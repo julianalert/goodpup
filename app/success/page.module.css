@@ -1,0 +1,123 @@
+.page {
+  min-height: 100vh;
+  background: var(--cream);
+  display: flex;
+  flex-direction: column;
+}
+
+/* NAV */
+.nav {
+  background: var(--green);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.navLogo {
+  font-family: var(--font-playfair), serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+  text-decoration: none;
+}
+.navLogo span { font-style: italic; font-weight: 400; color: rgba(255,255,255,0.7); }
+
+/* MAIN */
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+}
+.card {
+  background: white;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 32px rgba(28,28,26,0.07);
+  padding: 48px 40px;
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+}
+
+.iconWrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--green-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 28px;
+}
+
+.title {
+  font-family: var(--font-playfair), serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+.title em { font-weight: 400; font-style: italic; }
+
+.subtitle {
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--ink-mid);
+  line-height: 1.65;
+  margin-bottom: 32px;
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  text-align: left;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  color: var(--ink-mid);
+}
+.step:last-child { border-bottom: none; }
+.stepIcon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.step strong { color: var(--ink); font-weight: 500; display: block; margin-bottom: 2px; }
+
+.refNote {
+  font-size: 12px;
+  color: var(--ink-light);
+  background: var(--cream);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 28px;
+  word-break: break-all;
+}
+.refNote span { font-weight: 500; color: var(--ink-mid); }
+
+.btnHome {
+  display: inline-block;
+  background: var(--green);
+  color: white;
+  text-decoration: none;
+  border-radius: 99px;
+  padding: 14px 32px;
+  font-size: 15px;
+  font-weight: 500;
+  transition: background 0.2s, transform 0.15s;
+}
+.btnHome:hover { background: #155a3d; transform: translateY(-1px); }
+
+@media (max-width: 560px) {
+  .card { padding: 36px 24px; }
+}

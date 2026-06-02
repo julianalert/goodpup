@@ -1,8 +1,21 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import s from './page.module.css'
+// Save step data via the server-side API route (never writes to Supabase directly from the browser)
+async function saveStepToApi(data: Record<string, unknown>): Promise<void> {
+  try {
+    await fetch('/api/submission', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+  } catch (err) {
+    // Log but don't block the user — data loss is better than a broken form
+    console.error('[form] saveStep failed:', err)
+  }
+}
 
 const PROBLEM_LABELS: Record<string, string> = {
   leash_pulling: 'Pulls on leash',
@@ -61,9 +74,15 @@ const GEN_DELAYS = [0, 900, 1900, 2900, 4000, 5200]
 export default function FormPage() {
   const router = useRouter()
   const [step, setStep] = useState(1)
+  const [saving, setSaving] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [genStepIndex, setGenStepIndex] = useState(-1)
   const [errors, setErrors] = useState<Record<string, string>>({})
+
+  // Stable session ID — created once per page load, persisted across steps
+  const sessionId = useRef<string>(
+    typeof crypto !== 'undefined' ? crypto.randomUUID() : Math.random().toString(36).slice(2)
+  )
 
   const [form, setForm] = useState<FormData>({
     dogName: '',
@@ -114,12 +133,50 @@ export default function FormPage() {
     return Object.keys(e).length === 0
   }
 
-  const goNext = () => {
+  // Map each step number to the fields that were filled on that step
+  const getStepPayload = (currentStep: number) => {
+    switch (currentStep) {
+      case 1: return {
+        dog_name: form.dogName,
+        dog_breed: form.dogBreed,
+        dog_age: form.dogAge,
+      }
+      case 2: return {
+        problems: form.problems,
+        problem_context: form.problemContext || null,
+      }
+      case 3: return {
+        experience: form.experience,
+        living: form.living,
+      }
+      case 4: return {
+        daily_time: form.dailyTime,
+        training_history: form.trainingHistory || null,
+      }
+      case 5: return {
+        email: form.email,
+        status: 'completed' as const,
+      }
+      default: return {}
+    }
+  }
+
+  // Steps 1-4: fire-and-forget, never blocks navigation or shows spinner
+  const saveStepBackground = (currentStep: number) => {
+    saveStepToApi({
+      session_id: sessionId.current,
+      current_step: currentStep,
+      ...getStepPayload(currentStep),
+    })
+  }
+
+  const goNext = async () => {
     if (!validate(step)) return
     if (step === 5) {
-      submit()
+      await submit()
       return
     }
+    saveStepBackground(step)
     setStep((s) => s + 1)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -129,23 +186,32 @@ export default function FormPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const submit = () => {
-    setGenerating(true)
-    // Store form data for the order page
+  const submit = async () => {
+    setSaving(true)
+    // Save final step with status = 'completed'
+    await saveStepToApi({
+      session_id: sessionId.current,
+      current_step: 5,
+      email: form.email,
+      status: 'completed',
+    })
+    setSaving(false)
+
+    // Store form data in sessionStorage for the order page
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('pawplan_form', JSON.stringify(form))
+      sessionStorage.setItem('pawplan_session_id', sessionId.current)
     }
 
-    // Animate generating steps
-    GEN_DELAYS.forEach((delay, i) => {
-      setTimeout(() => setGenStepIndex(i), delay)
-    })
-
-    // After animation, navigate to /order
-    setTimeout(() => {
-      router.push('/order')
-    }, 7000)
+    // Navigate directly to /order — generation animation is preserved below but not used yet
+    router.push('/order')
   }
+
+  // NOTE: generation animation is intentionally kept but not triggered.
+  // Re-enable by replacing the router.push above with:
+  //   setGenerating(true)
+  //   GEN_DELAYS.forEach((delay, i) => { setTimeout(() => setGenStepIndex(i), delay) })
+  //   setTimeout(() => router.push('/order'), 7000)
 
   const progress = ((step - 1) / 5) * 100
 
@@ -469,10 +535,11 @@ export default function FormPage() {
             </div>
             <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
               {step > 1 && (
-                <button className={s.btnBack} onClick={goBack}>← Back</button>
+                <button className={s.btnBack} onClick={goBack} disabled={saving}>← Back</button>
               )}
-              <button className={s.btnNext} onClick={goNext}>
-                {step === 5 ? 'Generate my plan' : 'Continue'} <span>→</span>
+              <button className={s.btnNext} onClick={goNext} disabled={saving}>
+                {saving ? 'Saving…' : step === 5 ? 'Generate my plan' : 'Continue'}
+                {!saving && <span>→</span>}
               </button>
             </div>
           </div>

@@ -1,0 +1,8 @@
+import Stripe from 'stripe'
+
+// Server-side only — never import this in client components
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2025-05-28.basil',
+})
+
+export const PRICE_CENTS = 1700 // $17.00

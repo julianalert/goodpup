@@ -67,18 +67,43 @@ const DEFAULT_DATA: FormData = {
 
 export default function OrderPage() {
   const [data, setData] = useState<FormData>(DEFAULT_DATA)
-  const [checkoutClicked, setCheckoutClicked] = useState(false)
+  const [checkoutState, setCheckoutState] = useState<'idle' | 'loading' | 'error'>('idle')
+  const [sessionId, setSessionId] = useState<string | null>(null)
 
   useEffect(() => {
     try {
       const stored = sessionStorage.getItem('pawplan_form')
       if (stored) setData(JSON.parse(stored))
+
+      const sid = sessionStorage.getItem('pawplan_session_id')
+      if (sid) setSessionId(sid)
     } catch {}
   }, [])
 
-  const handleCheckout = () => {
-    setCheckoutClicked(true)
-    // TODO: integrate Stripe payment here
+  const handleCheckout = async () => {
+    setCheckoutState('loading')
+
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId }),
+      })
+
+      const json = await res.json()
+
+      if (!res.ok || !json.url) {
+        console.error('[order] checkout error:', json.error)
+        setCheckoutState('error')
+        return
+      }
+
+      // Redirect to Stripe Checkout
+      window.location.href = json.url
+    } catch (err) {
+      console.error('[order] checkout fetch failed:', err)
+      setCheckoutState('error')
+    }
   }
 
   const dogPillText = [
@@ -317,11 +342,12 @@ export default function OrderPage() {
               <button
                 className={s.btnCheckout}
                 onClick={handleCheckout}
-                disabled={checkoutClicked}
-                style={checkoutClicked ? { opacity: 0.75, cursor: 'default' } : {}}
+                disabled={checkoutState === 'loading'}
+                style={checkoutState === 'loading' ? { opacity: 0.75, cursor: 'default' } : {}}
               >
-                {checkoutClicked ? 'Redirecting to secure payment…' : 'Pay $17 — Get my plan'}
-                {!checkoutClicked && <small>Delivered to your inbox in &lt; 60 seconds</small>}
+                {checkoutState === 'loading' ? 'Redirecting to secure payment…' : 'Pay $17 — Get my plan'}
+                {checkoutState === 'idle' && <small>Delivered to your inbox in &lt; 60 seconds</small>}
+                {checkoutState === 'error' && <small style={{ color: '#ffb3ae' }}>Something went wrong — please try again</small>}
               </button>
 
               <div className={s.orderMicro}>
