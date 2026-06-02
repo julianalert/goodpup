@@ -22,6 +22,7 @@ export function createServerClient() {
 // ── Types ──────────────────────────────────────────────────────────────────
 
 export type SubmissionStatus = 'partial' | 'completed' | 'paid'
+export type PlanStatus = 'pending' | 'generating' | 'ready' | 'failed'
 
 export interface SubmissionRow {
   session_id: string
@@ -37,4 +38,12 @@ export interface SubmissionRow {
   email?: string | null
   current_step: number
   status: SubmissionStatus
+  // Plan generation
+  plan_html?: string | null
+  plan_status?: PlanStatus | null
+  // Stripe
+  stripe_session_id?: string | null
+  stripe_payment_intent_id?: string | null
+  // Timestamps
+  created_at?: string | null
 }

@@ -1,29 +1,150 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
+import { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import s from './page.module.css'
 
+const GEN_STEPS = [
+  'Analysing breed profile & temperament',
+  'Identifying root causes of issues',
+  'Building week-by-week program',
+  'Writing daily exercises & schedules',
+  'Compiling mistakes to avoid',
+  'Sending to your inbox ✓',
+]
+
+// How long to show each step label (ms) — purely cosmetic, polling drives the real transition
+const GEN_DELAYS = [0, 4000, 8000, 12000, 17000, 22000]
+
+type GenState = 'generating' | 'ready' | 'failed'
+
 export default function SuccessPage() {
-  const [stripeSessionId, setStripeSessionId] = useState<string | null>(null)
+  const router = useRouter()
   const [dogName, setDogName] = useState<string | null>(null)
-  const [email, setEmail] = useState<string | null>(null)
+  const [genState, setGenState] = useState<GenState>('generating')
+  const [genStepIndex, setGenStepIndex] = useState(0)
+  const sessionIdRef = useRef<string | null>(null)
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([])
 
   useEffect(() => {
-    // Read the Stripe session ID from the URL (?stripe_session_id=cs_...)
-    const params = new URLSearchParams(window.location.search)
-    setStripeSessionId(params.get('stripe_session_id'))
-
-    // Read dog/email from sessionStorage (still present from the form flow)
+    // Read session_id and form data from sessionStorage
+    let sessionId: string | null = null
     try {
+      sessionId = sessionStorage.getItem('pawplan_session_id')
       const stored = sessionStorage.getItem('pawplan_form')
       if (stored) {
         const form = JSON.parse(stored)
         setDogName(form.dogName ?? null)
-        setEmail(form.email ?? null)
       }
-    } catch {}
-  }, [])
+    } catch { /* ignore */ }
+
+    if (!sessionId) {
+      // No session — show error
+      setGenState('failed')
+      return
+    }
+
+    sessionIdRef.current = sessionId
+
+    // Start cosmetic step animation
+    GEN_DELAYS.forEach((delay, i) => {
+      const t = setTimeout(() => setGenStepIndex(i), delay)
+      timersRef.current.push(t)
+    })
+
+    // Kick off generation
+    fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: sessionId }),
+    }).catch(err => console.error('[success] generate trigger failed:', err))
+
+    // Poll for status every 3 s
+    pollRef.current = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/plan-status?session_id=${sessionId}`)
+        if (!res.ok) return
+        const data = await res.json()
+
+        if (data.plan_status === 'ready') {
+          clearInterval(pollRef.current!)
+          setGenState('ready')
+          // Short delay so user sees the final step before redirect
+          setTimeout(() => {
+            router.push(`/plan/${sessionId}`)
+          }, 800)
+        } else if (data.plan_status === 'failed') {
+          clearInterval(pollRef.current!)
+          setGenState('failed')
+        }
+      } catch { /* keep polling */ }
+    }, 3000)
+
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current)
+      timersRef.current.forEach(clearTimeout)
+    }
+  }, [router])
+
+  const handleRetry = () => {
+    const sessionId = sessionIdRef.current
+    if (!sessionId) return
+    setGenState('generating')
+    setGenStepIndex(0)
+
+    // Reset cosmetic timers
+    timersRef.current.forEach(clearTimeout)
+    timersRef.current = []
+    GEN_DELAYS.forEach((delay, i) => {
+      const t = setTimeout(() => setGenStepIndex(i), delay)
+      timersRef.current.push(t)
+    })
+
+    fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: sessionId }),
+    }).catch(err => console.error('[success] retry failed:', err))
+
+    pollRef.current = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/plan-status?session_id=${sessionId}`)
+        if (!res.ok) return
+        const data = await res.json()
+        if (data.plan_status === 'ready') {
+          clearInterval(pollRef.current!)
+          setGenState('ready')
+          setTimeout(() => router.push(`/plan/${sessionId}`), 800)
+        } else if (data.plan_status === 'failed') {
+          clearInterval(pollRef.current!)
+          setGenState('failed')
+        }
+      } catch { /* keep polling */ }
+    }, 3000)
+  }
+
+  if (genState === 'failed') {
+    return (
+      <div className={s.page}>
+        <nav className={s.nav}>
+          <a href="/" className={s.navLogo}>Paw<span>Plan</span></a>
+        </nav>
+        <main className={s.main}>
+          <div className={s.genCard}>
+            <div className={s.errorIcon}>⚠️</div>
+            <h2 className={s.genTitle}>Something went wrong</h2>
+            <p className={s.genSub}>
+              We couldn&apos;t generate {dogName ? `${dogName}'s` : 'your'} plan. Your payment is safe — tap retry and we&apos;ll try again.
+            </p>
+            <button className={s.btnRetry} onClick={handleRetry}>
+              Retry generation
+            </button>
+          </div>
+        </main>
+      </div>
+    )
+  }
 
   return (
     <div className={s.page}>
@@ -32,52 +153,46 @@ export default function SuccessPage() {
       </nav>
 
       <main className={s.main}>
-        <div className={s.card}>
-          <div className={s.iconWrap}>🎉</div>
-
-          <h1 className={s.title}>
-            Payment confirmed.<br />
-            <em>{dogName ? `${dogName}'s plan is on its way.` : 'Your plan is on its way.'}</em>
-          </h1>
-
-          <p className={s.subtitle}>
-            {email
-              ? <>We&apos;re generating the plan now and will send it to <strong>{email}</strong> in the next few minutes.</>
-              : <>We&apos;re generating your personalized 30-day plan now. Check your inbox in a few minutes.</>
-            }
-          </p>
-
-          <div className={s.steps}>
-            <div className={s.step}>
-              <span className={s.stepIcon}>✅</span>
-              <div>
-                <strong>Payment confirmed</strong>
-                Your order has been securely processed by Stripe.
-              </div>
-            </div>
-            <div className={s.step}>
-              <span className={s.stepIcon}>⚙️</span>
-              <div>
-                <strong>Plan generation in progress</strong>
-                Our AI is building a personalised 30-day program based on{dogName ? ` ${dogName}'s` : ' your dog\'s'} exact profile.
-              </div>
-            </div>
-            <div className={s.step}>
-              <span className={s.stepIcon}>📧</span>
-              <div>
-                <strong>PDF arriving in your inbox</strong>
-                {email ? `Sent to ${email}.` : 'Check the email you provided.'} Check spam if it doesn&apos;t arrive within 5 minutes.
-              </div>
-            </div>
+        <div className={s.genCard}>
+          {/* Spinner */}
+          <div className={s.spinnerWrap}>
+            {genState === 'ready' ? (
+              <div className={s.checkmark}>✓</div>
+            ) : (
+              <div className={s.spinner} />
+            )}
           </div>
 
-          {stripeSessionId && (
-            <div className={s.refNote}>
-              Order ref: <span>{stripeSessionId}</span>
-            </div>
-          )}
+          <h2 className={s.genTitle}>
+            {genState === 'ready'
+              ? `${dogName ? `${dogName}'s` : 'Your'} plan is ready!`
+              : `Generating ${dogName ? `${dogName}'s` : 'your'} plan…`}
+          </h2>
 
-          <Link href="/" className={s.btnHome}>Back to homepage</Link>
+          <p className={s.genSub}>
+            {genState === 'ready'
+              ? 'Redirecting you now…'
+              : 'This takes about a minute. Please keep this page open.'}
+          </p>
+
+          {/* Step list */}
+          <div className={s.stepList}>
+            {GEN_STEPS.map((label, i) => {
+              const done = genState === 'ready' || i < genStepIndex
+              const active = genState !== 'ready' && i === genStepIndex
+              return (
+                <div
+                  key={i}
+                  className={`${s.stepRow} ${done ? s.stepDone : ''} ${active ? s.stepActive : ''}`}
+                >
+                  <span className={s.stepDot}>
+                    {done ? '✓' : active ? '·' : '○'}
+                  </span>
+                  <span className={s.stepLabel}>{label}</span>
+                </div>
+              )
+            })}
+          </div>
         </div>
       </main>
     </div>

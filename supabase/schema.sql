@@ -34,6 +34,11 @@ CREATE TABLE submissions (
   stripe_session_id        TEXT,   -- Stripe Checkout Session ID (cs_...)
   stripe_payment_intent_id TEXT,   -- Stripe PaymentIntent ID (pi_...) — set by webhook
 
+  -- Plan generation
+  plan_html   TEXT,                -- AI-generated HTML (body sections only, no DOCTYPE)
+  plan_status TEXT NOT NULL DEFAULT 'pending',
+  -- plan_status: 'pending' | 'generating' | 'ready' | 'failed'
+
   -- Tracking
   current_step  INTEGER      NOT NULL DEFAULT 1,
   status        TEXT         NOT NULL DEFAULT 'partial',
