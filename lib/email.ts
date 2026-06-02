@@ -15,7 +15,7 @@ interface SendPlanEmailOptions {
 
 export async function sendPlanEmail({ to, dogName, planUrl }: SendPlanEmailOptions): Promise<void> {
   await getResend().emails.send({
-    from: 'Alex @ PawPlan <hello@mypawcraft.com>',
+    from: 'Julian @ PawCraft <hello@mypawcraft.com>',
     to,
     subject: `${dogName}'s 30-day training plan is ready 🐾`,
     html: `
@@ -45,7 +45,7 @@ export async function sendPlanEmail({ to, dogName, planUrl }: SendPlanEmailOptio
           <p style="font-size: 13px; color: #7A7A72; line-height: 1.6; margin-bottom: 0;">
             You can return to this link any time — it won't expire.<br>
             Questions? Reply to this email and we'll help you out.<br><br>
-            — Alex @ PawPlan
+            — Julian @ PawCraft
           </p>
         </div>
       </div>
