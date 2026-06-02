@@ -59,27 +59,28 @@
 
 .container { max-width: 760px; margin: 0 auto; padding: 0 40px; }
 
-.plan-body section,
-.plan-body .section {
+/* Scope section/typography rules to .container so they don't override cover styles */
+.container section,
+.container .section {
   padding: 48px 0;
   border-bottom: 1px solid var(--border);
 }
-.plan-body section:last-child,
-.plan-body .section:last-child { border-bottom: none; }
+.container section:last-child,
+.container .section:last-child { border-bottom: none; }
 
 .section-label {
   font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--green); margin-bottom: 6px;
 }
-.plan-body h2 {
+.container h2 {
   font-family: var(--font-playfair), 'Playfair Display', serif;
   font-size: 26px; font-weight: 600; line-height: 1.25;
   margin-bottom: 24px; color: var(--ink);
 }
-.plan-body h2 em { font-style: italic; font-weight: 400; font-size: 22px; }
-.plan-body h3 { font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 8px; }
-.plan-body p { color: var(--ink-mid); margin-bottom: 14px; }
-.plan-body p:last-child { margin-bottom: 0; }
+.container h2 em { font-style: italic; font-weight: 400; font-size: 22px; }
+.container h3 { font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 8px; }
+.container p { color: var(--ink-mid); margin-bottom: 14px; }
+.container p:last-child { margin-bottom: 0; }
 
 /* ── DIAGNOSTIC CARDS ───────────────────────────────────────────────────── */
 .diag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 28px; }
@@ -192,6 +193,52 @@
 }
 .plan-footer strong { color: rgba(255,255,255,0.8); }
 
+/* ── AI OUTPUT COMPATIBILITY ─────────────────────────────────────────────
+ * Claude generates semantic HTML instead of the specific CSS classes.
+ * These rules handle the actual AI output alongside the template classes.
+ * ─────────────────────────────────────────────────────────────────────── */
+
+/* Callout: Claude puts h4/p directly inside instead of icon+text wrapper */
+.callout { flex-wrap: wrap; }
+.callout h4 {
+  flex: 1 0 100%; margin: 0 0 6px;
+  font-size: 13px; font-weight: 500; color: var(--ink);
+}
+.callout > p,
+.callout > ul {
+  flex: 1 0 100%;
+  font-size: 13px; color: var(--ink-mid); line-height: 1.6; margin: 0;
+}
+.callout > p + p { margin-top: 8px; }
+.callout > ul { padding-left: 18px; margin-top: 6px; }
+.callout > ul li { margin-bottom: 4px; }
+.callout > strong { flex: 1 0 100%; font-size: 13px; color: var(--ink); }
+
+/* Diagnostic card: Claude uses <h3> for label, <p><strong> for value + desc */
+.diag-card h3 {
+  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ink-light); margin-bottom: 6px; font-weight: 500;
+}
+.diag-card > p {
+  font-size: 13px; color: var(--ink-light); margin: 6px 0 0; line-height: 1.55;
+}
+.diag-card > p > strong:first-child {
+  display: block; font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 3px;
+}
+
+/* Week header: Claude uses <h3> title + <p> description inside the header div */
+.week-header > div > h3 {
+  font-size: 17px; font-weight: 500; color: var(--ink); margin-bottom: 2px;
+}
+.week-header > div > p { font-size: 13px; color: var(--ink-light); margin: 0; }
+
+/* Mistake section: ensure h4 and p look right even without .mistake-content wrapper */
+.mistake-item h4 { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+.mistake-item > div > p, .mistake-content > p { font-size: 13px; color: var(--ink-light); margin: 0; }
+
+/* Day table: Claude uses <strong> for day names instead of .day-name span */
+.day-table td > strong:first-child { font-weight: 500; color: var(--ink); display: block; margin-bottom: 4px; }
+
 /* ── RESPONSIVE ─────────────────────────────────────────────────────────── */
 @media (max-width: 640px) {
   .cover { padding: 40px 24px 36px; }
@@ -203,5 +250,5 @@
 
 @media print {
   .cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .plan-body section, .plan-body .section { page-break-inside: avoid; }
+  .container section, .container .section { page-break-inside: avoid; }
 }

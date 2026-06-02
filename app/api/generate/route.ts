@@ -48,13 +48,22 @@ export async function POST(req: NextRequest) {
     // Call Claude
     const client = new Anthropic()
     const message = await client.messages.create({
-      model: 'claude-sonnet-4-5',
-      max_tokens: 8000,
+      model: 'claude-sonnet-4-6',
+      max_tokens: 16000,
       messages: [{ role: 'user', content: prompt }],
     })
 
-    const planHtml =
+    const raw =
       message.content[0].type === 'text' ? message.content[0].text : ''
+
+    // Claude sometimes wraps output in ```html ... ``` — strip it
+    const planHtml = raw
+      .replace(/^```(?:html)?\s*\n?/i, '')
+      .replace(/\n?```\s*$/, '')
+      // Also strip outer <body> tags if present (we only want inner content)
+      .replace(/^\s*<body[^>]*>\s*/i, '')
+      .replace(/\s*<\/body>\s*$/i, '')
+      .trim()
 
     // Save the generated HTML and mark as ready
     await supabase

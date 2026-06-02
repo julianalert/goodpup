@@ -95,48 +95,93 @@ Use this exact section structure:
 <!-- SECTION 1: DIAGNOSTIC -->
 <section class="section" id="diagnostic">
   <div class="section-label">Section 01</div>
-  <h2>${dogName}'s Profile & Temperament Diagnostic</h2>
+  <h2>${dogName}'s Profile &amp; Temperament Diagnostic</h2>
 
-  <!-- 4 diagnostic cards using .diag-grid > .diag-card structure with .score-bar-fill width 0-100% -->
-  <!-- Breed drive level -->
-  <!-- Trainability -->
-  <!-- Mental stimulation need -->
-  <!-- Reactivity baseline -->
+  <div class="diag-grid">
+    <div class="diag-card">
+      <div class="diag-card-label">Breed drive level</div>
+      <div class="diag-card-value"><!-- e.g. Very High --></div>
+      <div class="diag-card-sub"><!-- one sentence why --></div>
+      <div class="score-bar-wrap"><div class="score-bar"><div class="score-bar-fill" style="width: 85%"></div></div></div>
+    </div>
+    <!-- repeat for Trainability, Mental stimulation need, Reactivity baseline -->
+  </div>
 
-  <!-- Trait pills using .trait-list > .trait (add .positive or .watch modifier) -->
+  <div class="trait-list">
+    <span class="trait positive"><!-- positive trait specific to ${dogBreed} --></span>
+    <span class="trait watch"><!-- watch trait specific to ${dogBreed} --></span>
+  </div>
 
-  <!-- Root cause callout using .callout.callout-green explaining WHY ${dogName} has these specific problems -->
+  <div class="callout callout-green">
+    <span class="callout-icon">💡</span>
+    <div class="callout-text">
+      <strong>Root cause:</strong> <!-- explain WHY ${dogName} has these specific problems -->
+    </div>
+  </div>
 </section>
 
 <!-- SECTION 2: 30-DAY PROGRAM -->
 <section class="section" id="program">
   <div class="section-label">Section 02</div>
   <h2>Your 30-Day Program</h2>
+  <p><!-- brief intro --></p>
 
-  <!-- Week 1: Foundation (days 1-7) — full day-by-day .day-table -->
-  <!-- Week 2: First outdoor application (days 8-14) — full day-by-day .day-table -->
-  <!-- Week 3: Problem-specific work (days 15-21) — full day-by-day .day-table -->
-  <!-- Week 4: Consolidation (days 22-30) — summary with key rules -->
-
-  <!-- Each week: .week-block > .week-header (.week-badge + title/desc) + optional .callout + .day-table -->
-  <!-- Day table columns: Day | Exercise | Goal | Duration (use .duration-badge for the duration cell) -->
+  <div class="week-block">
+    <div class="week-header">
+      <span class="week-badge">Week 1 · Days 1–7</span>
+      <div>
+        <div class="week-title"><!-- week theme --></div>
+        <div class="week-desc"><!-- one-line description --></div>
+      </div>
+    </div>
+    <div class="callout callout-amber">
+      <span class="callout-icon">⚠️</span>
+      <div class="callout-text"><strong>Week 1 rule:</strong> <!-- key constraint --></div>
+    </div>
+    <table class="day-table">
+      <thead><tr><th>Day</th><th>Exercise</th><th>Goal</th><th>Duration</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="day-name">Mon</span></td>
+          <td><!-- exercise description --></td>
+          <td><!-- measurable goal --></td>
+          <td><span class="duration-badge"><!-- e.g. 3 × 5 min --></span></td>
+        </tr>
+        <!-- 7 rows total, Mon–Sun -->
+      </tbody>
+    </table>
+  </div>
+  <!-- Repeat .week-block for weeks 2, 3, 4 -->
 </section>
 
 <!-- SECTION 3: MISTAKES TO AVOID -->
 <section class="section" id="mistakes">
   <div class="section-label">Section 03</div>
   <h2>Common Mistakes to Avoid</h2>
-  <!-- 5 .mistake-item cards, each specific to ${dogBreed} aged ${age} -->
-  <!-- Each card: .mistake-x (✕) + .mistake-content (h4 title + p explanation) -->
+  <ul class="mistakes-list">
+    <li class="mistake-item">
+      <div class="mistake-x">✕</div>
+      <div class="mistake-content">
+        <h4><!-- mistake title specific to ${dogBreed} --></h4>
+        <p><!-- why it's a mistake for this breed/age --></p>
+      </div>
+    </li>
+    <!-- 5 items total -->
+  </ul>
 </section>
 
 <!-- SECTION 4: WEEKLY CHECKLIST -->
 <section class="section" id="checklist">
   <div class="section-label">Section 04</div>
   <h2>Weekly Progress Checklist</h2>
-  <!-- 4 .check-week blocks, each with .check-week-title + several .check-item rows -->
-  <!-- Each .check-item: .checkbox div + .check-text with a concrete measurable milestone -->
-  <!-- NOT "practice sit" but "${dogName} holds a sit for 10 seconds with TV on" -->
+  <div class="checklist">
+    <div class="check-week">
+      <div class="check-week-title">✓ Week 1 milestones</div>
+      <div class="check-item"><div class="checkbox"></div><div class="check-text"><!-- concrete measurable milestone, e.g. "${dogName} holds a sit for 10 s with TV on" --></div></div>
+      <!-- 3–4 items -->
+    </div>
+    <!-- Repeat for weeks 2, 3, 4 -->
+  </div>
 </section>
 
 Now generate the full plan for ${dogName}. Be thorough, specific, and genuinely useful.

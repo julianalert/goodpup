@@ -15,7 +15,7 @@ interface SendPlanEmailOptions {
 
 export async function sendPlanEmail({ to, dogName, planUrl }: SendPlanEmailOptions): Promise<void> {
   await getResend().emails.send({
-    from: 'Alex @ PawPlan <hello@mypawplan.com>',
+    from: 'Alex @ PawPlan <hello@mypawcraft.com>',
     to,
     subject: `${dogName}'s 30-day training plan is ready 🐾`,
     html: `

@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { createServerClient } from '@/lib/supabase'
+import { PlanContent } from './PlanContent'
 import './plan.css'
 
 // Re-generate at most once per 60 s (plan content never changes after it's ready)
@@ -66,6 +67,14 @@ export default async function PlanPage({ params }: Props) {
     )
   }
 
+  // Strip markdown code fence that Claude sometimes adds, and any outer <body> tags
+  const planHtml = (row.plan_html ?? '')
+    .replace(/^```(?:html)?\s*\n?/i, '')
+    .replace(/\n?```\s*$/, '')
+    .replace(/^\s*<body[^>]*>\s*/i, '')
+    .replace(/\s*<\/body>\s*$/i, '')
+    .trim()
+
   const dogName = row.dog_name ?? 'Your dog'
   const dogBreed = row.dog_breed ?? 'mixed breed'
   const dogAge = AGE_LABELS[row.dog_age ?? ''] ?? row.dog_age ?? ''
@@ -113,7 +122,7 @@ export default async function PlanPage({ params }: Props) {
 
       {/* ── AI-GENERATED SECTIONS ──────────────────────────────────────── */}
       <div className="container">
-        <div dangerouslySetInnerHTML={{ __html: row.plan_html }} />
+        <PlanContent html={planHtml} />
       </div>
 
       {/* ── FOOTER ─────────────────────────────────────────────────────── */}
