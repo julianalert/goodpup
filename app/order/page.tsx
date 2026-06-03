@@ -192,11 +192,11 @@ export default function OrderPage() {
                 </div>
                 <div className={s.summaryRow}>
                   <span className={s.sumKey}>Living situation</span>
-                  <span className={s.sumVal}>{data.living ? LIVING_LABELS[data.living] : '—'}</span>
+                  <span className={s.sumVal}>{data.living ? LIVING_LABELS[data.living] : '-'}</span>
                 </div>
                 <div className={s.summaryRow}>
                   <span className={s.sumKey}>Experience level</span>
-                  <span className={s.sumVal}>{data.experience ? EXPERIENCE_LABELS[data.experience] : '—'}</span>
+                  <span className={s.sumVal}>{data.experience ? EXPERIENCE_LABELS[data.experience] : '-'}</span>
                 </div>
               </div>
             </div>
@@ -243,28 +243,28 @@ export default function OrderPage() {
                 <div className={s.previewRow}>
                   <div className={s.previewWeek}>Week 1</div>
                   <div className={s.previewContent}>
-                    <div className={s.previewDay}>Monday — Name recognition &amp; attention</div>
+                    <div className={s.previewDay}>Monday: Name recognition &amp; attention</div>
                     <div className={s.previewEx}>3 × 5-min sessions indoors. Say {data.dogName}&apos;s name, mark with &quot;yes&quot;, reward. Goal: 10/10 response before moving outside.</div>
                   </div>
                 </div>
                 <div className={s.previewRow}>
                   <div className={s.previewWeek}>Week 1</div>
                   <div className={s.previewContent}>
-                    <div className={s.previewDay}>Tuesday — Eye contact hold</div>
+                    <div className={s.previewDay}>Tuesday: Eye contact hold</div>
                     <div className={s.previewEx}>2 × 8-min sessions. Hold treat at eye level, reward 3 seconds of voluntary eye contact. Build to 5 seconds with TV on.</div>
                   </div>
                 </div>
                 <div className={`${s.previewRow} ${s.previewBlur}`}>
                   <div className={s.previewWeek}>Week 2</div>
                   <div className={s.previewContent}>
-                    <div className={s.previewDay}>Monday — First outdoor session</div>
+                    <div className={s.previewDay}>Monday: First outdoor session</div>
                     <div className={s.previewEx}>Quiet street, 15 min. Stop every time leash tightens. Wait for slack, reward immediately. Goal: 5 voluntary check-ins.</div>
                   </div>
                 </div>
                 <div className={`${s.previewRow} ${s.previewBlur}`}>
                   <div className={s.previewWeek}>Week 2</div>
                   <div className={s.previewContent}>
-                    <div className={s.previewDay}>Wednesday — Threshold work</div>
+                    <div className={s.previewDay}>Wednesday: Threshold work</div>
                     <div className={s.previewEx}>Spot a dog at 50m. Ask for sit, reward calm focus. Do not allow closer. This is where reactivity is broken.</div>
                   </div>
                 </div>

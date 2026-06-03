@@ -237,8 +237,8 @@ export default function FormPage() {
         </div>
         <div className={s.hero}>
           <div className={s.heroEyebrow}>Takes 2 minutes · Instant results</div>
-          <h1>Tell us about your dog.<br />We&apos;ll build <em>the plan.</em></h1>
-          <p className={s.heroSub}>Answer 5 quick questions so our AI can generate a program that actually fits your dog — not a generic guide.</p>
+          <h1>Tell us about your dog.<br />We&apos;ll build <em>their 30-day personalised training plan.</em></h1>
+          <p className={s.heroSub}>Answer 5 quick questions so our AI can generate a program that actually fits your dog, not a generic guide.</p>
         </div>
         <div className={s.formWrap}>
           <div className={s.formCard}>
@@ -248,7 +248,7 @@ export default function FormPage() {
             <div className={s.successStep}>
               <div className={s.successIcon}>🐾</div>
               <div className={s.successTitle}>Generating your plan…</div>
-              <p className={s.successSub}>Hang tight — our AI is building a personalized 30-day program just for your dog.</p>
+              <p className={s.successSub}>Hang tight. Our AI is building a personalized 30-day program just for your dog.</p>
               <div className={s.generatingSteps}>
                 {GEN_STEPS.map((label, i) => {
                   const isDone = i < genStepIndex
@@ -280,8 +280,8 @@ export default function FormPage() {
 
       <div className={s.hero}>
         <div className={s.heroEyebrow}>Takes 2 minutes · Instant results</div>
-        <h1>Tell us about your dog.<br />We&apos;ll build <em>the plan.</em></h1>
-        <p className={s.heroSub}>Answer 5 quick questions so our AI can generate a program that actually fits your dog — not a generic guide.</p>
+        <h1>Tell us about your dog.<br />We&apos;ll build <em>their 30-day personalised training plan.</em></h1>
+        <p className={s.heroSub}>Answer 5 quick questions so our AI can generate a program that actually fits your dog, not a generic guide.</p>
         <div className={s.trustRow}>
           {['Breed-specific', 'Age-adapted', 'Problem-focused', 'Ready in 60 sec'].map((t) => (
             <div key={t} className={s.trustItem}><span className={s.trustDot} />{t}</div>
@@ -436,7 +436,7 @@ export default function FormPage() {
             <div className={s.step}>
               <div className={s.stepIndicator}>Step 4 of 5</div>
               <div className={s.stepTitle}>Time &amp; commitment</div>
-              <div className={s.stepSub}>Be honest — we&apos;ll build a plan you can actually stick to.</div>
+              <div className={s.stepSub}>Be honest: we&apos;ll build a plan you can actually stick to.</div>
 
               <div className={s.field}>
                 <label className={s.fieldLabel}>How much time can you dedicate per day? <span className={s.required}>*</span></label>
@@ -497,7 +497,7 @@ export default function FormPage() {
                 <div className={s.summarySectionTitle}>📋 Your plan summary</div>
                 <div className={s.summaryRow}>
                   <span className={s.summaryKey}>Dog</span>
-                  <span className={s.summaryVal}>{form.dogName || '—'}</span>
+                  <span className={s.summaryVal}>{form.dogName || '-'}</span>
                 </div>
                 <div className={s.summaryRow}>
                   <span className={s.summaryKey}>Breed &amp; age</span>
@@ -509,7 +509,7 @@ export default function FormPage() {
                     <div className={s.summaryTags}>
                       {form.problems.length > 0
                         ? form.problems.map((p) => <span key={p} className={s.summaryTag}>{PROBLEM_LABELS[p]}</span>)
-                        : '—'}
+                        : '-'}
                     </div>
                   </span>
                 </div>
@@ -519,7 +519,7 @@ export default function FormPage() {
                 </div>
                 <div className={s.summaryRow}>
                   <span className={s.summaryKey}>Living situation</span>
-                  <span className={s.summaryVal}>{form.living ? LIVING_LABELS[form.living] : '—'}</span>
+                  <span className={s.summaryVal}>{form.living ? LIVING_LABELS[form.living] : '-'}</span>
                 </div>
               </div>
 
