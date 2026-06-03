@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Playfair_Display, DM_Sans } from 'next/font/google'
+import { GoogleAds } from './GoogleAds'
 import { MixpanelProvider } from './MixpanelProvider'
 import './globals.css'
 
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${dmSans.variable} ${playfair.variable}`}>
       <body>
+        <GoogleAds />
         <MixpanelProvider>{children}</MixpanelProvider>
       </body>
     </html>
