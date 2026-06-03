@@ -199,8 +199,8 @@ export default function FormPage() {
 
     // Store form data in sessionStorage for the order page
     if (typeof window !== 'undefined') {
-      sessionStorage.setItem('pawplan_form', JSON.stringify(form))
-      sessionStorage.setItem('pawplan_session_id', sessionId.current)
+      sessionStorage.setItem('pawcraft_form', JSON.stringify(form))
+      sessionStorage.setItem('pawcraft_session_id', sessionId.current)
     }
 
     // Navigate directly to /order — generation animation is preserved below but not used yet
@@ -229,7 +229,10 @@ export default function FormPage() {
     return (
       <>
         <div className={s.header}>
-          <div className={s.logo}>Paw<span>Plan</span></div>
+          <div className={s.logo}>
+            <img src="/icon.png" alt="" className="appIcon" width={28} height={28} />
+            Paw<span>Craft</span>
+          </div>
           <span className={s.headerBadge}>30-Day Training Plan</span>
         </div>
         <div className={s.hero}>
@@ -268,7 +271,10 @@ export default function FormPage() {
   return (
     <>
       <div className={s.header}>
-        <div className={s.logo}>Paw<span>Plan</span></div>
+        <div className={s.logo}>
+          <img src="/icon.png" alt="" className="appIcon" width={28} height={28} />
+          Paw<span>Craft</span>
+        </div>
         <span className={s.headerBadge}>30-Day Training Plan</span>
       </div>
 

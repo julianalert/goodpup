@@ -72,10 +72,10 @@ export default function OrderPage() {
 
   useEffect(() => {
     try {
-      const stored = sessionStorage.getItem('pawplan_form')
+      const stored = sessionStorage.getItem('pawcraft_form')
       if (stored) setData(JSON.parse(stored))
 
-      const sid = sessionStorage.getItem('pawplan_session_id')
+      const sid = sessionStorage.getItem('pawcraft_session_id')
       if (sid) setSessionId(sid)
     } catch {}
   }, [])
@@ -119,7 +119,10 @@ export default function OrderPage() {
     <>
       {/* NAV */}
       <nav className={s.nav}>
-        <a href="/" className={s.navLogo}>Paw<span>Plan</span></a>
+        <a href="/" className={s.navLogo}>
+          <img src="/icon.png" alt="" className="appIcon" width={28} height={28} />
+          Paw<span>Craft</span>
+        </a>
         <div className={s.navSecure}>🔒 Secure checkout</div>
       </nav>
 
@@ -294,7 +297,7 @@ export default function OrderPage() {
 
               <div className={s.miniTestimonial}>
                 <div className={s.miniStars}>★★★★★</div>
-                <div className={s.miniQuote}>&ldquo;My trainer quoted me $600 for a 6-session package. I tried PawPlan first for $17. Honestly, the plan was more detailed than what he gave me in session one.&rdquo;</div>
+                <div className={s.miniQuote}>&ldquo;My trainer quoted me $600 for a 6-session package. I tried PawCraft first for $17. Honestly, the plan was more detailed than what he gave me in session one.&rdquo;</div>
                 <div className={s.miniAuthor}>
                   <div className={s.miniAvatar}>JK</div>
                   <div>

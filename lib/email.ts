@@ -22,7 +22,7 @@ export async function sendPlanEmail({ to, dogName, planUrl }: SendPlanEmailOptio
       <div style="font-family: 'DM Sans', Arial, sans-serif; max-width: 520px; margin: 0 auto; color: #1C1C1A;">
         <div style="background: #1A6B4A; padding: 32px 40px; border-radius: 12px 12px 0 0;">
           <p style="font-family: Georgia, serif; font-size: 22px; color: white; margin: 0; font-weight: 600;">
-            PawPlan
+            PawCraft
           </p>
         </div>
         <div style="background: #F9F7F3; padding: 40px; border-radius: 0 0 12px 12px; border: 1px solid rgba(28,28,26,0.1);">

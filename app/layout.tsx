@@ -18,8 +18,11 @@ const dmSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'PawPlan — Your Dog\'s Personalized 30-Day Training Plan',
+  title: 'PawCraft — Your Dog\'s Personalized 30-Day Training Plan',
   description: 'AI-powered personalised dog training plans. Breed-specific, problem-focused, and ready to work.',
+  icons: {
+    icon: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

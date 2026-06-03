@@ -31,8 +31,8 @@ export default function SuccessPage() {
     // Read session_id and form data from sessionStorage
     let sessionId: string | null = null
     try {
-      sessionId = sessionStorage.getItem('pawplan_session_id')
-      const stored = sessionStorage.getItem('pawplan_form')
+      sessionId = sessionStorage.getItem('pawcraft_session_id')
+      const stored = sessionStorage.getItem('pawcraft_form')
       if (stored) {
         const form = JSON.parse(stored)
         setDogName(form.dogName ?? null)
@@ -128,7 +128,10 @@ export default function SuccessPage() {
     return (
       <div className={s.page}>
         <nav className={s.nav}>
-          <a href="/" className={s.navLogo}>Paw<span>Plan</span></a>
+          <a href="/" className={s.navLogo}>
+            <img src="/icon.png" alt="" className="appIcon" width={28} height={28} />
+            Paw<span>Craft</span>
+          </a>
         </nav>
         <main className={s.main}>
           <div className={s.genCard}>
@@ -149,7 +152,10 @@ export default function SuccessPage() {
   return (
     <div className={s.page}>
       <nav className={s.nav}>
-        <a href="/" className={s.navLogo}>Paw<span>Plan</span></a>
+        <a href="/" className={s.navLogo}>
+          <img src="/icon.png" alt="" className="appIcon" width={28} height={28} />
+          Paw<span>Craft</span>
+        </a>
       </nav>
 
       <main className={s.main}>

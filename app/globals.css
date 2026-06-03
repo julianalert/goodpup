@@ -52,3 +52,13 @@ em { font-style: italic; }
 @keyframes blink {
   0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
 }
+
+.appIcon {
+  width: 28px;
+  height: 28px;
+  margin-right: 8px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  object-fit: contain;
+  vertical-align: middle;
+}

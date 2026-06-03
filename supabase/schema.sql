@@ -1,5 +1,5 @@
 -- ============================================================
--- PawPlan — Supabase Schema
+-- PawCraft — Supabase Schema
 -- Run this in your Supabase SQL Editor (Database > SQL Editor)
 -- ============================================================
 

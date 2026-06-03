@@ -76,9 +76,7 @@
 .btnPrimary:active { transform: translateY(0); }
 .heroMicro {
   font-size: 13px; color: rgba(255,255,255,0.5);
-  display: flex; align-items: center; gap: 6px;
 }
-.heroMicro::before { content: '🔒'; font-size: 12px; }
 
 /* PROOF BAR */
 .proofBar {
@@ -158,6 +156,39 @@
 .whyCardIcon { font-size: 28px; margin-bottom: 12px; display: block; }
 .whyCard h3 { font-size: 16px; font-weight: 500; color: var(--ink); margin-bottom: 8px; }
 .whyCard p { font-size: 14px; color: var(--ink-mid); margin: 0; line-height: 1.6; }
+
+/* TRANSFORMATION LISTICLE */
+.transformIntro { margin-bottom: 44px; }
+.transformGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 32px;
+  margin-bottom: 44px;
+}
+@media (max-width: 600px) { .transformGrid { grid-template-columns: 1fr; } }
+.transformItem {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 16px 20px;
+  background: var(--green-light);
+  border: 1px solid rgba(26,107,74,0.12);
+  border-radius: 12px;
+  font-size: 16px; font-weight: 400; color: var(--ink);
+  line-height: 1.4;
+}
+.transformCheck {
+  font-size: 18px; flex-shrink: 0; margin-top: 1px;
+}
+.transformCta {
+  background: var(--amber-light);
+  border-left: 3px solid var(--amber);
+  border-radius: 0 14px 14px 0;
+  padding: 24px 28px;
+}
+.transformCta p {
+  font-size: 17px; color: var(--ink-mid);
+  line-height: 1.7; margin: 0;
+}
+.transformCta em { color: var(--ink); font-style: italic; font-weight: 500; }
 
 /* SOLUTION SECTION */
 .solutionIntro { margin-bottom: 52px; }

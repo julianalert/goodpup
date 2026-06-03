@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: 'PawPlan — Personalized 30-Day Training Plan',
+              name: 'PawCraft — Personalized 30-Day Training Plan',
               description: description || undefined,
             },
             unit_amount: PRICE_CENTS,
