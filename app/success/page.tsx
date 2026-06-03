@@ -182,7 +182,7 @@ export default function SuccessPage() {
           <p className={s.genSub}>
             {genState === 'ready'
               ? 'Redirecting you now…'
-              : 'This takes about a minute. Please keep this page open.'}
+              : 'This can take up to 5 minutes. Please keep this page open.'}
           </p>
 
           {/* Step list */}

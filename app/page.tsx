@@ -62,7 +62,7 @@ export default function LandingPage() {
       {/* HERO */}
       <div className={s.hero}>
         <div className={s.container}>
-          <div className={s.heroEyebrow}>Ready in 60 seconds</div>
+          <div className={s.heroEyebrow}>🐕 Built for your dog, not a template</div>
           <h1>A personalized training plan for your dog,<br /><em>built in minutes.</em></h1>
           <p className={s.heroSub}>Answer a few questions about your dog and get a custom training plan that actually fits them: no generic advice, no guesswork.</p>
           <div className={s.heroCtaGroup}>
