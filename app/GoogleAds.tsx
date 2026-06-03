@@ -1,6 +1,5 @@
 import Script from 'next/script'
-
-const GOOGLE_ADS_ID = 'AW-17912302186'
+import { GOOGLE_ADS_ID } from '@/lib/gtag'
 
 export function GoogleAds() {
   return (
