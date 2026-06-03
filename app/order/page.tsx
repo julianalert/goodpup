@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { trackEvent } from '@/lib/mixpanel-client'
 import s from './page.module.css'
 
 const PROBLEM_LABELS: Record<string, string> = {
@@ -82,6 +83,12 @@ export default function OrderPage() {
 
   const handleCheckout = async () => {
     setCheckoutState('loading')
+
+    trackEvent('checkout_started', {
+      session_id: sessionId ?? undefined,
+      dog_breed: data.dogBreed,
+      problem_count: data.problems.length,
+    })
 
     try {
       const res = await fetch('/api/checkout', {

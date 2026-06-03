@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { stripe } from '@/lib/stripe'
 import { createServerClient } from '@/lib/supabase'
+import { setUserProfile, trackServerEvent } from '@/lib/mixpanel-server'
 
 // Next.js App Router streams the body — we read it as raw text so Stripe can
 // verify the signature. No bodyParser config needed (unlike Pages Router).
@@ -60,6 +61,17 @@ export async function POST(req: NextRequest) {
     }
 
     console.log(`[webhook] Submission ${session_id} marked as paid`)
+
+    const amountTotal = session.amount_total ?? 1700
+    trackServerEvent(session_id, 'payment_completed', {
+      stripe_session_id: session.id,
+      amount: amountTotal / 100,
+      currency: session.currency ?? 'usd',
+    })
+
+    if (session.customer_email) {
+      setUserProfile(session_id, { $email: session.customer_email })
+    }
   }
 
   // Return 200 for all other event types so Stripe stops retrying them

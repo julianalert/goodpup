@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { identifyUser, trackEvent } from '@/lib/mixpanel-client'
 import s from './page.module.css'
 // Save step data via the server-side API route (never writes to Supabase directly from the browser)
 async function saveStepToApi(data: Record<string, unknown>): Promise<void> {
@@ -96,6 +97,10 @@ export default function FormPage() {
     trainingHistory: '',
     email: '',
   })
+
+  useEffect(() => {
+    trackEvent('form_started', { session_id: sessionId.current })
+  }, [])
 
   const set = useCallback(<K extends keyof FormData>(key: K, value: FormData[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -196,6 +201,18 @@ export default function FormPage() {
       status: 'completed',
     })
     setSaving(false)
+
+    identifyUser(sessionId.current, { $email: form.email })
+    trackEvent('form_completed', {
+      session_id: sessionId.current,
+      dog_breed: form.dogBreed,
+      dog_age: form.dogAge,
+      problem_count: form.problems.length,
+      problems: form.problems,
+      experience: form.experience,
+      living: form.living,
+      daily_time: form.dailyTime,
+    })
 
     // Store form data in sessionStorage for the order page
     if (typeof window !== 'undefined') {

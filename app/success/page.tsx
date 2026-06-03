@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { trackEvent } from '@/lib/mixpanel-client'
 import s from './page.module.css'
 
 const GEN_STEPS = [
@@ -47,6 +48,8 @@ export default function SuccessPage() {
 
     sessionIdRef.current = sessionId
 
+    trackEvent('plan_generation_started', { session_id: sessionId })
+
     // Start cosmetic step animation
     GEN_DELAYS.forEach((delay, i) => {
       const t = setTimeout(() => setGenStepIndex(i), delay)
@@ -70,6 +73,7 @@ export default function SuccessPage() {
         if (data.plan_status === 'ready') {
           clearInterval(pollRef.current!)
           setGenState('ready')
+          trackEvent('plan_generated', { session_id: sessionId })
           // Short delay so user sees the final step before redirect
           setTimeout(() => {
             router.push(`/plan/${sessionId}`)
