@@ -79,11 +79,11 @@ async function runGeneration(
 
     if (submission.email) {
       const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
-      sendPlanEmail({
+      await sendPlanEmail({
         to: submission.email,
         dogName: submission.dog_name ?? 'your dog',
         planUrl: `${appUrl}/plan/${sessionId}`,
-      }).catch(err => console.error('[generate] sendPlanEmail failed:', err))
+      })
     }
   } catch (err) {
     console.error('[generate] background generation failed:', err)
