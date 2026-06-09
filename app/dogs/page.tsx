@@ -1,0 +1,72 @@
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import { getAllBreeds, getAllProblems } from '@/lib/supabase-dogs'
+import BreedGrid from './_components/BreedGrid'
+
+export const revalidate = 86400
+
+export const metadata: Metadata = {
+  title: 'Dog Training by Breed — PawCraft',
+  description:
+    'Every breed has different instincts, drives, and problem patterns. Find yours and understand exactly what you\'re working with. 50 breeds, 15 problem types, 750 breed-specific guides.',
+}
+
+export default async function DogsPage() {
+  const [breeds, problems] = await Promise.all([getAllBreeds(), getAllProblems()])
+
+  return (
+    <div className="dogs-container">
+      <div className="breadcrumb">
+        <Link href="/">Home</Link>
+        <span>›</span>
+        Dog Training by Breed
+      </div>
+
+      <div className="page-header">
+        <span className="section-label">Breed library</span>
+        <h1>
+          Dog training guides,<br />
+          <em>built by breed.</em>
+        </h1>
+        <p>
+          Every breed has different instincts, drives, and problem patterns. Find yours and
+          understand exactly what you&apos;re working with.
+        </p>
+        <div className="header-stats">
+          <div className="header-stat">
+            <span className="stat-num-lg">{breeds.length || 50}</span>
+            <span className="stat-label-sm">breeds covered</span>
+          </div>
+          <div className="header-stat">
+            <span className="stat-num-lg">{problems.length || 15}</span>
+            <span className="stat-label-sm">problem types</span>
+          </div>
+          <div className="header-stat">
+            <span className="stat-num-lg">{(breeds.length || 50) * (problems.length || 15)}</span>
+            <span className="stat-label-sm">breed × problem guides</span>
+          </div>
+        </div>
+      </div>
+
+      {/* @ts-expect-error – Supabase returns untyped data; shape matches component props */}
+      <BreedGrid breeds={breeds} />
+
+      <div className="clusters-section">
+        <span className="section-label">Browse by problem</span>
+        <h2>
+          What&apos;s your dog <em>struggling with?</em>
+        </h2>
+        <p className="lead">Every problem guide is written for your specific breed — not generic advice.</p>
+        <div className="problem-cluster-grid">
+          {problems.map((p) => (
+            <Link key={p.slug} href={`/dogs/problems/${p.slug}`} className="cluster-card">
+              <span className="cluster-icon">{p.emoji ?? '🐾'}</span>
+              <div className="cluster-name">{p.name}</div>
+              <div className="cluster-count">{breeds.length || 50} breed guides</div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
