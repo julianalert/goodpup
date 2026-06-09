@@ -57,8 +57,9 @@ export default function SuccessPage() {
   }, [])
 
   useEffect(() => {
-    // Read session_id and form data from sessionStorage
     let sessionId: string | null = null
+
+    // 1. Try sessionStorage (normal post-form flow)
     try {
       sessionId = sessionStorage.getItem('pawcraft_session_id')
       const stored = sessionStorage.getItem('pawcraft_form')
@@ -68,12 +69,43 @@ export default function SuccessPage() {
       }
     } catch { /* ignore */ }
 
-    if (!sessionId) {
-      // No session — show error
+    if (sessionId) {
+      startGeneration(sessionId)
+      return () => {
+        if (pollRef.current) clearInterval(pollRef.current)
+        timersRef.current.forEach(clearTimeout)
+      }
+    }
+
+    // 2. Fallback: recover session_id from Stripe session ID in URL
+    //    (email recovery flow — sessionStorage is empty in a fresh browser tab)
+    const stripeSessionId = new URLSearchParams(window.location.search).get('stripe_session_id')
+    if (!stripeSessionId) {
       setGenState('failed')
       return
     }
 
+    fetch(`/api/session-from-stripe?stripe_session_id=${encodeURIComponent(stripeSessionId)}`)
+      .then(async (res) => {
+        if (!res.ok) throw new Error('not found')
+        const json = await res.json()
+        const recoveredId: string = json.session_id
+        if (json.dog_name) setDogName(json.dog_name)
+        try {
+          sessionStorage.setItem('pawcraft_session_id', recoveredId)
+        } catch { /* ignore */ }
+        startGeneration(recoveredId)
+      })
+      .catch(() => setGenState('failed'))
+
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current)
+      timersRef.current.forEach(clearTimeout)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router])
+
+  function startGeneration(sessionId: string) {
     sessionIdRef.current = sessionId
 
     trackEvent('plan_generation_started', { session_id: sessionId })
@@ -102,7 +134,6 @@ export default function SuccessPage() {
           clearInterval(pollRef.current!)
           setGenState('ready')
           trackEvent('plan_generated', { session_id: sessionId })
-          // Short delay so user sees the final step before redirect
           setTimeout(() => {
             router.push(`/plan/${sessionId}`)
           }, 800)
@@ -112,12 +143,7 @@ export default function SuccessPage() {
         }
       } catch { /* keep polling */ }
     }, 3000)
-
-    return () => {
-      if (pollRef.current) clearInterval(pollRef.current)
-      timersRef.current.forEach(clearTimeout)
-    }
-  }, [router])
+  }
 
   const handleRetry = () => {
     const sessionId = sessionIdRef.current

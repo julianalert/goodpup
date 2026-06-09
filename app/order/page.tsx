@@ -72,13 +72,37 @@ export default function OrderPage() {
   const [sessionId, setSessionId] = useState<string | null>(null)
 
   useEffect(() => {
+    // 1. Try sessionStorage first (normal post-form flow)
     try {
       const stored = sessionStorage.getItem('pawcraft_form')
       if (stored) setData(JSON.parse(stored))
 
       const sid = sessionStorage.getItem('pawcraft_session_id')
-      if (sid) setSessionId(sid)
-    } catch {}
+      if (sid) {
+        setSessionId(sid)
+        return
+      }
+    } catch { /* ignore */ }
+
+    // 2. Fallback: load from URL ?session_id param (abandoned-cart email flow)
+    const params = new URLSearchParams(window.location.search)
+    const urlSessionId = params.get('session_id')
+    if (!urlSessionId) return
+
+    setSessionId(urlSessionId)
+
+    fetch(`/api/submission-data?session_id=${encodeURIComponent(urlSessionId)}`)
+      .then(async (res) => {
+        if (!res.ok) return
+        const json = await res.json()
+        setData(json)
+        // Hydrate sessionStorage so downstream pages (success) still work
+        try {
+          sessionStorage.setItem('pawcraft_form', JSON.stringify(json))
+          sessionStorage.setItem('pawcraft_session_id', urlSessionId)
+        } catch { /* ignore */ }
+      })
+      .catch(() => { /* keep DEFAULT_DATA */ })
   }, [])
 
   const handleCheckout = async () => {

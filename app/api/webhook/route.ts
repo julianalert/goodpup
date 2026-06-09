@@ -51,6 +51,7 @@ export async function POST(req: NextRequest) {
       .update({
         status: 'paid',
         stripe_payment_intent_id: session.payment_intent as string ?? null,
+        recovery_suppressed: true, // stop abandoned-cart email sequence immediately
       })
       .eq('session_id', session_id)
 

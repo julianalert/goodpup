@@ -44,6 +44,10 @@ export interface SubmissionRow {
   // Stripe
   stripe_session_id?: string | null
   stripe_payment_intent_id?: string | null
+  // Recovery email sequence
+  recovery_emails_sent?: number | null   // 0–4 — how many abandoned-cart emails sent
+  recovery_suppressed?: boolean | null   // true = stop sending (paid or unsubscribed)
+
   // Timestamps
   created_at?: string | null
 }
