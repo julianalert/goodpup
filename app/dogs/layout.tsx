@@ -21,6 +21,7 @@ export default function DogsLayout({ children }: { children: React.ReactNode }) 
             <Image src="/icon.png" alt="PawCraft" width={32} height={32} className="dogs-footer-icon" />
           </div>
           <p className="dogs-footer-tagline">30-day personalised dog training plans</p>
+          <Link href="/dogs" className="dogs-footer-guide-link">Browse all breed guides →</Link>
           <div className="dogs-footer-social">
             <a href="https://www.instagram.com/trypawcraft/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <FaInstagram />

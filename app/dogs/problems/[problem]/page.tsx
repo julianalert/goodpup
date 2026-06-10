@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getProblemWithAllBreeds, getAllProblemSlugs, getAllProblems } from '@/lib/supabase-dogs'
 import BreedProblemTable from './_components/BreedProblemTable'
+import { JsonLd } from '@/app/_components/JsonLd'
 
 export const revalidate = 86400
 
@@ -19,9 +20,21 @@ export async function generateMetadata({
   const { problem: slug } = await params
   const { problem } = await getProblemWithAllBreeds(slug)
   if (!problem) return {}
+  const title = problem.meta_title ?? `${problem.name} by Breed — PawCraft`
+  const description =
+    problem.meta_description ??
+    `${problem.name} in dogs — causes, difficulty, and breed-specific guides across 50+ breeds.`
   return {
-    title: problem.meta_title ?? `${problem.name} by Breed — PawCraft`,
-    description: problem.meta_description ?? undefined,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `/dogs/problems/${slug}`,
+      type: 'website',
+    },
+    twitter: { title, description },
+    alternates: { canonical: `/dogs/problems/${slug}` },
   }
 }
 
@@ -53,8 +66,19 @@ export default async function ProblemPage({
   const otherProblems = allProblems.filter((p) => p.slug !== slug)
   const breedCount = breeds.length
 
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://mypawcraft.com' },
+      { '@type': 'ListItem', position: 2, name: 'Dog Training Guides by Breed', item: 'https://mypawcraft.com/dogs' },
+      { '@type': 'ListItem', position: 3, name: `${problem.name} by Breed`, item: `https://mypawcraft.com/dogs/problems/${slug}` },
+    ],
+  }
+
   return (
     <div className="dogs-container">
+      <JsonLd data={breadcrumbSchema} />
       <div className="breadcrumb">
         <Link href="/">Home</Link>
         <span>›</span>
@@ -69,10 +93,10 @@ export default async function ProblemPage({
         <div className="header-inner">
           <div>
             <span className="section-label">Problem guide · All breeds</span>
-            <div className="page-title">
+            <h1 className="page-title">
               {problem.name} —<br />
               <em>by breed</em>
-            </div>
+            </h1>
             <p className="page-lead">{problem.description}</p>
             <div className="header-meta">
               <div className="meta-chip">

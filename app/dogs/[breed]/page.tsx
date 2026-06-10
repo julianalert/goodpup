@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getBreedBySlug, getAllBreedSlugs, getSimilarBreeds } from '@/lib/supabase-dogs'
 import BreedTabs from './_components/BreedTabs'
+import { JsonLd } from '@/app/_components/JsonLd'
 
 export const revalidate = 86400
 
@@ -19,9 +20,19 @@ export async function generateMetadata({
   const { breed: slug } = await params
   const breed = await getBreedBySlug(slug)
   if (!breed) return {}
+  const title = breed.meta_title ?? `${breed.name} Training Guide — PawCraft`
+  const description = breed.meta_description ?? `Training guide for ${breed.name}s — temperament, behaviour problems, and what actually works for this breed.`
   return {
-    title: breed.meta_title ?? `${breed.name} Training Guide — PawCraft`,
-    description: breed.meta_description ?? undefined,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `/dogs/${slug}`,
+      type: 'article',
+    },
+    twitter: { title, description },
+    alternates: { canonical: `/dogs/${slug}` },
   }
 }
 
@@ -354,8 +365,19 @@ export default async function BreedPage({
     </div>
   )
 
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://mypawcraft.com' },
+      { '@type': 'ListItem', position: 2, name: 'Dog Training Guides by Breed', item: 'https://mypawcraft.com/dogs' },
+      { '@type': 'ListItem', position: 3, name: `${breed.name} Training Guide`, item: `https://mypawcraft.com/dogs/${slug}` },
+    ],
+  }
+
   return (
     <div className="dogs-container">
+      <JsonLd data={breadcrumbSchema} />
       <div className="breadcrumb">
         <Link href="/">Home</Link>
         <span>›</span>

@@ -61,6 +61,13 @@
   color: rgba(255,255,255,0.4);
   margin: 0;
 }
+.dogs-footer-guide-link {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.dogs-footer-guide-link:hover { color: rgba(255,255,255,0.85); }
 .dogs-footer-social {
   display: flex;
   align-items: center;

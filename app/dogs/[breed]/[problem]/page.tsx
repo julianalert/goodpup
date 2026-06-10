@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getBreedProblem, getAllBreedProblemPaths } from '@/lib/supabase-dogs'
+import { JsonLd } from '@/app/_components/JsonLd'
 
 export const revalidate = 86400
 
@@ -15,14 +16,27 @@ export async function generateMetadata({
 }: {
   params: Promise<{ breed: string; problem: string }>
 }): Promise<Metadata> {
-  const { breed, problem } = await params
-  const { breedProblem } = await getBreedProblem(breed, problem)
+  const { breed: breedSlug, problem: problemSlug } = await params
+  const { breedProblem, breed, problem } = await getBreedProblem(breedSlug, problemSlug)
   if (!breedProblem) return {}
   const rawTitle = breedProblem.meta_title ?? undefined
-  const title = rawTitle ? rawTitle.replace(/^Why\s+/i, '') : undefined
+  const title = rawTitle
+    ? rawTitle.replace(/^Why\s+/i, '')
+    : `${breed?.name ?? breedSlug}s ${problem?.name ?? problemSlug} — Training Guide — PawCraft`
+  const description =
+    breedProblem.meta_description ??
+    `Why ${breed?.name ?? breedSlug}s ${(problem?.name ?? problemSlug).toLowerCase()} and how to fix it. Breed-specific causes, common mistakes, and what an effective protocol looks like.`
   return {
     title,
-    description: breedProblem.meta_description ?? undefined,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `/dogs/${breedSlug}/${problemSlug}`,
+      type: 'article',
+    },
+    twitter: { title, description },
+    alternates: { canonical: `/dogs/${breedSlug}/${problemSlug}` },
   }
 }
 
@@ -68,8 +82,46 @@ export default async function BreedProblemPage({
     (bp: { problem: { slug: string } | null }) => bp.problem?.slug !== problemSlug
   )
 
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://mypawcraft.com' },
+      { '@type': 'ListItem', position: 2, name: 'Dog Training Guides by Breed', item: 'https://mypawcraft.com/dogs' },
+      { '@type': 'ListItem', position: 3, name: `${breed.name} Training Guide`, item: `https://mypawcraft.com/dogs/${breedSlug}` },
+      { '@type': 'ListItem', position: 4, name: problem.name, item: `https://mypawcraft.com/dogs/${breedSlug}/${problemSlug}` },
+    ],
+  }
+
+  const articleSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: `${breed.name}s ${problem.name}`,
+    description: `Why ${breed.name}s ${problem.name.toLowerCase()} and how to fix it. Breed-specific causes, common mistakes, and what an effective protocol looks like.`,
+    url: `https://mypawcraft.com/dogs/${breedSlug}/${problemSlug}`,
+    image: 'https://mypawcraft.com/opengraph-image.png',
+    datePublished: '2024-10-01',
+    dateModified: new Date().toISOString().split('T')[0],
+    author: {
+      '@type': 'Organization',
+      name: 'PawCraft',
+      url: 'https://mypawcraft.com',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'PawCraft',
+      url: 'https://mypawcraft.com',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://mypawcraft.com/icon.png',
+      },
+    },
+  }
+
   return (
     <div className="dogs-container">
+      <JsonLd data={breadcrumbSchema} />
+      <JsonLd data={articleSchema} />
       <div className="breadcrumb">
         <Link href="/">Home</Link>
         <span>›</span>

@@ -41,15 +41,9 @@ export default function BreedTabs({ overview, training, problems, dailylife }: B
       </div>
 
       <div className="tab-content">
-        {TABS.map((tab) => (
-          <div
-            key={tab.id}
-            id={`tab-${tab.id}`}
-            className={`tab-panel${active === tab.id ? ' active' : ''}`}
-          >
-            {panels[tab.id]}
-          </div>
-        ))}
+        <div id={`tab-${active}`} className="tab-panel active">
+          {panels[active]}
+        </div>
       </div>
     </>
   )

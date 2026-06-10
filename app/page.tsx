@@ -1,64 +1,83 @@
-'use client'
-
-import { useState, useEffect, useRef } from 'react'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { FaInstagram, FaTiktok } from 'react-icons/fa'
 import { HiOutlineMail } from 'react-icons/hi'
+import { FaqItem, AnimateOnScroll } from './_components/HomeComponents'
 import s from './page.module.css'
 
-function FaqItem({ question, answer }: { question: string; answer: string }) {
-  const [open, setOpen] = useState(false)
-  return (
-    <div className={s.faqItem} onClick={() => setOpen(!open)}>
-      <div className={s.faqQuestion}>
-        {question}
-        <span className={`${s.faqIcon} ${open ? s.faqIconOpen : ''}`}>+</span>
-      </div>
-      <div className={`${s.faqAnswer} ${open ? s.faqAnswerOpen : ''}`}>{answer}</div>
-    </div>
-  )
+export const metadata: Metadata = {
+  title: "PawCraft — Your Dog's Personalized 30-Day Training Plan",
+  description: 'AI-powered personalised dog training plans. Breed-specific, problem-focused, and ready to work.',
+  openGraph: {
+    title: "PawCraft — Your Dog's Personalized 30-Day Training Plan",
+    description: 'AI-powered personalised dog training plans. Breed-specific, problem-focused, and ready to work.',
+    url: '/',
+    type: 'website',
+  },
+  twitter: {
+    title: "PawCraft — Your Dog's Personalized 30-Day Training Plan",
+    description: 'AI-powered personalised dog training plans. Breed-specific, problem-focused, and ready to work.',
+  },
+  alternates: {
+    canonical: '/',
+  },
 }
 
-function AnimateOnScroll({ children, className }: { children: React.ReactNode; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [visible, setVisible] = useState(false)
+const FAQ_ITEMS = [
+  {
+    question: "How personalised is this really?",
+    answer: "Very. The plan is generated from scratch for your dog based on their breed (including breed-specific temperament and drive levels), age, your top behaviour problems, how much time you can train per day, and whether you live in an apartment, house, or rural setting. Two dogs of different breeds or ages will receive completely different plans.",
+  },
+  {
+    question: "What if my dog's breed is unusual or mixed?",
+    answer: 'No problem. You can enter any breed or mix. If your dog is a mixed breed, describe the dominant mix (e.g. "Lab/Shepherd mix") and the AI will account for the behavioural traits of both breeds when building the plan.',
+  },
+  {
+    question: "How quickly will I see results?",
+    answer: "Most owners notice a meaningful difference within the first 2 weeks when following the plan consistently. Week 1 focuses on building the foundational habits that everything else rests on. Don't skip it, even if the exercises feel basic.",
+  },
+  {
+    question: "I'm a first-time dog owner. Is this too advanced for me?",
+    answer: "No. We ask about your experience level in the form and the plan adapts accordingly. First-time owners get more explanation and simpler progressions. The plan is written in plain language with no jargon.",
+  },
+  {
+    question: "What if I'm not happy with the plan?",
+    answer: "We offer a 30-day money-back guarantee, no questions asked. If the plan isn't useful to you, email us and we'll refund you immediately.",
+  },
+  {
+    question: "Is this a subscription?",
+    answer: "No. It's a one-time $17 payment. You get the plan, it's yours forever, and you'll never be charged again. No hidden fees.",
+  },
+]
 
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.unobserve(el) } },
-      { threshold: 0.1 }
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [])
-
-  return (
-    <div
-      ref={ref}
-      className={className}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(20px)',
-        transition: 'opacity 0.6s ease, transform 0.6s ease',
-      }}
-    >
-      {children}
-    </div>
-  )
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQ_ITEMS.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer,
+    },
+  })),
 }
 
 export default function LandingPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       {/* NAV */}
       <nav className={s.nav}>
-        <a href="#" className={s.navLogo}>
+        <Link href="/" className={s.navLogo}>
           <img src="/icon.png" alt="" className="appIcon" width={28} height={28} />
           Paw<span>Craft</span>
-        </a>
+        </Link>
         <a href="#pricing" className={s.navCta}>Get my plan →</a>
       </nav>
 
@@ -340,12 +359,9 @@ export default function LandingPage() {
           <h2 className={s.h2}>Everything you <em>need to know</em></h2>
 
           <div className={s.faqList}>
-            <FaqItem question="How personalised is this really?" answer={'Very. The plan is generated from scratch for your dog based on their breed (including breed-specific temperament and drive levels), age, your top behaviour problems, how much time you can train per day, and whether you live in an apartment, house, or rural setting. Two dogs of different breeds or ages will receive completely different plans.'} />
-            <FaqItem question="What if my dog's breed is unusual or mixed?" answer={'No problem. You can enter any breed or mix. If your dog is a mixed breed, describe the dominant mix (e.g. "Lab/Shepherd mix") and the AI will account for the behavioural traits of both breeds when building the plan.'} />
-            <FaqItem question="How quickly will I see results?" answer={'Most owners notice a meaningful difference within the first 2 weeks when following the plan consistently. Week 1 focuses on building the foundational habits that everything else rests on. Don\'t skip it, even if the exercises feel basic.'} />
-            <FaqItem question="I'm a first-time dog owner. Is this too advanced for me?" answer={'No. We ask about your experience level in the form and the plan adapts accordingly. First-time owners get more explanation and simpler progressions. The plan is written in plain language with no jargon.'} />
-            <FaqItem question="What if I'm not happy with the plan?" answer={"We offer a 30-day money-back guarantee, no questions asked. If the plan isn't useful to you, email us and we'll refund you immediately."} />
-            <FaqItem question="Is this a subscription?" answer={"No. It's a one-time $17 payment. You get the plan, it's yours forever, and you'll never be charged again. No hidden fees."} />
+            {FAQ_ITEMS.map((item) => (
+              <FaqItem key={item.question} question={item.question} answer={item.answer} />
+            ))}
           </div>
         </div>
       </section>
@@ -366,6 +382,9 @@ export default function LandingPage() {
             <Image src="/icon.png" alt="PawCraft" width={32} height={32} className={s.footerIcon} />
           </div>
           <p className={s.footerTagline}>30-day personalised dog training plans</p>
+          <Link href="/dogs" className={s.footerDogsLink}>
+            Browse all breed training guides →
+          </Link>
           <div className={s.footerSocial}>
             <a href="https://www.instagram.com/trypawcraft/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <FaInstagram />

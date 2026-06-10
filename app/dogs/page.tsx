@@ -2,13 +2,38 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getAllBreeds, getAllProblems } from '@/lib/supabase-dogs'
 import BreedGrid from './_components/BreedGrid'
+import { JsonLd } from '@/app/_components/JsonLd'
 
 export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: 'Dog Training by Breed — PawCraft',
   description:
-    'Every breed has different instincts, drives, and problem patterns. Find yours and understand exactly what you\'re working with. 50 breeds, 15 problem types, 750 breed-specific guides.',
+    "Every breed has different instincts, drives, and problem patterns. Find yours and understand exactly what you're working with. 50 breeds, 15 problem types, 750 breed-specific guides.",
+  openGraph: {
+    title: 'Dog Training by Breed — PawCraft',
+    description:
+      "Every breed has different instincts, drives, and problem patterns. Find yours and understand exactly what you're working with. 50 breeds, 15 problem types, 750 breed-specific guides.",
+    url: '/dogs',
+    type: 'website',
+  },
+  twitter: {
+    title: 'Dog Training by Breed — PawCraft',
+    description:
+      "Every breed has different instincts, drives, and problem patterns. Find yours and understand exactly what you're working with. 50 breeds, 15 problem types, 750 breed-specific guides.",
+  },
+  alternates: {
+    canonical: '/dogs',
+  },
+}
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://mypawcraft.com' },
+    { '@type': 'ListItem', position: 2, name: 'Dog Training Guides by Breed', item: 'https://mypawcraft.com/dogs' },
+  ],
 }
 
 export default async function DogsPage() {
@@ -16,6 +41,7 @@ export default async function DogsPage() {
 
   return (
     <div className="dogs-container">
+      <JsonLd data={breadcrumbSchema} />
       <div className="breadcrumb">
         <Link href="/">Home</Link>
         <span>›</span>

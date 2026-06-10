@@ -1,7 +1,12 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { createServerClient } from '@/lib/supabase'
 import { PlanContent } from './PlanContent'
 import './plan.css'
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+}
 
 // Re-generate at most once per 60 s (plan content never changes after it's ready)
 export const revalidate = 60
