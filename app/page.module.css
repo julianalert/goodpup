@@ -366,11 +366,75 @@
 
 /* FOOTER */
 .footer {
-  background: var(--ink); padding: 32px 24px;
-  text-align: center; font-size: 13px; color: rgba(255,255,255,0.35);
+  background: var(--ink);
+  padding: 48px 24px;
+  text-align: center;
+  font-size: 13px;
+  color: rgba(255,255,255,0.35);
 }
-.footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
-.footer strong { color: rgba(255,255,255,0.6); }
+.footerInner {
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.footerBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.footerIcon {
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.footerBrandName {
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: -0.3px;
+}
+.footerTagline {
+  font-size: 13px;
+  color: rgba(255,255,255,0.4);
+  margin: 0;
+}
+.footerSocial {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 4px;
+}
+.footerSocial a {
+  color: rgba(255,255,255,0.45);
+  font-size: 20px;
+  line-height: 1;
+  transition: color 0.15s;
+  display: flex;
+  align-items: center;
+}
+.footerSocial a:hover { color: rgba(255,255,255,0.85); }
+.footerLinks {
+  display: flex;
+  gap: 16px;
+}
+.footerLinks a {
+  color: rgba(255,255,255,0.45);
+  font-size: 20px;
+  line-height: 1;
+  transition: color 0.15s;
+  display: flex;
+  align-items: center;
+}
+.footerLinks a:hover { color: rgba(255,255,255,0.85); }
+.footerLegal {
+  font-size: 11px;
+  color: rgba(255,255,255,0.25);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 400px;
+}
 
 @media (max-width: 600px) {
   .section, .sectionAlt, .sectionDark { padding: 56px 0; }

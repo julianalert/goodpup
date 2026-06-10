@@ -19,14 +19,13 @@ export default async function DogsPage() {
       <div className="breadcrumb">
         <Link href="/">Home</Link>
         <span>›</span>
-        Dog Training by Breed
+        Dog Training Guides by Breed
       </div>
 
       <div className="page-header">
-        <span className="section-label">Breed library</span>
+        <span className="section-label">Dogs library</span>
         <h1>
-          Dog training guides,<br />
-          <em>built by breed.</em>
+          Dog training guides, <em>built by breed.</em>
         </h1>
         <p>
           Every breed has different instincts, drives, and problem patterns. Find yours and

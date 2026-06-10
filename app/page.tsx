@@ -2,6 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
+import { FaInstagram, FaTiktok } from 'react-icons/fa'
+import { HiOutlineMail } from 'react-icons/hi'
 import s from './page.module.css'
 
 function FaqItem({ question, answer }: { question: string; answer: string }) {
@@ -358,9 +361,24 @@ export default function LandingPage() {
 
       {/* FOOTER */}
       <footer className={s.footer}>
-        <strong>PawCraft</strong> · 30-day personalised dog training plans<br />
-        <a href="#">Privacy Policy</a> · <a href="#">Terms</a> · <a href="#">Contact</a><br /><br />
-        © 2026 PawCraft. Results may vary. Always consult a veterinary professional for medical or severe behavioural issues.
+        <div className={s.footerInner}>
+          <div className={s.footerBrand}>
+            <Image src="/icon.png" alt="PawCraft" width={32} height={32} className={s.footerIcon} />
+          </div>
+          <p className={s.footerTagline}>30-day personalised dog training plans</p>
+          <div className={s.footerSocial}>
+            <a href="https://www.instagram.com/trypawcraft/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+              <FaInstagram />
+            </a>
+            <a href="https://www.tiktok.com/@seraphova" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+              <FaTiktok />
+            </a>
+            <a href="mailto:hello@mypawcraft.com" aria-label="Contact">
+              <HiOutlineMail />
+            </a>
+          </div>
+          <p className={s.footerLegal}>© 2026 PawCraft. Results may vary. Always consult a veterinary professional for medical or severe behavioural issues.</p>
+        </div>
       </footer>
     </>
   )

@@ -27,11 +27,75 @@
 
 /* FOOTER */
 .dogs-footer {
-  background: var(--ink); padding: 32px 24px;
-  text-align: center; font-size: 13px; color: rgba(255,255,255,0.35);
+  background: var(--ink);
+  padding: 48px 24px;
+  text-align: center;
+  font-size: 13px;
+  color: rgba(255,255,255,0.35);
 }
-.dogs-footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
-.dogs-footer strong { color: rgba(255,255,255,0.6); }
+.dogs-footer-inner {
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.dogs-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.dogs-footer-icon {
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.dogs-footer-brand-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: -0.3px;
+}
+.dogs-footer-tagline {
+  font-size: 13px;
+  color: rgba(255,255,255,0.4);
+  margin: 0;
+}
+.dogs-footer-social {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 4px;
+}
+.dogs-footer-social a {
+  color: rgba(255,255,255,0.45);
+  font-size: 20px;
+  line-height: 1;
+  transition: color 0.15s;
+  display: flex;
+  align-items: center;
+}
+.dogs-footer-social a:hover { color: rgba(255,255,255,0.85); }
+.dogs-footer-links {
+  display: flex;
+  gap: 16px;
+}
+.dogs-footer-links a {
+  color: rgba(255,255,255,0.45);
+  font-size: 20px;
+  line-height: 1;
+  transition: color 0.15s;
+  display: flex;
+  align-items: center;
+}
+.dogs-footer-links a:hover { color: rgba(255,255,255,0.85); }
+.dogs-footer-legal {
+  font-size: 11px;
+  color: rgba(255,255,255,0.25);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 400px;
+}
 
 /* BREADCRUMB */
 .breadcrumb { padding: 14px 0 0; font-size: 13px; color: var(--ink-light); }
@@ -372,12 +436,15 @@
 @media (max-width: 740px) { .page-layout { grid-template-columns: 1fr; } }
 
 /* Article */
+.article h2,
 .article h3 {
   font-family: var(--font-playfair), 'Playfair Display', serif;
   font-size: 20px; font-weight: 600; color: var(--ink);
   margin: 32px 0 10px; line-height: 1.2;
 }
+.article h2 em,
 .article h3 em { font-style: italic; font-weight: 400; }
+.article h2:first-child,
 .article h3:first-child { margin-top: 0; }
 .article p { font-size: 15px; color: var(--ink-mid); line-height: 1.75; margin-bottom: 16px; }
 .article p:last-child { margin-bottom: 0; }
@@ -395,6 +462,7 @@
   padding: 16px; display: flex; gap: 14px; align-items: flex-start;
 }
 .mistake-x { color: var(--red); font-size: 18px; font-weight: 500; flex-shrink: 0; margin-top: 1px; }
+.mistake-content h3,
 .mistake-content h4 { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
 .mistake-content p { font-size: 13px; color: var(--ink-mid); margin: 0; line-height: 1.55; }
 
@@ -403,6 +471,7 @@
   background: var(--green-light); border: 1px solid rgba(26,107,74,0.15);
   border-radius: 14px; padding: 24px; margin: 28px 0;
 }
+.needs-box h3,
 .needs-box h4 { font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 14px; }
 .needs-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; }
 .needs-item:last-child { margin-bottom: 0; }
@@ -411,6 +480,7 @@
 
 /* Other breeds strip */
 .other-breeds-strip { margin-top: 48px; padding-top: 28px; border-top: 1px solid var(--border); }
+.other-breeds-strip h2,
 .other-breeds-strip h3 { font-size: 16px; font-weight: 500; color: var(--ink); margin-bottom: 14px; }
 .breed-strip { display: flex; gap: 10px; flex-wrap: wrap; }
 .breed-strip-link {
@@ -544,6 +614,20 @@
 .problem-card-icon { font-size: 22px; margin-bottom: 8px; display: block; }
 .problem-card-name { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
 .problem-card-count { font-size: 12px; color: var(--ink-light); }
+
+/* Rich generated content (overview / training / daily-life tabs) */
+.breed-rich-content { margin-bottom: 28px; }
+.breed-rich-content p {
+  font-size: 15px; color: var(--ink-mid); line-height: 1.75; margin-bottom: 16px;
+}
+.breed-rich-content p:last-child { margin-bottom: 0; }
+.breed-rich-content h3 {
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-size: 18px; font-weight: 600; color: var(--ink);
+  margin: 28px 0 8px; line-height: 1.2;
+}
+.breed-rich-content h3:first-child { margin-top: 0; }
+.breed-rich-content strong { color: var(--ink); font-weight: 500; }
 
 /* Mental stimulation card */
 .mental-stim-card {

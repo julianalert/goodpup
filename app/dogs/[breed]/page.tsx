@@ -87,8 +87,6 @@ export default async function BreedPage({
         <h2 className="panel-h2">
           {breed.name} — <em>breed profile</em>
         </h2>
-        <p className="panel-lead">{breed.description}</p>
-
         <div className="info-grid">
           <div className="info-card">
             <span className="info-card-label">Lifespan</span>
@@ -121,6 +119,15 @@ export default async function BreedPage({
           <div className="callout">
             <p><strong>Training note:</strong> {breed.training_overview}</p>
           </div>
+        )}
+
+        {breed.overview_content ? (
+          <div
+            className="breed-rich-content"
+            dangerouslySetInnerHTML={{ __html: breed.overview_content }}
+          />
+        ) : (
+          <p className="panel-lead">{breed.description}</p>
         )}
       </div>
 
@@ -155,8 +162,6 @@ export default async function BreedPage({
         <h2 className="panel-h2">
           Built to learn. <em>Needs direction.</em>
         </h2>
-        <p className="panel-lead">{breed.training_overview}</p>
-
         <span className="section-label">What drives them</span>
         <div className="trait-list">
           <TraitRow label="Food motivation" value={breed.drive_food} />
@@ -165,6 +170,15 @@ export default async function BreedPage({
           <TraitRow label="Focus outdoors" value={breed.drive_focus_outdoors} />
           <TraitRow label="Distraction threshold" value={breed.drive_distraction_threshold} />
         </div>
+
+        {breed.training_full_content ? (
+          <div
+            className="breed-rich-content"
+            dangerouslySetInnerHTML={{ __html: breed.training_full_content }}
+          />
+        ) : (
+          <p className="panel-lead">{breed.training_overview}</p>
+        )}
 
         {breed.adolescence_warning && (
           <div className="callout">
@@ -264,10 +278,6 @@ export default async function BreedPage({
         <h2 className="panel-h2">
           What living with a {breed.name} <em>actually requires</em>
         </h2>
-        <p className="panel-lead">
-          {breed.description}
-        </p>
-
         <div className="info-grid">
           <div className="info-card">
             <span className="info-card-label">Daily exercise</span>
@@ -313,6 +323,15 @@ export default async function BreedPage({
           </div>
         )}
 
+        {breed.daily_life_content ? (
+          <div
+            className="breed-rich-content"
+            dangerouslySetInnerHTML={{ __html: breed.daily_life_content }}
+          />
+        ) : (
+          <p className="panel-lead">{breed.description}</p>
+        )}
+
         <span className="section-label">Mental stimulation needs</span>
         <div className="mental-stim-card">
           <div className="mental-stim-title">A tired mind beats a tired body</div>
@@ -340,7 +359,7 @@ export default async function BreedPage({
       <div className="breadcrumb">
         <Link href="/">Home</Link>
         <span>›</span>
-        <Link href="/dogs">Breeds</Link>
+        <Link href="/dogs">Dogs</Link>
         <span>›</span>
         {breed.name}
       </div>
@@ -348,7 +367,7 @@ export default async function BreedPage({
       <div className="breed-hero">
         <div>
           <span className="breed-eyebrow">Breed training guide</span>
-          <div className="breed-title">{breed.name}</div>
+          <h1 className="breed-title">{breed.name}</h1>
           <div className="breed-meta">
             {[breed.group_name, breed.weight_range, breed.lifespan].filter(Boolean).join(' · ')}
           </div>

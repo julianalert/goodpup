@@ -58,7 +58,7 @@ export default async function ProblemPage({
       <div className="breadcrumb">
         <Link href="/">Home</Link>
         <span>›</span>
-        <Link href="/dogs">Breeds</Link>
+        <Link href="/dogs">Dogs</Link>
         <span>›</span>
         Problems
         <span>›</span>

@@ -18,8 +18,10 @@ export async function generateMetadata({
   const { breed, problem } = await params
   const { breedProblem } = await getBreedProblem(breed, problem)
   if (!breedProblem) return {}
+  const rawTitle = breedProblem.meta_title ?? undefined
+  const title = rawTitle ? rawTitle.replace(/^Why\s+/i, '') : undefined
   return {
-    title: breedProblem.meta_title ?? undefined,
+    title,
     description: breedProblem.meta_description ?? undefined,
   }
 }
@@ -71,7 +73,7 @@ export default async function BreedProblemPage({
       <div className="breadcrumb">
         <Link href="/">Home</Link>
         <span>›</span>
-        <Link href="/dogs">Breeds</Link>
+        <Link href="/dogs">Dogs</Link>
         <span>›</span>
         <Link href={`/dogs/${breedSlug}`}>{breed.name}</Link>
         <span>›</span>
@@ -84,10 +86,9 @@ export default async function BreedProblemPage({
             <span className="section-label">
               {breed.name} · Behavior problem
             </span>
-            <div className="problem-title">
-              Why {breed.name}s<br />
-              <em>{problem.name.toLowerCase()}</em>
-            </div>
+            <h1 className="problem-title">
+              {breed.name}s <em>{problem.name.toLowerCase()}</em>
+            </h1>
             <p className="problem-subtitle">
               {breedProblem.why_this_breed
                 ? breedProblem.why_this_breed.split('.')[0] + '.'
@@ -115,9 +116,9 @@ export default async function BreedProblemPage({
 
       <div className="page-layout">
         <article className="article">
-          <h3>
+          <h2>
             The biology behind why {breed.name}s {problem.name.toLowerCase()}
-          </h3>
+          </h2>
           {breedProblem.why_this_breed
             ?.split('\n')
             .filter(Boolean)
@@ -140,7 +141,7 @@ export default async function BreedProblemPage({
             </div>
           </div>
 
-          <h3>Why it gets worse before it gets better</h3>
+          <h2>Why it gets worse before it gets better</h2>
           {breedProblem.makes_it_worse
             ?.split('\n')
             .filter(Boolean)
@@ -156,7 +157,7 @@ export default async function BreedProblemPage({
 
           {mistakes.length > 0 && (
             <>
-              <h3>The most common owner mistakes</h3>
+              <h2>The most common owner mistakes</h2>
               <p>
                 These are the patterns that keep {breed.name} owners stuck in a cycle for months or
                 years:
@@ -166,7 +167,7 @@ export default async function BreedProblemPage({
                   <div key={i} className="mistake-item">
                     <span className="mistake-x">✕</span>
                     <div className="mistake-content">
-                      <h4>{m.title}</h4>
+                      <h3>{m.title}</h3>
                       <p>{m.description}</p>
                     </div>
                   </div>
@@ -177,13 +178,13 @@ export default async function BreedProblemPage({
 
           {whatFix.length > 0 && (
             <>
-              <h3>What a proper fix requires</h3>
+              <h2>What a proper fix requires</h2>
               <p>
                 Solving {problem.name.toLowerCase()} in a {breed.name} is not a single technique —
                 it&apos;s a protocol built across multiple phases. What genuinely works involves:
               </p>
               <div className="needs-box">
-                <h4>What an effective protocol looks like for this breed</h4>
+                <h3>What an effective protocol looks like for this breed</h3>
                 {whatFix.map((item, i) => (
                   <div key={i} className="needs-item">
                     <span className="needs-check">✓</span>
@@ -201,7 +202,7 @@ export default async function BreedProblemPage({
           </p>
 
           <div className="other-breeds-strip">
-            <h3>{problem.name} in other breeds</h3>
+            <h2>{problem.name} in other breeds</h2>
             <div className="breed-strip">
               <Link href={`/dogs/problems/${problemSlug}`} className="breed-strip-link">
                 View all {problem.name} guides →
