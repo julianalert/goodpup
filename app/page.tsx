@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { FaInstagram, FaTiktok } from 'react-icons/fa'
 import { HiOutlineMail } from 'react-icons/hi'
 import { FaqItem, AnimateOnScroll } from './_components/HomeComponents'
+import { LIST_PRICE_LABEL, PRICE_LABEL } from '@/lib/pricing'
 import s from './page.module.css'
 
 export const metadata: Metadata = {
@@ -47,7 +48,7 @@ const FAQ_ITEMS = [
   },
   {
     question: "Is this a subscription?",
-    answer: "No. It's a one-time $17 payment. You get the plan, it's yours forever, and you'll never be charged again. No hidden fees.",
+    answer: `No. It's a one-time ${PRICE_LABEL} payment. You get the plan, it's yours forever, and you'll never be charged again. No hidden fees.`,
   },
 ]
 
@@ -204,7 +205,7 @@ export default function LandingPage() {
           <AnimateOnScroll className={s.solutionIntro}>
             <span className={s.sectionLabel}>The solution</span>
             <h2 className={s.h2}>A training plan built <em>around<br />your actual dog.</em></h2>
-            <p className={s.lead}>PawCraft uses AI to do what a $150/hr private trainer would do in an initial consultation: analyse your dog&apos;s specific profile and build a step-by-step program from scratch. In 60 seconds. For $17.</p>
+            <p className={s.lead}>PawCraft uses AI to do what a $150/hr private trainer would do in an initial consultation: analyse your dog&apos;s specific profile and build a step-by-step program from scratch. In 60 seconds. For {PRICE_LABEL}.</p>
           </AnimateOnScroll>
 
           <div className={s.solutionSteps}>
@@ -256,7 +257,7 @@ export default function LandingPage() {
         <div className={s.container}>
           <span className={s.sectionLabel}>How it compares</span>
           <h2 className={s.h2}>The plan that makes sense<br />at <em>every level.</em></h2>
-          <p className={s.lead}>You could spend $300+ on a group course or $600+ on private sessions. Or you could start here with something built for your dog, for $17.</p>
+          <p className={s.lead}>You could spend $300+ on a group course or $600+ on private sessions. Or you could start here with something built for your dog, for {PRICE_LABEL}.</p>
 
           <table className={s.vsTable}>
             <thead>
@@ -272,7 +273,7 @@ export default function LandingPage() {
               <tr><td>Day-by-day structured plan</td><td><span className={s.cross}>✕ Random tips &amp; videos</span></td><td><span className={s.check}>✓ 30 days, fully mapped</span></td></tr>
               <tr><td>Works for your living situation</td><td><span className={s.cross}>✕ Assumes you have a garden</span></td><td><span className={s.check}>✓ Apartment, house, rural</span></td></tr>
               <tr><td>Ready to start today</td><td><span className={s.cross}>✕ Hours of videos to watch first</span></td><td><span className={s.check}>✓ In your inbox in 60 sec</span></td></tr>
-              <tr><td>Cost</td><td>Free (but costs you time &amp; frustration)</td><td><strong style={{ color: 'var(--green)' }}>$17, one-time</strong></td></tr>
+              <tr><td>Cost</td><td>Free (but costs you time &amp; frustration)</td><td><strong style={{ color: 'var(--green)' }}>{PRICE_LABEL}, one-time</strong></td></tr>
             </tbody>
           </table>
         </div>
@@ -288,7 +289,7 @@ export default function LandingPage() {
             {[
               { initials: 'SL', name: 'Sarah L.', dog: 'Koda · Husky · 2 years', quote: 'I\'ve spent $400 on group classes and nothing clicked. This plan finally explained WHY Koda does what he does, and within 2 weeks the leash pulling has dropped by like 80%.' },
               { initials: 'MR', name: 'Marcus R.', dog: 'Pepper · Aussie Shepherd · 18 months', quote: 'The breed diagnostic section alone was worth it. I didn\'t realise half of Pepper\'s \'bad\' behaviour was just her herding instincts with no outlet. Game changer.' },
-              { initials: 'JK', name: 'Jamie K.', dog: 'Bruno · French Bulldog · 3 years', quote: 'My trainer quoted me $600 for a 6-session package. I tried this first for $17 and honestly, the plan is more detailed than what the trainer gave me in session 1.' },
+              { initials: 'JK', name: 'Jamie K.', dog: 'Bruno · French Bulldog · 3 years', quote: `My trainer quoted me $600 for a 6-session package. I tried this first for ${PRICE_LABEL} and honestly, the plan is more detailed than what the trainer gave me in session 1.` },
             ].map((t) => (
               <AnimateOnScroll key={t.name} className={s.testimonial}>
                 <div className={s.stars}>★★★★★</div>
@@ -327,15 +328,15 @@ export default function LandingPage() {
             <div className={s.vaDivider}></div>
             <div className={s.valueAnchorItem}>
               <span className={s.vaLabel}>PawCraft</span>
-              <span className={s.vaValue} style={{ color: 'var(--green)' }}>$17</span>
+              <span className={s.vaValue} style={{ color: 'var(--green)' }}>{PRICE_LABEL}</span>
             </div>
           </div>
 
           <div className={s.pricingCard}>
             <div className={s.pricingBadge}>Most popular</div>
             <div className={s.priceDisplay}>
-              <span className={s.priceOld}>$97</span>
-              <span className={s.priceNew}>$17</span>
+              <span className={s.priceOld}>{LIST_PRICE_LABEL}</span>
+              <span className={s.priceNew}>{PRICE_LABEL}</span>
             </div>
             <div className={s.priceSub}>One-time payment · No subscription · Instant delivery</div>
             <ul className={s.priceFeatures}>
@@ -371,7 +372,7 @@ export default function LandingPage() {
         <div className={s.containerNarrow}>
           <h2>Stop guessing.<br /><em>Start with the right plan.</em></h2>
           <p>Your dog isn&apos;t bad. They just need an approach built for them, not a recycled guide written for every dog on the planet.</p>
-          <Link href="/form" className={s.btnPrimary}>Get my dog&apos;s plan for $17</Link>
+          <Link href="/form" className={s.btnPrimary}>Get my dog&apos;s plan for {PRICE_LABEL}</Link>
         </div>
       </div>
 

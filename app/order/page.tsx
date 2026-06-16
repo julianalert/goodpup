@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { trackEvent } from '@/lib/mixpanel-client'
+import { DISCOUNT_LABEL, LIST_PRICE_LABEL, PRICE_LABEL } from '@/lib/pricing'
 import s from './page.module.css'
 
 const PROBLEM_LABELS: Record<string, string> = {
@@ -328,7 +329,7 @@ export default function OrderPage() {
 
               <div className={s.miniTestimonial}>
                 <div className={s.miniStars}>★★★★★</div>
-                <div className={s.miniQuote}>&ldquo;My trainer quoted me $600 for a 6-session package. I tried PawCraft first for $17. Honestly, the plan was more detailed than what he gave me in session one.&rdquo;</div>
+                <div className={s.miniQuote}>&ldquo;My trainer quoted me $600 for a 6-session package. I tried PawCraft first for {PRICE_LABEL}. Honestly, the plan was more detailed than what he gave me in session one.&rdquo;</div>
                 <div className={s.miniAuthor}>
                   <div className={s.miniAvatar}>JK</div>
                   <div>
@@ -350,8 +351,8 @@ export default function OrderPage() {
               <div className={s.orderBoxTitle}>Your order</div>
               <div className={s.orderPlanName}>Personalized 30-Day Training Plan</div>
               <div className={s.orderPriceRow}>
-                <span className={s.orderPriceOld}>$97</span>
-                <span className={s.orderPriceNew}>$17</span>
+                <span className={s.orderPriceOld}>{LIST_PRICE_LABEL}</span>
+                <span className={s.orderPriceNew}>{PRICE_LABEL}</span>
               </div>
               <div className={s.orderPriceSub}>Limited launch price · One-time payment</div>
             </div>
@@ -359,18 +360,18 @@ export default function OrderPage() {
             <div className={s.orderBoxBody}>
               <div className={s.orderLine}>
                 <span className={s.orderLineLabel}>30-day personalized plan</span>
-                <span className={s.orderLineValue}>$97.00</span>
+                <span className={s.orderLineValue}>{LIST_PRICE_LABEL}.00</span>
               </div>
               <div className={s.orderLine}>
                 <span className={s.orderLineLabel}>Launch discount</span>
-                <span className={`${s.orderLineValue} ${s.orderLineValueGreen}`}>−$80.00</span>
+                <span className={`${s.orderLineValue} ${s.orderLineValueGreen}`}>{DISCOUNT_LABEL}</span>
               </div>
 
               <hr className={s.orderDivider} />
 
               <div className={s.orderTotal}>
                 <span className={s.orderTotalLabel}>Total today</span>
-                <span className={s.orderTotalValue}>$17</span>
+                <span className={s.orderTotalValue}>{PRICE_LABEL}</span>
               </div>
 
               <button
@@ -379,7 +380,7 @@ export default function OrderPage() {
                 disabled={checkoutState === 'loading'}
                 style={checkoutState === 'loading' ? { opacity: 0.75, cursor: 'default' } : {}}
               >
-                {checkoutState === 'loading' ? 'Redirecting to secure payment…' : 'Pay $17 — Get my plan'}
+                {checkoutState === 'loading' ? 'Redirecting to secure payment…' : `Pay ${PRICE_LABEL} — Get my plan`}
                 {checkoutState === 'idle' && <small>Delivered to your inbox in &lt; 60 seconds</small>}
                 {checkoutState === 'error' && <small style={{ color: '#ffb3ae' }}>Something went wrong — please try again</small>}
               </button>
@@ -401,7 +402,7 @@ export default function OrderPage() {
 
               <div className={s.urgencyBar}>
                 <span className={s.urgencyDot} />
-                <span>Launch price ends soon — normally $97</span>
+                <span>Launch price ends soon — normally {LIST_PRICE_LABEL}</span>
               </div>
             </div>
 

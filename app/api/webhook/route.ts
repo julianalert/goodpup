@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { stripe } from '@/lib/stripe'
+import { PRICE_CENTS } from '@/lib/pricing'
 import { createServerClient } from '@/lib/supabase'
 import { setUserProfile, trackServerEvent } from '@/lib/mixpanel-server'
 
@@ -63,7 +64,7 @@ export async function POST(req: NextRequest) {
 
     console.log(`[webhook] Submission ${session_id} marked as paid`)
 
-    const amountTotal = session.amount_total ?? 1700
+    const amountTotal = session.amount_total ?? PRICE_CENTS
     trackServerEvent(session_id, 'payment_completed', {
       stripe_session_id: session.id,
       amount: amountTotal / 100,

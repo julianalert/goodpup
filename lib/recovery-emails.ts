@@ -9,6 +9,8 @@
  *   Email 4 — 120 h  (last ever)
  */
 
+import { PRICE_LABEL } from './pricing'
+
 export interface RecoveryEmailData {
   sessionId: string
   dogName: string
@@ -183,9 +185,9 @@ export function recoveryEmail1(d: RecoveryEmailData) {
     ${p(`That's not what someone does when they've given up on their dog.`)}
     ${p(`So we went ahead and built ${d.dogName}'s plan. It's sitting on our server right now, ready to generate the moment you complete your order. A full 30-day, ${d.dogBreed}-specific programme — day by day, exercise by exercise — built around everything you told us.`)}
     ${dogPill(d.dogName, d.dogBreed, d.dogAge, d.problems)}
-    ${p(`<strong style="color:#1C1C1A;">All that's left is $17.</strong> That's it. Less than a coffee-shop afternoon. Less than one hour with a trainer who doesn't know your dog's name.`)}
+    ${p(`<strong style="color:#1C1C1A;">All that's left is ${PRICE_LABEL}.</strong> That's it. Less than a coffee-shop afternoon. Less than one hour with a trainer who doesn't know your dog's name.`)}
     ${p(`No subscription. Delivered to this inbox in under 60 seconds.`)}
-    ${ctaButton(orderUrl(d.sessionId), `Get ${d.dogName}'s plan — $17 →`)}
+    ${ctaButton(orderUrl(d.sessionId), `Get ${d.dogName}'s plan — ${PRICE_LABEL} →`)}
     <table cellpadding="0" cellspacing="0" border="0" role="presentation" width="100%" style="margin-top:24px;padding-top:18px;border-top:1px solid rgba(28,28,26,0.08);">
       <tr><td><p style="font-size:12px;color:#8A8A82;font-style:italic;line-height:1.6;margin:0;"><strong style="color:#4A4A44;font-style:normal;">P.S.</strong> If something stopped you — a question, a doubt — just reply to this email. I read every reply personally.</p></td></tr>
     </table>
@@ -214,7 +216,7 @@ export function recoveryEmail2(d: RecoveryEmailData) {
       `The one routine change that drops reactivity faster than most outdoor sessions`,
       `Why your current approach may be accidentally reinforcing the behaviour you want to stop`,
     ])}
-    ${p(`All of that is in ${d.dogName}'s plan. Breed-specific. Built for your situation. <strong style="color:#1C1C1A;">$17.</strong>`)}
+    ${p(`All of that is in ${d.dogName}'s plan. Breed-specific. Built for your situation. <strong style="color:#1C1C1A;">${PRICE_LABEL}.</strong>`)}
     ${ctaButton(orderUrl(d.sessionId), `Get ${d.dogName}'s 30-day plan →`)}
     <table cellpadding="0" cellspacing="0" border="0" role="presentation" width="100%" style="margin-top:24px;padding-top:18px;border-top:1px solid rgba(28,28,26,0.08);">
       <tr><td>
@@ -239,12 +241,12 @@ export function recoveryEmail3(d: RecoveryEmailData) {
     ${p(`Sarah had a 2-year-old Husky named Koda. ${problem.charAt(0).toUpperCase() + problem.slice(1)}, reactive — similar profile to ${d.dogName}.`)}
     ${p(`She'd spent $400 on group classes. Tried every YouTube technique. Still ended every walk exhausted and embarrassed.`)}
     ${blockquote(
-      `I've spent $400 on group classes and nothing clicked. This plan finally explained WHY Koda does what he does. Within 2 weeks the ${problem} dropped by about 80%. The breed diagnostic section alone was worth the $17.`,
+      `I've spent $400 on group classes and nothing clicked. This plan finally explained WHY Koda does what he does. Within 2 weeks the ${problem} dropped by about 80%. The breed diagnostic section alone was worth the ${PRICE_LABEL}.`,
       `— Sarah L. · Koda · Husky · 2 years`
     )}
     ${p(`The difference wasn't effort. Sarah was already trying hard. The difference was having a plan built for <em>her dog's</em> specific drive level, age, and environment — not a recycled guide written for every dog on the planet.`)}
     ${p(`${d.dogName}'s plan is already built around their ${d.dogBreed} temperament, their specific triggers, and your situation. <strong style="color:#1C1C1A;">It's just waiting for you to unlock it.</strong>`)}
-    ${p(`$17. 60 seconds to your inbox.`)}
+    ${p(`${PRICE_LABEL}. 60 seconds to your inbox.`)}
     ${ctaButton(orderUrl(d.sessionId), `Unlock ${d.dogName}'s plan now →`)}
     <table cellpadding="0" cellspacing="0" border="0" role="presentation" width="100%" style="margin-top:24px;padding-top:18px;border-top:1px solid rgba(28,28,26,0.08);">
       <tr><td><p style="font-size:12px;color:#8A8A82;font-style:italic;line-height:1.6;margin:0;"><strong style="color:#4A4A44;font-style:normal;">P.S.</strong> Not happy with the plan? Reply within 30 days for a full refund. No forms, no questions.</p></td></tr>
@@ -272,13 +274,13 @@ export function recoveryEmail4(d: RecoveryEmailData) {
       `The most common mistakes owners make with ${d.dogBreed}s that silently kill progress`,
       `Weekly checklists so you know exactly when you're ready to advance`,
     ])}
-    ${p(`All of that for $17. With a 30-day money-back guarantee.`)}
+    ${p(`All of that for ${PRICE_LABEL}. With a 30-day money-back guarantee.`)}
     ${p(`If you've decided it's not for you — no problem at all. But if something stopped you that I can answer, just hit reply. I'm a real person and I'll respond within a few hours.`)}
     ${p(`Either way, I hope ${d.dogName}'s walks — and days — get easier soon. You clearly care about getting this right.`)}
     <table cellpadding="0" cellspacing="0" border="0" role="presentation" style="margin:24px 0 8px;">
       <tr>
         <td style="border-radius:99px;background:#1A6B4A;margin-right:10px;">
-          <a href="${orderUrl(d.sessionId)}" style="display:inline-block;padding:14px 28px;color:white;font-size:14px;font-weight:500;text-decoration:none;border-radius:99px;font-family:'DM Sans',Arial,sans-serif;">Get ${d.dogName}'s plan — $17</a>
+          <a href="${orderUrl(d.sessionId)}" style="display:inline-block;padding:14px 28px;color:white;font-size:14px;font-weight:500;text-decoration:none;border-radius:99px;font-family:'DM Sans',Arial,sans-serif;">Get ${d.dogName}'s plan — ${PRICE_LABEL}</a>
         </td>
         <td style="padding-left:10px;">
           <a href="mailto:hello@mypawcraft.com" style="display:inline-block;padding:13px 22px;color:#1A6B4A;font-size:14px;font-weight:500;text-decoration:none;border-radius:99px;border:1.5px solid #1A6B4A;font-family:'DM Sans',Arial,sans-serif;">I have a question →</a>
