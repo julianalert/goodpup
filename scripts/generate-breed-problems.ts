@@ -110,7 +110,7 @@ Return ONLY valid JSON with exactly these fields:
     {"title": "<mistake name>", "description": "<1-2 sentence explanation>"}
   ],
   "age_risk_note": "<short note on when this peaks>",
-  "meta_title": "Why ${breedName}s [verb] [problem] — PawCraft",
+  "meta_title": "Why ${breedName}s [verb] [problem]",
   "meta_description": "<155 char max SEO description>"
 }
 

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { getProblemWithAllBreeds, getAllProblemSlugs, getAllProblems } from '@/lib/supabase-dogs'
 import BreedProblemTable from './_components/BreedProblemTable'
 import { JsonLd } from '@/app/_components/JsonLd'
+import { sanitizeMetaText, sanitizeMetaTitle } from '@/lib/metadata'
 
 export const revalidate = 86400
 
@@ -20,9 +21,9 @@ export async function generateMetadata({
   const { problem: slug } = await params
   const { problem } = await getProblemWithAllBreeds(slug)
   if (!problem) return {}
-  const title = problem.meta_title ?? `${problem.name} by Breed — PawCraft`
+  const title = sanitizeMetaTitle(problem.meta_title, `${problem.name} by Breed`)
   const description =
-    problem.meta_description ??
+    sanitizeMetaText(problem.meta_description) ??
     `${problem.name} in dogs — causes, difficulty, and breed-specific guides across 50+ breeds.`
   return {
     title,

@@ -81,7 +81,7 @@ interface GeneratedBreedContent {
 
 // ─── Prompt ───────────────────────────────────────────────────────────────────
 function buildPrompt(breed: Breed): string {
-  return `You are a professional dog trainer and behaviorist writing content for PawPlan, a dog training website.
+  return `You are a professional dog trainer and behaviorist writing content for PawCraft, a dog training website.
 
 Generate content for the following breed's hub page. The content goes into three tabs: Overview, Training, and Daily Life.
 
@@ -153,7 +153,7 @@ training_full_content (400–550 words):
 - H3: "What works for [breed name]" — 2–3 specific training principles grounded in their breed history and drives
 - H3: "What doesn't work" — what approaches backfire and why, specific to this breed
 - H3: "[Breed] adolescence" — expand on the adolescence warning above with breed-specific detail
-- Close with a bridging sentence toward getting a personalized plan (don't mention PawPlan by name)
+- Close with a bridging sentence toward getting a personalized plan (don't mention PawCraft by name)
 
 daily_life_content (350–450 words):
 - Open with what a realistic day looks like with this breed (exercise, stimulation, downtime)
@@ -200,7 +200,7 @@ async function main() {
   const targetSlug = process.env.BREED_SLUG ?? null
 
   console.log('─'.repeat(60))
-  console.log('PawPlan — Breed Content Generator')
+  console.log('PawCraft — Breed Content Generator')
   console.log('─'.repeat(60))
 
   // Fetch breeds — either one specific breed or all that are missing content

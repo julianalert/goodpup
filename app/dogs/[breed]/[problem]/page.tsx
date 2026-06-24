@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getBreedProblem, getAllBreedProblemPaths } from '@/lib/supabase-dogs'
 import { JsonLd } from '@/app/_components/JsonLd'
+import { sanitizeMetaText, sanitizeMetaTitle } from '@/lib/metadata'
 
 export const revalidate = 86400
 
@@ -19,12 +20,12 @@ export async function generateMetadata({
   const { breed: breedSlug, problem: problemSlug } = await params
   const { breedProblem, breed, problem } = await getBreedProblem(breedSlug, problemSlug)
   if (!breedProblem) return {}
-  const rawTitle = breedProblem.meta_title ?? undefined
+  const rawTitle = sanitizeMetaText(breedProblem.meta_title)
   const title = rawTitle
     ? rawTitle.replace(/^Why\s+/i, '')
-    : `${breed?.name ?? breedSlug}s ${problem?.name ?? problemSlug} — Training Guide — PawCraft`
+    : `${breed?.name ?? breedSlug}s ${problem?.name ?? problemSlug} — Training Guide`
   const description =
-    breedProblem.meta_description ??
+    sanitizeMetaText(breedProblem.meta_description) ??
     `Why ${breed?.name ?? breedSlug}s ${(problem?.name ?? problemSlug).toLowerCase()} and how to fix it. Breed-specific causes, common mistakes, and what an effective protocol looks like.`
   return {
     title,

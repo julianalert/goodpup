@@ -7,18 +7,18 @@ import { JsonLd } from '@/app/_components/JsonLd'
 export const revalidate = 86400
 
 export const metadata: Metadata = {
-  title: 'Dog Training by Breed — PawCraft',
+  title: 'Dog Training by Breed',
   description:
     "Every breed has different instincts, drives, and problem patterns. Find yours and understand exactly what you're working with. 50 breeds, 15 problem types, 750 breed-specific guides.",
   openGraph: {
-    title: 'Dog Training by Breed — PawCraft',
+    title: 'Dog Training by Breed',
     description:
       "Every breed has different instincts, drives, and problem patterns. Find yours and understand exactly what you're working with. 50 breeds, 15 problem types, 750 breed-specific guides.",
     url: '/dogs',
     type: 'website',
   },
   twitter: {
-    title: 'Dog Training by Breed — PawCraft',
+    title: 'Dog Training by Breed',
     description:
       "Every breed has different instincts, drives, and problem patterns. Find yours and understand exactly what you're working with. 50 breeds, 15 problem types, 750 breed-specific guides.",
   },

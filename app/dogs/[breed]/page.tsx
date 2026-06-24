@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { getBreedBySlug, getAllBreedSlugs, getSimilarBreeds } from '@/lib/supabase-dogs'
 import BreedTabs from './_components/BreedTabs'
 import { JsonLd } from '@/app/_components/JsonLd'
+import { sanitizeMetaText, sanitizeMetaTitle } from '@/lib/metadata'
 
 export const revalidate = 86400
 
@@ -20,8 +21,8 @@ export async function generateMetadata({
   const { breed: slug } = await params
   const breed = await getBreedBySlug(slug)
   if (!breed) return {}
-  const title = breed.meta_title ?? `${breed.name} Training Guide — PawCraft`
-  const description = breed.meta_description ?? `Training guide for ${breed.name}s — temperament, behaviour problems, and what actually works for this breed.`
+  const title = sanitizeMetaTitle(breed.meta_title, `${breed.name} Training Guide`)
+  const description = sanitizeMetaText(breed.meta_description) ?? `Training guide for ${breed.name}s — temperament, behaviour problems, and what actually works for this breed.`
   return {
     title,
     description,

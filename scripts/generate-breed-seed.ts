@@ -137,7 +137,7 @@ Return ONLY valid JSON with exactly these fields. No preamble, no markdown fence
   "training_overview": "<2–3 sentences: what drives this breed in training, what approach works best, and what the core challenge is — specific to their breed history and drives>",
   "adolescence_warning": "<1–2 sentences: what specifically happens during adolescence in this breed, at what age range, and what it requires from the owner>",
 
-  "meta_title": "<SEO title: [Breed Name] Training Guide — PawCraft>",
+  "meta_title": "<SEO title: [Breed Name] Training Guide>",
   "meta_description": "<SEO meta description, max 155 characters, covering what the page contains>"
 }
 
