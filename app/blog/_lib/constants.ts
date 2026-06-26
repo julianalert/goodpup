@@ -1,0 +1,26 @@
+export const BLOG_DEFAULT_PAGE = 1;
+export const BLOG_ARTICLES_PER_PAGE = 12;
+export const BLOG_SITEMAP_PAGE_SIZE = 100;
+export const BLOG_REVALIDATE_SECONDS = process.env.NODE_ENV === 'development' ? 1 : 86400;
+export const BLOG_CARD_TAG_LIMIT = 3;
+export const BLOG_SEARCH_DEBOUNCE_MS = 150;
+export const BLOG_INDEX_EAGER_IMAGE_LIMIT = 3;
+export const BLOG_TAG_EAGER_IMAGE_LIMIT = 3;
+export const BLOG_RELATED_ARTICLES_DEFAULT_LIMIT = 3;
+export const BLOG_PAGINATION_SIBLING_COUNT = 1;
+export const BLOG_PAGINATION_VISIBLE_PAGE_GAP = 1;
+export const BLOG_PAGINATION_MIN_PAGES_FOR_ARROWS = 3;
+export const BLOG_INDEX_SITEMAP_PRIORITY = 0.8;
+export const BLOG_ARTICLE_SITEMAP_PRIORITY = 0.7;
+export const SITE_URL_FALLBACK = 'http://localhost:3000';
+export const HOST_HEADER = 'host';
+export const FORWARDED_PROTO_HEADER = 'x-forwarded-proto';
+export const LOCALHOST_HOST_PREFIX = 'localhost';
+export const HTTP_PROTOCOL = 'http';
+export const HTTPS_PROTOCOL = 'https';
+export const BLOG_ARTICLES_REQUEST_ERROR = 'Failed to load Outrank blog articles';
+export const BLOG_ARTICLE_REQUEST_ERROR = 'Failed to load Outrank blog article';
+export const BLOG_ALL_ARTICLES_REQUEST_ERROR = 'Failed to load Outrank blog sitemap articles';
+export const OUTRANK_ENV_ERROR_PATTERN = 'OUTRANK_';
+
+export const OUTRANK_API_KEY_PLACEHOLDER = 'your_outrank_blog_api_key';
