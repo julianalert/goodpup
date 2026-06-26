@@ -49,30 +49,28 @@ export type SiteConfig = {
 };
 
 export const siteConfig: SiteConfig = {
-  brandName: 'Your Brand',
-  brandTagline: 'AI-powered content for teams that need to ship.',
+  brandName: 'PawCraft',
+  brandTagline: 'Expert dog training guides, tips, and resources for every pup.',
   logoUrl: undefined,
   homeUrl: '/',
   navLinks: [
     { label: 'Home', href: '/' },
-    { label: 'Pricing', href: '/pricing' },
     { label: 'Blog', href: '/blog' },
-    { label: 'About', href: '/about' },
   ],
   socialLinks: {
-    twitter: 'https://twitter.com/yourbrand',
-    linkedin: 'https://www.linkedin.com/company/yourbrand',
+    twitter: undefined,
+    linkedin: undefined,
     github: undefined,
-    email: 'hello@yourbrand.com',
+    email: 'hello@mypawcraft.com',
   },
-  footerCopyrightHolder: 'Your Brand',
+  footerCopyrightHolder: 'PawCraft',
   blog: {
-    indexEyebrow: 'Blog',
-    indexTitle: "This Is Your Brand's Blog",
-    indexDek: 'Essays, dispatches, and notes from the team.',
-    indexMetaDescription: 'Read the latest articles.',
+    indexEyebrow: 'Dog Training Blog',
+    indexTitle: 'Tips & Guides for Every Pup',
+    indexDek: 'Expert advice on training, behaviour, and raising a happy, well-behaved dog.',
+    indexMetaDescription: 'Expert dog training tips, guides and resources from the PawCraft team.',
 
-    tagEyebrow: 'Tag',
+    tagEyebrow: 'Topic',
 
     relatedEyebrow: 'Keep reading',
     relatedTitle: 'More articles',

@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
@@ -19,6 +21,7 @@
   --red-light: #FDF0EE;
   --radius: 12px;
   --radius-sm: 8px;
+  --default-accent: 26 107 74;
 }
 
 html { scroll-behavior: smooth; }
@@ -54,6 +57,7 @@ em { font-style: italic; }
 }
 
 .appIcon {
+  display: inline-block;
   width: 28px;
   height: 28px;
   margin-right: 8px;

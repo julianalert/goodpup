@@ -1,0 +1,209 @@
+/* ── Shared Nav ───────────────────────────────────────────────────────────── */
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(249, 247, 243, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navLogo {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-playfair), serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.navLogo span {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--green);
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.navLink {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-mid);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.navLink:hover {
+  color: var(--ink);
+}
+
+.navCta {
+  background: var(--green);
+  color: white;
+  text-decoration: none;
+  border-radius: 99px;
+  padding: 9px 22px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s, transform 0.15s;
+  display: inline-block;
+}
+
+.navCta:hover {
+  background: #155a3d;
+  transform: translateY(-1px);
+}
+
+/* Mobile */
+
+.hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  color: var(--ink-mid);
+}
+
+.mobileMenu {
+  border-top: 1px solid var(--border);
+  background: var(--cream);
+  padding: 8px 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mobileLink {
+  display: block;
+  padding: 10px 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink-mid);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+  transition: color 0.15s;
+}
+
+.mobileLink:hover {
+  color: var(--ink);
+}
+
+.mobileCta {
+  display: block;
+  margin-top: 10px;
+  text-align: center;
+  background: var(--green);
+  color: white;
+  border-radius: 99px;
+  padding: 11px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.mobileCta:hover {
+  background: #155a3d;
+}
+
+@media (max-width: 640px) {
+  .navLinks { display: none; }
+  .hamburger { display: inline-flex; }
+}
+
+/* ── Shared Footer ────────────────────────────────────────────────────────── */
+
+.footer {
+  background: var(--ink);
+  padding: 48px 24px;
+  text-align: center;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.35);
+  margin-top: 0;
+}
+
+.footerInner {
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.footerBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.footerIcon {
+  border-radius: 8px;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.footerBrandName {
+  font-family: var(--font-playfair), serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: -0.3px;
+}
+
+.footerBrandName span {
+  font-style: italic;
+  font-weight: 400;
+  color: rgba(74, 155, 111, 1);
+}
+
+.footerTagline {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+}
+
+.footerSocial {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.footerSocial a {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 20px;
+  line-height: 1;
+  transition: color 0.15s;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.footerSocial a:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.footerLegal {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.25);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 400px;
+}

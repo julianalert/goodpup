@@ -11,6 +11,7 @@
   display: flex; align-items: center; justify-content: space-between;
 }
 .navLogo {
+  display: inline-flex; align-items: center;
   font-family: var(--font-playfair), serif;
   font-size: 20px; font-weight: 600;
   color: var(--ink); text-decoration: none;
