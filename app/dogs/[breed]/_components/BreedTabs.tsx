@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 const TABS = [
   { id: 'overview', label: 'Overview' },
@@ -9,42 +10,36 @@ const TABS = [
   { id: 'dailylife', label: 'Daily Life' },
 ]
 
-interface BreedTabsProps {
-  overview: React.ReactNode
-  training: React.ReactNode
-  problems: React.ReactNode
-  dailylife: React.ReactNode
+function tabHref(breedSlug: string, id: string): string {
+  if (id === 'overview') return `/dogs/${breedSlug}`
+  if (id === 'dailylife') return `/dogs/${breedSlug}/daily-life`
+  return `/dogs/${breedSlug}/${id}`
 }
 
-export default function BreedTabs({ overview, training, problems, dailylife }: BreedTabsProps) {
-  const [active, setActive] = useState('overview')
+function getActiveId(pathname: string): string {
+  if (pathname.endsWith('/training')) return 'training'
+  if (pathname.endsWith('/problems')) return 'problems'
+  if (pathname.endsWith('/daily-life')) return 'dailylife'
+  return 'overview'
+}
 
-  const panels: Record<string, React.ReactNode> = { overview, training, problems, dailylife }
+export default function BreedTabs({ breedSlug }: { breedSlug: string }) {
+  const pathname = usePathname()
+  const active = getActiveId(pathname)
 
   return (
-    <>
-      <div className="tabs-wrap">
-        <div className="tabs-nav">
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              className={`tab-btn${active === tab.id ? ' active' : ''}`}
-              onClick={() => {
-                setActive(tab.id)
-                window.scrollTo({ top: 0, behavior: 'smooth' })
-              }}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+    <div className="tabs-wrap">
+      <div className="tabs-nav">
+        {TABS.map((tab) => (
+          <Link
+            key={tab.id}
+            href={tabHref(breedSlug, tab.id)}
+            className={`tab-btn${active === tab.id ? ' active' : ''}`}
+          >
+            {tab.label}
+          </Link>
+        ))}
       </div>
-
-      <div className="tab-content">
-        <div id={`tab-${active}`} className="tab-panel active">
-          {panels[active]}
-        </div>
-      </div>
-    </>
+    </div>
   )
 }

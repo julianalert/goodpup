@@ -316,6 +316,7 @@
   background: none; border: none; cursor: pointer;
   padding: 14px 18px; border-bottom: 2px solid transparent;
   white-space: nowrap; transition: color 0.15s;
+  text-decoration: none; display: inline-block;
 }
 .tab-btn:hover { color: var(--ink); }
 .tab-btn.active { color: var(--green); border-bottom-color: var(--green); }
