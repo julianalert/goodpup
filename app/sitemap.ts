@@ -27,12 +27,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
-  const breedRoutes: MetadataRoute.Sitemap = breedSlugs.map((slug) => ({
-    url: `${BASE_URL}/dogs/${slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly',
-    priority: 0.8,
-  }))
+  const breedRoutes: MetadataRoute.Sitemap = breedSlugs.flatMap((slug) => [
+    {
+      url: `${BASE_URL}/dogs/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/dogs/${slug}/training`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.75,
+    },
+    {
+      url: `${BASE_URL}/dogs/${slug}/problems`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.75,
+    },
+    {
+      url: `${BASE_URL}/dogs/${slug}/daily-life`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.75,
+    },
+  ])
 
   const problemRoutes: MetadataRoute.Sitemap = problemSlugs.map((slug) => ({
     url: `${BASE_URL}/dogs/problems/${slug}`,
