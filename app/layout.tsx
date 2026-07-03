@@ -3,6 +3,7 @@ import { Playfair_Display, DM_Sans } from 'next/font/google'
 import { GoogleAds } from './GoogleAds'
 import { MixpanelProvider } from './MixpanelProvider'
 import { SimpleAnalytics } from './SimpleAnalytics'
+import { SITE_URL } from '@/lib/site'
 import './globals.css'
 
 const playfair = Playfair_Display({
@@ -20,7 +21,7 @@ const dmSans = DM_Sans({
   display: 'swap',
 })
 
-const BASE_URL = 'https://mypawcraft.com'
+const BASE_URL = SITE_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),

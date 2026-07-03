@@ -5,6 +5,7 @@ import { getProblemWithAllBreeds, getAllProblemSlugs, getAllProblems } from '@/l
 import BreedProblemTable from './_components/BreedProblemTable'
 import { JsonLd } from '@/app/_components/JsonLd'
 import { sanitizeMetaText, sanitizeMetaTitle } from '@/lib/metadata'
+import { SITE_URL } from '@/lib/site'
 
 export const revalidate = 86400
 
@@ -71,9 +72,9 @@ export default async function ProblemPage({
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://mypawcraft.com' },
-      { '@type': 'ListItem', position: 2, name: 'Dog Training Guides by Breed', item: 'https://mypawcraft.com/dogs' },
-      { '@type': 'ListItem', position: 3, name: `${problem.name} by Breed`, item: `https://mypawcraft.com/dogs/problems/${slug}` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+      { '@type': 'ListItem', position: 2, name: 'Dog Training Guides by Breed', item: `${SITE_URL}/dogs` },
+      { '@type': 'ListItem', position: 3, name: `${problem.name} by Breed`, item: `${SITE_URL}/dogs/problems/${slug}` },
     ],
   }
 

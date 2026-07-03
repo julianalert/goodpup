@@ -6,6 +6,7 @@ import {
   RECOVERY_EMAIL_DELAYS_MINUTES,
   type RecoveryEmailData,
 } from '@/lib/recovery-emails'
+import { SITE_URL } from '@/lib/site'
 
 // Vercel Cron sends `Authorization: Bearer <CRON_SECRET>` — we verify it.
 // In local development (CRON_SECRET unset) the check is skipped so you can
@@ -88,7 +89,7 @@ export async function GET(req: NextRequest) {
         subject,
         html:    addPreviewText(html, previewText),
         headers: {
-          'List-Unsubscribe': `<${process.env.NEXT_PUBLIC_APP_URL ?? 'https://mypawcraft.com'}/api/unsubscribe?session_id=${row.session_id}>`,
+          'List-Unsubscribe': `<${process.env.NEXT_PUBLIC_APP_URL ?? SITE_URL}/api/unsubscribe?session_id=${row.session_id}>`,
         },
       })
 

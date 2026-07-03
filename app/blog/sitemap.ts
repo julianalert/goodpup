@@ -5,10 +5,11 @@ import {
   BLOG_INDEX_SITEMAP_PRIORITY,
 } from './_lib/constants';
 import { getStaticArticles } from './_lib/outrank';
+import { SITE_URL } from '@/lib/site';
 
 export const revalidate = 86400;
 
-const BASE_URL = 'https://mypawcraft.com';
+const BASE_URL = SITE_URL;
 
 const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   const siteUrl = BASE_URL;

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { getBreedBySlug } from '@/lib/supabase-dogs'
 import BreedTabs from '../_components/BreedTabs'
 import { JsonLd } from '@/app/_components/JsonLd'
+import { SITE_URL } from '@/lib/site'
 
 function ScoreRow({ label, value }: { label: string; value: number | null }) {
   return (
@@ -31,9 +32,9 @@ export default async function BreedTabsLayout({
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://mypawcraft.com' },
-      { '@type': 'ListItem', position: 2, name: 'Dog Training Guides by Breed', item: 'https://mypawcraft.com/dogs' },
-      { '@type': 'ListItem', position: 3, name: `${breed.name} Training Guide`, item: `https://mypawcraft.com/dogs/${slug}` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+      { '@type': 'ListItem', position: 2, name: 'Dog Training Guides by Breed', item: `${SITE_URL}/dogs` },
+      { '@type': 'ListItem', position: 3, name: `${breed.name} Training Guide`, item: `${SITE_URL}/dogs/${slug}` },
     ],
   }
 

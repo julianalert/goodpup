@@ -10,6 +10,7 @@
  */
 
 import { PRICE_LABEL } from './pricing'
+import { SITE_URL } from './site'
 
 export interface RecoveryEmailData {
   sessionId: string
@@ -75,7 +76,7 @@ function livingText(living: string | null): string {
 }
 
 function getAppUrl(): string {
-  return process.env.NEXT_PUBLIC_APP_URL ?? 'https://mypawcraft.com'
+  return process.env.NEXT_PUBLIC_APP_URL ?? SITE_URL
 }
 
 function orderUrl(sessionId: string): string {

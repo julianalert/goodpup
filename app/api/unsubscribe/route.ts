@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase'
+import { SITE_URL } from '@/lib/site'
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -71,7 +72,7 @@ function successPage(): string {
     <div class="icon">✓</div>
     <h1>You've been unsubscribed</h1>
     <p>We won't send any more follow-up emails about your dog's plan.</p>
-    <p>If you change your mind, you can always <a href="https://mypawcraft.com">start a new plan</a> — it only takes a couple of minutes.</p>
+    <p>If you change your mind, you can always <a href="${SITE_URL}">start a new plan</a> — it only takes a couple of minutes.</p>
     <p style="margin-bottom:0;font-size:12px;color:#8A8A82;">— Julian @ PawCraft</p>
   </div>
 </body>

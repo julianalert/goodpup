@@ -1,7 +1,8 @@
 import type { MetadataRoute } from 'next'
 import { getAllBreedSlugs, getAllProblemSlugs, getAllBreedProblemPaths } from '@/lib/supabase-dogs'
+import { SITE_URL } from '@/lib/site'
 
-const BASE_URL = 'https://mypawcraft.com'
+const BASE_URL = SITE_URL
 
 export const revalidate = 86400
 

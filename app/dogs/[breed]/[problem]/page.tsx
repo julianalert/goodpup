@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { getBreedProblem, getAllBreedProblemPaths } from '@/lib/supabase-dogs'
 import { JsonLd } from '@/app/_components/JsonLd'
 import { sanitizeMetaText, sanitizeMetaTitle } from '@/lib/metadata'
+import { SITE_URL } from '@/lib/site'
 
 export const revalidate = 86400
 
@@ -87,10 +88,10 @@ export default async function BreedProblemPage({
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://mypawcraft.com' },
-      { '@type': 'ListItem', position: 2, name: 'Dog Training Guides by Breed', item: 'https://mypawcraft.com/dogs' },
-      { '@type': 'ListItem', position: 3, name: `${breed.name} Training Guide`, item: `https://mypawcraft.com/dogs/${breedSlug}` },
-      { '@type': 'ListItem', position: 4, name: problem.name, item: `https://mypawcraft.com/dogs/${breedSlug}/${problemSlug}` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+      { '@type': 'ListItem', position: 2, name: 'Dog Training Guides by Breed', item: `${SITE_URL}/dogs` },
+      { '@type': 'ListItem', position: 3, name: `${breed.name} Training Guide`, item: `${SITE_URL}/dogs/${breedSlug}` },
+      { '@type': 'ListItem', position: 4, name: problem.name, item: `${SITE_URL}/dogs/${breedSlug}/${problemSlug}` },
     ],
   }
 
@@ -99,22 +100,22 @@ export default async function BreedProblemPage({
     '@type': 'Article',
     headline: `${breed.name}s ${problem.name}`,
     description: `Why ${breed.name}s ${problem.name.toLowerCase()} and how to fix it. Breed-specific causes, common mistakes, and what an effective protocol looks like.`,
-    url: `https://mypawcraft.com/dogs/${breedSlug}/${problemSlug}`,
-    image: 'https://mypawcraft.com/opengraph-image.png',
+    url: `${SITE_URL}/dogs/${breedSlug}/${problemSlug}`,
+    image: `${SITE_URL}/opengraph-image.png`,
     datePublished: '2024-10-01',
     dateModified: new Date().toISOString().split('T')[0],
     author: {
       '@type': 'Organization',
       name: 'PawCraft',
-      url: 'https://mypawcraft.com',
+      url: SITE_URL,
     },
     publisher: {
       '@type': 'Organization',
       name: 'PawCraft',
-      url: 'https://mypawcraft.com',
+      url: SITE_URL,
       logo: {
         '@type': 'ImageObject',
-        url: 'https://mypawcraft.com/icon.png',
+        url: `${SITE_URL}/icon.png`,
       },
     },
   }
