@@ -61,6 +61,12 @@ const SiteHeader = () => {
           <Link href="/dog-food-calculator" className={s.mobileLink} onClick={close}>
             🥣 Dog Food Calculator
           </Link>
+          <Link href="/dog-size-calculator" className={s.mobileLink} onClick={close}>
+            📏 Puppy Size Calculator
+          </Link>
+          <Link href="/dog-bmi-calculator" className={s.mobileLink} onClick={close}>
+            ⚖️ Dog BMI Calculator
+          </Link>
           <Link href="/" className={s.mobileCta} onClick={close}>
             Start Training 🐾
           </Link>

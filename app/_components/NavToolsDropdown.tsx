@@ -6,6 +6,8 @@ import s from './NavToolsDropdown.module.css'
 
 const TOOLS = [
   { label: '🥣 Dog Food Calculator', href: '/dog-food-calculator' },
+  { label: '📏 Puppy Size Calculator', href: '/dog-size-calculator' },
+  { label: '⚖️ Dog BMI Calculator', href: '/dog-bmi-calculator' },
 ]
 
 export default function NavToolsDropdown() {
