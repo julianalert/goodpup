@@ -4,7 +4,7 @@ import { siteConfig } from '@/app/_config/siteConfig';
 import BlogList from './_components/BlogList';
 import { getAllArticleSummaries, getArticles } from './_lib/outrank';
 import { BLOG_ARTICLES_PER_PAGE } from './_lib/constants';
-import { getPageParam } from './_lib/format';
+import { getPageParam, sortByPublishDateDesc } from './_lib/format';
 import s from './blog.module.css';
 
 export const revalidate = 86400;
@@ -21,10 +21,13 @@ type Props = {
 const BlogPage = async ({ searchParams }: Props) => {
   const resolvedSearchParams = await searchParams;
   const currentPage = getPageParam(resolvedSearchParams.page);
-  const [{ articles, total_pages }, allArticles] = await Promise.all([
+  const [{ articles: rawArticles, total_pages }, rawAllArticles] = await Promise.all([
     getArticles({ page: currentPage, limit: BLOG_ARTICLES_PER_PAGE }),
     getAllArticleSummaries(),
   ]);
+
+  const articles = [...rawArticles].sort(sortByPublishDateDesc);
+  const allArticles = [...rawAllArticles].sort(sortByPublishDateDesc);
 
   return (
     <main className={s.page}>

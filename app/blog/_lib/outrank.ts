@@ -14,6 +14,7 @@ import {
   OUTRANK_API_KEY_PLACEHOLDER,
   OUTRANK_ENV_ERROR_PATTERN,
 } from './constants';
+import { sortByPublishDateDesc } from './format';
 import { getAllMockArticles, getMockArticle, getMockArticlesResponse } from './mockArticles';
 
 type GetArticlesParams = {
@@ -192,7 +193,7 @@ export const getAllArticleSummaries = async (): Promise<ArticleSummary[]> => {
 };
 
 const sortByCreatedAtDesc = (a: ArticleSummary, b: ArticleSummary): number =>
-  new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  sortByPublishDateDesc(a, b);
 
 export const getRelatedArticles = async (
   currentSlug: string,

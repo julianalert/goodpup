@@ -5,6 +5,7 @@ import {
   BLOG_INDEX_SITEMAP_PRIORITY,
 } from './_lib/constants';
 import { getStaticArticles } from './_lib/outrank';
+import { getPublishDate } from './_lib/format';
 import { SITE_URL } from '@/lib/site';
 
 export const revalidate = 86400;
@@ -24,7 +25,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     },
     ...articles.map((article) => ({
       url: `${siteUrl}/blog/${article.slug}`,
-      lastModified: new Date(article.updated_at || article.created_at),
+      lastModified: new Date(getPublishDate(article.slug, article.updated_at || article.created_at)),
       changeFrequency: 'daily' as const,
       priority: BLOG_ARTICLE_SITEMAP_PRIORITY,
     })),

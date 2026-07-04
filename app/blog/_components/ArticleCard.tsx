@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import type { OutrankArticleSummary } from '../_types/blog';
 import { BLOG_CARD_TAG_LIMIT } from '../_lib/constants';
-import { formatDate } from '../_lib/format';
+import { formatDate, getPublishDate } from '../_lib/format';
 import s from '../blog.module.css';
 
 type Props = {
@@ -43,7 +43,7 @@ const ArticleCard = ({ article, imageLoading = 'lazy' }: Props) => {
         </Link>
         <p className={s.cardDesc}>{article.meta_description}</p>
         <div className={s.cardMeta}>
-          <time dateTime={article.created_at}>{formatDate(article.created_at)}</time>
+          <time dateTime={getPublishDate(article.slug, article.created_at)}>{formatDate(getPublishDate(article.slug, article.created_at))}</time>
           <span>{article.reading_time_minutes} min read</span>
         </div>
       </div>

@@ -9,7 +9,7 @@ import BackToTop from '../_components/BackToTop';
 import RelatedArticles from '../_components/RelatedArticles';
 import styles from '../_components/ArticleContent.module.css';
 import { getArticle, getRelatedArticles, getStaticArticles } from '../_lib/outrank';
-import { formatDate } from '../_lib/format';
+import { formatDate, getPublishDate } from '../_lib/format';
 import { ensureHeadingIds } from '../_lib/toc';
 import s from '../blog.module.css';
 
@@ -67,7 +67,7 @@ const ArticlePage = async ({ params }: Props) => {
           <h1 className={s.articleTitle}>{article.title}</h1>
           <p className={s.articleDek}>{article.meta_description}</p>
           <div className={s.articleMeta}>
-            <time dateTime={article.created_at}>{formatDate(article.created_at)}</time>
+            <time dateTime={getPublishDate(article.slug, article.created_at)}>{formatDate(getPublishDate(article.slug, article.created_at))}</time>
             <span className={s.articleMetaDot}>·</span>
             <span>{article.reading_time_minutes} min read</span>
           </div>
