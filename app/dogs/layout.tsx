@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { FaInstagram, FaTiktok } from 'react-icons/fa'
 import { HiOutlineMail } from 'react-icons/hi'
+import NavToolsDropdown from '@/app/_components/NavToolsDropdown'
 
 export default function DogsLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,6 +16,7 @@ export default function DogsLayout({ children }: { children: React.ReactNode }) 
         <div className="dogs-nav-links">
           <Link href="/dogs" className="dogs-nav-link">Dogs</Link>
           <Link href="/blog" className="dogs-nav-link">Blog</Link>
+          <NavToolsDropdown />
         </div>
         <Link href="/form" className="dogs-nav-cta">Get my dog&apos;s plan →</Link>
       </nav>

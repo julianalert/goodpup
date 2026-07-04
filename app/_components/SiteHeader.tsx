@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import { siteConfig } from '../_config/siteConfig';
+import NavToolsDropdown from './NavToolsDropdown';
 import s from './site.module.css';
 
 const SiteHeader = () => {
@@ -25,6 +26,7 @@ const SiteHeader = () => {
               {link.label}
             </Link>
           ))}
+          <NavToolsDropdown />
           <Link href="/" className={s.navCta}>
             Start Training 🐾
           </Link>
@@ -56,6 +58,9 @@ const SiteHeader = () => {
               {link.label}
             </Link>
           ))}
+          <Link href="/dog-food-calculator" className={s.mobileLink} onClick={close}>
+            🥣 Dog Food Calculator
+          </Link>
           <Link href="/" className={s.mobileCta} onClick={close}>
             Start Training 🐾
           </Link>

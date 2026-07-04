@@ -1,0 +1,6 @@
+IMAGE PLACEHOLDER — replace this file with the actual image.
+
+Filename: dog-food-hero.jpg
+Recommended dimensions: 800 × 500 px
+Subject: Dog next to a full food bowl, natural light, warm tones
+Usage: Hero section of /dog-food-calculator — split layout right column

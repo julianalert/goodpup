@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { FaInstagram, FaTiktok } from 'react-icons/fa'
 import { HiOutlineMail } from 'react-icons/hi'
 import { FaqItem, AnimateOnScroll } from './_components/HomeComponents'
+import NavToolsDropdown from './_components/NavToolsDropdown'
 import { LIST_PRICE_LABEL, PRICE_LABEL } from '@/lib/pricing'
 import s from './page.module.css'
 
@@ -82,6 +83,7 @@ export default function LandingPage() {
         <div className={s.navLinks}>
           <Link href="/dogs" className={s.navLink}>Dogs</Link>
           <Link href="/blog" className={s.navLink}>Blog</Link>
+          <NavToolsDropdown />
         </div>
         <a href="#pricing" className={s.navCta}>Get my plan →</a>
       </nav>
