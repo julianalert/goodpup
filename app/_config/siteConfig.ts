@@ -55,6 +55,7 @@ export const siteConfig: SiteConfig = {
   homeUrl: '/',
   navLinks: [
     { label: 'Home', href: '/' },
+    { label: 'Dogs', href: '/dogs' },
     { label: 'Blog', href: '/blog' },
   ],
   socialLinks: {

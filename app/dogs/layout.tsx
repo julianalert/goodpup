@@ -12,6 +12,10 @@ export default function DogsLayout({ children }: { children: React.ReactNode }) 
           <Image src="/icon.png" alt="" width={28} height={28} className="appIcon" />
           Paw<span>Craft</span>
         </Link>
+        <div className="dogs-nav-links">
+          <Link href="/dogs" className="dogs-nav-link">Dogs</Link>
+          <Link href="/blog" className="dogs-nav-link">Blog</Link>
+        </div>
         <Link href="/form" className="dogs-nav-cta">Get my dog&apos;s plan →</Link>
       </nav>
       <main>{children}</main>

@@ -17,6 +17,16 @@
   color: var(--ink); text-decoration: none;
 }
 .navLogo span { font-style: italic; font-weight: 400; color: var(--green); }
+.navLinks {
+  display: flex; align-items: center; gap: 4px;
+}
+.navLink {
+  color: var(--ink); text-decoration: none;
+  font-size: 14px; font-weight: 500;
+  padding: 6px 12px; border-radius: 8px;
+  transition: background 0.15s, color 0.15s;
+}
+.navLink:hover { background: rgba(0,0,0,0.05); }
 .navCta {
   background: var(--green); color: white;
   text-decoration: none; border-radius: 99px;

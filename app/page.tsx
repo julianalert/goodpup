@@ -79,6 +79,10 @@ export default function LandingPage() {
           <img src="/icon.png" alt="" className="appIcon" width={28} height={28} />
           Paw<span>Craft</span>
         </Link>
+        <div className={s.navLinks}>
+          <Link href="/dogs" className={s.navLink}>Dogs</Link>
+          <Link href="/blog" className={s.navLink}>Blog</Link>
+        </div>
         <a href="#pricing" className={s.navCta}>Get my plan →</a>
       </nav>
 
