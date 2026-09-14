@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { Playfair_Display, DM_Sans } from 'next/font/google'
 import { GoogleAds } from './GoogleAds'
+import { GoogleAnalytics } from './GoogleAnalytics'
 import { MixpanelProvider } from './MixpanelProvider'
-import { SimpleAnalytics } from './SimpleAnalytics'
 import { SITE_URL } from '@/lib/site'
 import './globals.css'
 
@@ -89,7 +89,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
         <GoogleAds />
-        <SimpleAnalytics />
+        <GoogleAnalytics />
         <MixpanelProvider>{children}</MixpanelProvider>
       </body>
     </html>
