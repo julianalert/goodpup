@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { FaInstagram, FaTiktok } from 'react-icons/fa'
 import { HiOutlineMail } from 'react-icons/hi'
 import NavToolsDropdown from '@/app/_components/NavToolsDropdown'
+import { SITE_EMAIL } from '@/lib/site'
 
 export default function DogsLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -35,7 +36,7 @@ export default function DogsLayout({ children }: { children: React.ReactNode }) 
             <a href="https://www.tiktok.com/@seraphova" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
               <FaTiktok />
             </a>
-            <a href="mailto:hello@mypawcraft.com" aria-label="Contact">
+            <a href={`mailto:${SITE_EMAIL}`} aria-label="Contact">
               <HiOutlineMail />
             </a>
           </div>

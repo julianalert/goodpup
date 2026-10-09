@@ -3,7 +3,7 @@ import { Playfair_Display, DM_Sans } from 'next/font/google'
 import { GoogleAds } from './GoogleAds'
 import { GoogleAnalytics } from './GoogleAnalytics'
 import { MixpanelProvider } from './MixpanelProvider'
-import { SITE_URL } from '@/lib/site'
+import { SITE_URL, SITE_EMAIL } from '@/lib/site'
 import './globals.css'
 
 const playfair = Playfair_Display({
@@ -63,7 +63,7 @@ const orgSchema = {
   ],
   contactPoint: {
     '@type': 'ContactPoint',
-    email: 'hello@mypawcraft.com',
+    email: SITE_EMAIL,
     contactType: 'customer support',
   },
 }

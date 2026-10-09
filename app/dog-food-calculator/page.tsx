@@ -7,6 +7,7 @@ import NavToolsDropdown from '@/app/_components/NavToolsDropdown'
 import DogFoodCalculator from './_components/DogFoodCalculator'
 import { CalcFaqItem } from './_components/CalcFaqItem'
 import s from './page.module.css'
+import { SITE_URL, SITE_EMAIL } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'Dog Food Calculator — How Much Should I Feed My Dog? | PawCraft',
@@ -73,8 +74,8 @@ const jsonLd = {
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'GBP' },
   description:
     'A free tool that calculates the recommended daily food portion for a dog based on weight, life stage, activity level, and food type.',
-  url: 'https://mypawcraft.com/dog-food-calculator',
-  provider: { '@type': 'Organization', name: 'PawCraft', url: 'https://mypawcraft.com' },
+  url: `${SITE_URL}/dog-food-calculator`,
+  provider: { '@type': 'Organization', name: 'PawCraft', url: SITE_URL },
 }
 
 export default function DogFoodCalculatorPage() {
@@ -393,7 +394,7 @@ export default function DogFoodCalculatorPage() {
               <a href="https://www.tiktok.com/@seraphova" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
                 <FaTiktok />
               </a>
-              <a href="mailto:hello@mypawcraft.com" aria-label="Contact">
+              <a href={`mailto:${SITE_EMAIL}`} aria-label="Contact">
                 <HiOutlineMail />
               </a>
             </div>

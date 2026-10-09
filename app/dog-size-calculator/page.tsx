@@ -7,6 +7,7 @@ import NavToolsDropdown from '@/app/_components/NavToolsDropdown'
 import DogSizeCalculator from './_components/DogSizeCalculator'
 import { CalcFaqItem } from './_components/CalcFaqItem'
 import s from './page.module.css'
+import { SITE_URL, SITE_EMAIL } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'Puppy Size Calculator — How Big Will My Dog Get? | PawCraft',
@@ -73,8 +74,8 @@ const jsonLd = {
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'GBP' },
   description:
     "A free tool that estimates a puppy's adult weight based on current weight, age in weeks, and breed size category.",
-  url: 'https://mypawcraft.com/dog-size-calculator',
-  provider: { '@type': 'Organization', name: 'PawCraft', url: 'https://mypawcraft.com' },
+  url: `${SITE_URL}/dog-size-calculator`,
+  provider: { '@type': 'Organization', name: 'PawCraft', url: SITE_URL },
 }
 
 export default function DogSizeCalculatorPage() {
@@ -387,7 +388,7 @@ export default function DogSizeCalculatorPage() {
               <a href="https://www.tiktok.com/@seraphova" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
                 <FaTiktok />
               </a>
-              <a href="mailto:hello@mypawcraft.com" aria-label="Contact">
+              <a href={`mailto:${SITE_EMAIL}`} aria-label="Contact">
                 <HiOutlineMail />
               </a>
             </div>

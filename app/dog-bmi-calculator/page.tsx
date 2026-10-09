@@ -7,6 +7,7 @@ import NavToolsDropdown from '@/app/_components/NavToolsDropdown'
 import DogBmiCalculator from './_components/DogBmiCalculator'
 import { CalcFaqItem } from './_components/CalcFaqItem'
 import s from './page.module.css'
+import { SITE_URL, SITE_EMAIL } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'Dog BMI Calculator — Is My Dog a Healthy Weight? | PawCraft',
@@ -73,8 +74,8 @@ const jsonLd = {
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'GBP' },
   description:
     "A free tool that calculates a dog's BMI from weight and height at the withers and maps the result to a body condition category.",
-  url: 'https://mypawcraft.com/dog-bmi-calculator',
-  provider: { '@type': 'Organization', name: 'PawCraft', url: 'https://mypawcraft.com' },
+  url: `${SITE_URL}/dog-bmi-calculator`,
+  provider: { '@type': 'Organization', name: 'PawCraft', url: SITE_URL },
 }
 
 export default function DogBmiCalculatorPage() {
@@ -389,7 +390,7 @@ export default function DogBmiCalculatorPage() {
               <a href="https://www.tiktok.com/@seraphova" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
                 <FaTiktok />
               </a>
-              <a href="mailto:hello@mypawcraft.com" aria-label="Contact">
+              <a href={`mailto:${SITE_EMAIL}`} aria-label="Contact">
                 <HiOutlineMail />
               </a>
             </div>

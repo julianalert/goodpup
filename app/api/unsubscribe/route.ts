@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase'
-import { SITE_URL } from '@/lib/site'
+import { SITE_URL, SITE_EMAIL } from '@/lib/site'
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -96,7 +96,7 @@ function errorPage(message: string): string {
 </head>
 <body>
   <div class="card">
-    <p>${message} You can also reply to any email to unsubscribe — <a href="mailto:hello@mypawcraft.com">hello@mypawcraft.com</a>.</p>
+    <p>${message} You can also reply to any email to unsubscribe — <a href="mailto:${SITE_EMAIL}">${SITE_EMAIL}</a>.</p>
   </div>
 </body>
 </html>`

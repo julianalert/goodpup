@@ -1,4 +1,5 @@
 import { Resend } from 'resend'
+import { SITE_EMAIL } from './site'
 
 // Lazy initialisation — avoids build-time errors when RESEND_API_KEY is absent
 let _resend: Resend | null = null
@@ -15,7 +16,7 @@ interface SendPlanEmailOptions {
 
 export async function sendPlanEmail({ to, dogName, planUrl }: SendPlanEmailOptions): Promise<void> {
   await getResend().emails.send({
-    from: 'Julian @ PawCraft <hello@mypawcraft.com>',
+    from: `Julian @ PawCraft <${SITE_EMAIL}>`,
     to,
     subject: `${dogName}'s 30-day training plan is ready 🐾`,
     html: `

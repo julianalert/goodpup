@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { FaInstagram, FaTiktok } from 'react-icons/fa'
 import { HiOutlineMail } from 'react-icons/hi'
 import s from './page.module.css'
+import { SITE_EMAIL } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'PawCraft Affiliate Program — Earn 50% Per Sale',
@@ -94,7 +95,7 @@ export default function AffiliatesPage() {
           </p>
           <div className={s.heroCtaGroup}>
             <a
-              href="mailto:hello@mypawcraft.com?subject=Affiliate%20Partner%20Application"
+              href={`mailto:${SITE_EMAIL}?subject=Affiliate%20Partner%20Application`}
               className={s.btnPrimary}
             >
               Apply to partner →
@@ -221,7 +222,7 @@ export default function AffiliatesPage() {
               <h4>How we track your sales</h4>
               <p>
                 You get a unique link with your handle (e.g.{' '}
-                <strong>mypawcraft.com/?ref=yourname</strong>). Every click sets a 30-day cookie. If they buy within
+                <strong>pawcraftplan.com/?ref=yourname</strong>). Every click sets a 30-day cookie. If they buy within
                 that window, the sale is yours — even if they come back days later. We log every conversion in real
                 time and share a monthly report before payout.
               </p>
@@ -238,14 +239,14 @@ export default function AffiliatesPage() {
             Send us a quick note with who you are and where your audience lives. We&apos;ll get you set up within 24 hours.
           </p>
           <a
-            href="mailto:hello@mypawcraft.com?subject=Affiliate%20Partner%20Application"
+            href={`mailto:${SITE_EMAIL}?subject=Affiliate%20Partner%20Application`}
             className={s.btnPrimary}
           >
             Apply now — it&apos;s free →
           </a>
           <p className={s.contactLine}>
             Or reach out directly at{' '}
-            <a href="mailto:hello@mypawcraft.com">hello@mypawcraft.com</a>
+            <a href={`mailto:${SITE_EMAIL}`}>{SITE_EMAIL}</a>
           </p>
         </div>
       </div>
@@ -264,7 +265,7 @@ export default function AffiliatesPage() {
             <a href="https://www.tiktok.com/@seraphova" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
               <FaTiktok />
             </a>
-            <a href="mailto:hello@mypawcraft.com" aria-label="Contact">
+            <a href={`mailto:${SITE_EMAIL}`} aria-label="Contact">
               <HiOutlineMail />
             </a>
           </div>

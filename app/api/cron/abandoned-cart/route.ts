@@ -6,7 +6,7 @@ import {
   RECOVERY_EMAIL_DELAYS_MINUTES,
   type RecoveryEmailData,
 } from '@/lib/recovery-emails'
-import { SITE_URL } from '@/lib/site'
+import { SITE_URL, SITE_EMAIL } from '@/lib/site'
 
 // Vercel Cron sends `Authorization: Bearer <CRON_SECRET>` — we verify it.
 // In local development (CRON_SECRET unset) the check is skipped so you can
@@ -84,7 +84,7 @@ export async function GET(req: NextRequest) {
 
     try {
       const sendResult = await resend.emails.send({
-        from:    'Julian @ PawCraft <hello@mypawcraft.com>',
+        from:    `Julian @ PawCraft <${SITE_EMAIL}>`,
         to:      data.email,
         subject,
         html:    addPreviewText(html, previewText),

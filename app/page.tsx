@@ -7,6 +7,7 @@ import { FaqItem, AnimateOnScroll } from './_components/HomeComponents'
 import NavToolsDropdown from './_components/NavToolsDropdown'
 import { LIST_PRICE_LABEL, PRICE_LABEL } from '@/lib/pricing'
 import s from './page.module.css'
+import { SITE_EMAIL } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: "PawCraft — Your Dog's Personalized 30-Day Training Plan",
@@ -399,7 +400,7 @@ export default function LandingPage() {
             <a href="https://www.tiktok.com/@seraphova" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
               <FaTiktok />
             </a>
-            <a href="mailto:hello@mypawcraft.com" aria-label="Contact">
+            <a href={`mailto:${SITE_EMAIL}`} aria-label="Contact">
               <HiOutlineMail />
             </a>
           </div>

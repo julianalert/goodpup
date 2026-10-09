@@ -10,7 +10,7 @@
  */
 
 import { PRICE_LABEL } from './pricing'
-import { SITE_URL } from './site'
+import { SITE_URL, SITE_EMAIL } from './site'
 
 export interface RecoveryEmailData {
   sessionId: string
@@ -284,7 +284,7 @@ export function recoveryEmail4(d: RecoveryEmailData) {
           <a href="${orderUrl(d.sessionId)}" style="display:inline-block;padding:14px 28px;color:white;font-size:14px;font-weight:500;text-decoration:none;border-radius:99px;font-family:'DM Sans',Arial,sans-serif;">Get ${d.dogName}'s plan — ${PRICE_LABEL}</a>
         </td>
         <td style="padding-left:10px;">
-          <a href="mailto:hello@mypawcraft.com" style="display:inline-block;padding:13px 22px;color:#1A6B4A;font-size:14px;font-weight:500;text-decoration:none;border-radius:99px;border:1.5px solid #1A6B4A;font-family:'DM Sans',Arial,sans-serif;">I have a question →</a>
+          <a href="mailto:${SITE_EMAIL}" style="display:inline-block;padding:13px 22px;color:#1A6B4A;font-size:14px;font-weight:500;text-decoration:none;border-radius:99px;border:1.5px solid #1A6B4A;font-family:'DM Sans',Arial,sans-serif;">I have a question →</a>
         </td>
       </tr>
     </table>
