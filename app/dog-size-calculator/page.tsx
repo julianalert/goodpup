@@ -94,7 +94,6 @@ export default function DogSizeCalculatorPage() {
         </Link>
         <div className={s.navLinks}>
           <Link href="/dogs" className={s.navLink}>Dogs</Link>
-          <Link href="/blog" className={s.navLink}>Blog</Link>
           <NavToolsDropdown />
         </div>
         <Link href="/form" className={s.navCta}>Get my dog&apos;s plan →</Link>

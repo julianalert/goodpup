@@ -16,7 +16,6 @@ export default function DogsLayout({ children }: { children: React.ReactNode }) 
         </Link>
         <div className="dogs-nav-links">
           <Link href="/dogs" className="dogs-nav-link">Dogs</Link>
-          <Link href="/blog" className="dogs-nav-link">Blog</Link>
           <NavToolsDropdown />
         </div>
         <Link href="/form" className="dogs-nav-cta">Get my dog&apos;s plan →</Link>

@@ -83,7 +83,6 @@ export default function LandingPage() {
         </Link>
         <div className={s.navLinks}>
           <Link href="/dogs" className={s.navLink}>Dogs</Link>
-          <Link href="/blog" className={s.navLink}>Blog</Link>
           <NavToolsDropdown />
         </div>
         <a href="#pricing" className={s.navCta}>Get my plan →</a>
