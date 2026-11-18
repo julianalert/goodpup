@@ -272,7 +272,7 @@ export default async function BreedProblemPage({
               A breed-specific, age-adjusted 30-day plan built around your dog&apos;s history and
               your environment.
             </p>
-            <Link href="/start" className="cta-btn">Build my dog&apos;s plan →</Link>
+            <Link href="/start" className="cta-btn">Get my dog&apos;s plan →</Link>
             <div className="cta-micro">30-day guarantee · Delivered in 60 sec</div>
           </div>
 

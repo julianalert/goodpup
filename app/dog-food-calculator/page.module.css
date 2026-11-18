@@ -34,7 +34,7 @@
   color: white; line-height: 1.12; margin-bottom: 16px;
   max-width: 680px; margin-left: auto; margin-right: auto;
 }
-.hero h1 em { font-weight: 400; font-style: italic; }
+.hero h1 em { font-weight: 400; }
 .heroSub {
   font-size: clamp(15px, 2vw, 17px); font-weight: 300;
   color: rgba(255,255,255,0.68); max-width: 480px;
@@ -178,7 +178,7 @@
   font-size: clamp(28px, 4vw, 40px); font-weight: 600;
   line-height: 1.15; margin-bottom: 16px; color: var(--ink);
 }
-.h2 em { font-weight: 400; font-style: italic; }
+.h2 em { font-weight: 400; }
 .h2Light { color: white; }
 .lead {
   font-size: 17px; color: var(--ink-mid); font-weight: 300;
@@ -286,7 +286,7 @@
   text-align: center;
 }
 .finalCta h2 { color: white; margin-bottom: 16px; font-family: var(--font-playfair), serif; font-size: clamp(28px, 4vw, 40px); font-weight: 600; line-height: 1.15; }
-.finalCta h2 em { font-weight: 400; font-style: italic; }
+.finalCta h2 em { font-weight: 400; }
 .finalCta p { color: rgba(255,255,255,0.65); font-size: 17px; font-weight: 300; margin-bottom: 36px; max-width: 460px; margin-left: auto; margin-right: auto; }
 .btnPrimary {
   display: inline-block;

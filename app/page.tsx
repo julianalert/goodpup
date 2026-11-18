@@ -145,7 +145,7 @@ export default function LandingPage() {
             <p className={s.heroSub}>Answer a few questions about your dog and get a custom training plan that actually fits them: no generic advice, no guesswork.</p>
             <div className={s.heroCtaRow}>
               <Link href="/start" className={s.btnPrimary}>
-                Build my dog&apos;s plan <PiArrowRightBold aria-hidden="true" />
+                Get my dog&apos;s plan <PiArrowRightBold aria-hidden="true" />
               </Link>
               <a href="#inside" className={s.btnGhost}>See what&apos;s inside</a>
             </div>
@@ -708,7 +708,7 @@ export default function LandingPage() {
                     <li key={f} className={s.priceFeature}><PiCheckCircleFill aria-hidden="true" /> {f}</li>
                   ))}
                 </ul>
-                <Link href="/start" className={s.btnCtaMain}>Build my dog&apos;s plan <PiArrowRightBold aria-hidden="true" /></Link>
+                <Link href="/start" className={s.btnCtaMain}>Get my dog&apos;s plan <PiArrowRightBold aria-hidden="true" /></Link>
                 <div className={s.pricingMicro}>
                   <span><PiLockSimpleFill aria-hidden="true" /> Secure payment</span>
                   <span><PiShieldCheckFill aria-hidden="true" /> 30-day guarantee</span>

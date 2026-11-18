@@ -17,7 +17,7 @@
   font-size: 20px; font-weight: 600;
   color: var(--ink); text-decoration: none;
 }
-.navLogo span { font-style: italic; font-weight: 400; color: var(--green); }
+.navLogo span { font-weight: 400; color: var(--green); }
 .navBadge {
   background: var(--green); color: white;
   font-size: 11px; font-weight: 500;
@@ -57,7 +57,7 @@
   font-size: clamp(36px, 6vw, 54px); font-weight: 600;
   color: white; line-height: 1.12; margin-bottom: 22px;
 }
-.hero h1 em { font-weight: 400; font-style: italic; }
+.hero h1 em { font-weight: 400; }
 .heroSub {
   font-size: clamp(16px, 2.5vw, 18px); font-weight: 300;
   color: rgba(255,255,255,0.68); max-width: 500px;
@@ -122,7 +122,7 @@
   line-height: 1.18; margin-bottom: 40px;
   color: var(--ink);
 }
-.h2 em { font-weight: 400; font-style: italic; }
+.h2 em { font-weight: 400; }
 
 /* HOW IT WORKS */
 .stepsGrid {
@@ -156,7 +156,7 @@
   font-size: clamp(24px, 3vw, 34px); font-weight: 600;
   color: white; margin-bottom: 16px; line-height: 1.2;
 }
-.commissionLeft h2 em { font-weight: 400; font-style: italic; }
+.commissionLeft h2 em { font-weight: 400; }
 .commissionLeft p { font-size: 15px; color: rgba(255,255,255,0.5); line-height: 1.7; }
 .commissionRight { display: flex; flex-direction: column; gap: 12px; }
 .commRow {
@@ -249,7 +249,7 @@
   font-size: clamp(28px, 4vw, 42px); font-weight: 600;
   color: white; line-height: 1.15; margin-bottom: 18px;
 }
-.finalCta h2 em { font-weight: 400; font-style: italic; }
+.finalCta h2 em { font-weight: 400; }
 .finalCta > .containerNarrow > p {
   font-size: 17px; font-weight: 300;
   color: rgba(255,255,255,0.65);

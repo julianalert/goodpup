@@ -20,7 +20,7 @@
   font-size: 20px; font-weight: 600;
   color: white; text-decoration: none; white-space: nowrap;
 }
-.brand span { font-style: italic; font-weight: 400; color: rgba(255,255,255,0.7); }
+.brand span { font-weight: 400; color: rgba(255,255,255,0.7); }
 
 .ranges { display: flex; flex-wrap: wrap; gap: 4px; background: rgba(255,255,255,0.1); padding: 3px; border-radius: 20px; max-width: 100%; }
 .rangeLink {
@@ -211,7 +211,7 @@
   display: flex; flex-direction: column; gap: 10px;
 }
 .loginBrand { font-family: var(--font-playfair), serif; font-size: 20px; font-weight: 600; color: var(--green); margin: 0 0 4px; }
-.loginBrand span { font-style: italic; font-weight: 400; color: var(--ink-light); }
+.loginBrand span { font-weight: 400; color: var(--ink-light); }
 .loginTitle { font-size: 22px; font-weight: 600; margin: 0 0 10px; }
 .loginLabel { font-size: 13px; font-weight: 500; color: var(--ink-mid); }
 .loginInput {

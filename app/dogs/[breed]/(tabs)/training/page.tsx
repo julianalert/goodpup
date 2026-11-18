@@ -104,7 +104,7 @@ export default async function BreedTrainingPage({
             age, problem behaviours, and your schedule.
           </p>
           <Link href="/start" className="cta-btn">
-            Build my dog&apos;s plan →
+            Get my dog&apos;s plan →
           </Link>
           <div className="cta-micro">30-day guarantee · Delivered in 60 sec</div>
         </div>

@@ -116,7 +116,7 @@
   font-size: clamp(30px, 4vw, 44px); font-weight: 600;
   line-height: 1.1; margin-bottom: 14px; color: var(--ink);
 }
-.page-header h1 em { font-weight: 400; font-style: italic; }
+.page-header h1 em { font-weight: 400; }
 .page-header p {
   font-size: 17px; color: var(--ink-mid); font-weight: 300;
   max-width: 540px; line-height: 1.7;
@@ -207,7 +207,7 @@
   font-family: var(--font-playfair), 'Playfair Display', serif;
   font-size: 24px; font-weight: 600; color: var(--ink); margin-bottom: 6px;
 }
-.clusters-section h2 em { font-style: italic; font-weight: 400; }
+.clusters-section h2 em { font-weight: 400; }
 .clusters-section .lead { font-size: 15px; color: var(--ink-mid); margin-bottom: 24px; }
 .problem-cluster-grid {
   display: grid;
@@ -245,7 +245,7 @@
   font-size: clamp(28px, 4vw, 40px); font-weight: 600;
   color: white; line-height: 1.1; margin-bottom: 10px;
 }
-.breed-title em { font-weight: 400; font-style: italic; }
+.breed-title em { font-weight: 400; }
 .breed-meta { font-size: 14px; color: rgba(255,255,255,0.55); margin-bottom: 18px; }
 .breed-tags { display: flex; gap: 6px; flex-wrap: wrap; }
 .breed-tag {
@@ -310,7 +310,7 @@
   font-family: var(--font-playfair), 'Playfair Display', serif;
   font-size: 26px; font-weight: 600; color: var(--ink); margin-bottom: 10px; line-height: 1.2;
 }
-.panel-h2 em { font-style: italic; font-weight: 400; }
+.panel-h2 em { font-weight: 400; }
 .panel-lead { font-size: 16px; color: var(--ink-mid); font-weight: 300; line-height: 1.7; margin-bottom: 28px; }
 
 /* Info Grid */
@@ -364,7 +364,7 @@
   font-family: var(--font-playfair), 'Playfair Display', serif;
   font-size: 18px; font-weight: 600; color: white; margin-bottom: 8px; line-height: 1.2;
 }
-.cta-card h3 em { font-style: italic; font-weight: 400; }
+.cta-card h3 em { font-weight: 400; }
 .cta-card p { font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 16px; line-height: 1.6; }
 .cta-btn {
   display: block; background: white; color: var(--green);
@@ -402,7 +402,7 @@
   font-size: clamp(26px, 4vw, 38px); font-weight: 600;
   color: var(--ink); line-height: 1.1; margin-bottom: 10px;
 }
-.problem-title em { font-style: italic; font-weight: 400; }
+.problem-title em { font-weight: 400; }
 .problem-subtitle { font-size: 16px; color: var(--ink-mid); font-weight: 300; max-width: 540px; line-height: 1.7; }
 .problem-meta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
 .meta-chip {
@@ -428,7 +428,7 @@
   margin: 32px 0 10px; line-height: 1.2;
 }
 .article h2 em,
-.article h3 em { font-style: italic; font-weight: 400; }
+.article h3 em { font-weight: 400; }
 .article h2:first-child,
 .article h3:first-child { margin-top: 0; }
 .article p { font-size: 15px; color: var(--ink-mid); line-height: 1.75; margin-bottom: 16px; }
@@ -501,7 +501,7 @@
   font-size: clamp(28px, 4vw, 42px); font-weight: 600;
   color: var(--ink); line-height: 1.1; margin-bottom: 12px;
 }
-.page-title em { font-style: italic; font-weight: 400; }
+.page-title em { font-weight: 400; }
 .page-lead { font-size: 16px; color: var(--ink-mid); font-weight: 300; max-width: 520px; line-height: 1.7; margin-bottom: 20px; }
 .header-meta { display: flex; gap: 10px; flex-wrap: wrap; }
 
@@ -588,7 +588,7 @@
   font-family: var(--font-playfair), 'Playfair Display', serif;
   font-size: 22px; font-weight: 600; color: var(--ink); margin-bottom: 6px;
 }
-.other-problems h2 em { font-style: italic; font-weight: 400; }
+.other-problems h2 em { font-weight: 400; }
 .other-problems .lead { font-size: 14px; color: var(--ink-mid); margin-bottom: 20px; }
 .problems-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
 .problem-card {

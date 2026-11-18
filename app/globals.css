@@ -35,7 +35,8 @@ body {
   overflow-x: hidden;
 }
 
-em { font-style: italic; }
+/* Accent text (<em>) is styled with weight/colour, never italic */
+em { font-style: normal; }
 
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(20px); }

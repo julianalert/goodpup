@@ -20,7 +20,7 @@
   color: white;
   text-decoration: none;
 }
-.navLogo span { font-style: italic; font-weight: 400; color: rgba(255,255,255,0.7); }
+.navLogo span { font-weight: 400; color: rgba(255,255,255,0.7); }
 
 /* MAIN */
 .main {
