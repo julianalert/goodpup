@@ -359,7 +359,7 @@
   .bottomTrust { padding: 14px 16px; gap: 6px 14px; }
 
   .stickyCta {
-    display: flex; align-items: center; gap: 12px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
     padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
     background: rgba(255,255,255,0.97);
@@ -374,19 +374,21 @@
   .stickyPriceRow { display: flex; align-items: baseline; gap: 6px; line-height: 1; }
   .stickyNew {
     font-family: var(--font-playfair), serif;
-    font-size: 26px; font-weight: 600; color: var(--green);
+    font-size: 26px; font-weight: 600; color: var(--ink);
   }
   .stickyOld { font-size: 14px; color: var(--ink-light); text-decoration: line-through; }
   .stickySub { font-size: 11px; color: var(--ink-light); line-height: 1.2; margin-top: 4px; }
   .stickyBtn {
-    flex: 1; height: 52px;
-    background: var(--green); color: white;
+    /* Sized to its label, not stretched across the bar */
+    flex: 0 0 auto; height: 52px; padding: 0 26px;
+    /* Dark text: white on this yellow is too faint to read */
+    background: #ffc123; color: var(--ink);
     border: none; border-radius: 99px; cursor: pointer;
     font-family: var(--font-dm-sans), sans-serif; font-size: 16px; font-weight: 500;
     touch-action: manipulation; -webkit-tap-highlight-color: transparent;
     transition: background 0.15s, transform 0.1s;
   }
-  .stickyBtn:active { background: #155a3d; transform: scale(0.985); }
+  .stickyBtn:active { background: #eeb011; transform: scale(0.985); }
   .stickyBtn:disabled { opacity: 0.75; cursor: default; }
 }
 
