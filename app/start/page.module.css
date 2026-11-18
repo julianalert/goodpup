@@ -108,8 +108,6 @@
 }
 
 @media (max-width: 640px) {
-  /* Keep the trust row to one line on phones: three items fit, four wrap */
-  .trustItem:last-child { display: none; }
   /* After step 1 the intro collapses to a thin band so the question is at the top */
   .heroCollapsed { padding: 0; height: 36px; }
   .heroCollapsed > *,
@@ -134,17 +132,25 @@
 }
 
 /* PROGRESS */
-.progressBarTrack { height: 3px; background: var(--cream-dark); }
+/* Sits inside the card (not on its top edge) and uses the amber accent, so it
+   reads clearly instead of blending into the green header behind the card */
+.progressBarTrack {
+  height: 8px;
+  margin: 18px 18px 0;
+  background: var(--cream-dark);
+  border-radius: 99px;
+  overflow: hidden;
+}
 .progressBarFill {
   height: 100%;
-  background: var(--green);
-  border-radius: 0 99px 99px 0;
+  background: #F5A623;
+  border-radius: 99px;
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* STEPS */
 .step {
-  padding: 22px 18px 20px;
+  padding: 14px 18px 20px;
   animation: fadeIn 0.3s ease;
 }
 
@@ -557,7 +563,8 @@
   .formWrap { margin-top: -32px; padding: 0 16px 64px; }
   .formCard { border-radius: 20px; }
 
-  .step { padding: 32px 32px 28px; }
+  .progressBarTrack { margin: 28px 32px 0; }
+  .step { padding: 18px 32px 28px; }
   .stepTitle { font-size: 22px; margin-bottom: 6px; }
   .stepSub { font-size: 13px; margin-bottom: 28px; }
   .fieldLabel { font-size: 13px; }

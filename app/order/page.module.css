@@ -62,10 +62,6 @@
   gap: 28px;
   align-items: start;
 }
-@media (max-width: 720px) {
-  .pageWrap { grid-template-columns: 1fr; }
-  .colRight { order: -1; }
-}
 
 .colLeft { display: flex; flex-direction: column; gap: 20px; }
 .colLeft > * { animation: fadeUp 0.45s ease both; }
@@ -176,9 +172,13 @@
   opacity: 0.5;
 }
 .previewUnlock {
+  display: block; width: 100%;
+  background: none; border: none; cursor: pointer;
+  font-family: var(--font-dm-sans), sans-serif;
   text-align: center; padding: 10px 0 4px;
   font-size: 12px; color: var(--green); font-weight: 500;
 }
+.previewUnlock:disabled { opacity: 0.6; cursor: default; }
 
 /* TRUST SIGNALS */
 .trustList { display: flex; flex-direction: column; gap: 0; }
@@ -286,8 +286,10 @@
   padding: 17px 24px; margin-bottom: 12px;
   transition: all 0.2s; line-height: 1;
 }
-.btnCheckout:hover { background: #155a3d; transform: translateY(-1px); }
-.btnCheckout:active { transform: translateY(0); }
+@media (hover: hover) {
+  .btnCheckout:hover { background: #155a3d; transform: translateY(-1px); }
+}
+.btnCheckout:active { background: #155a3d; transform: translateY(0); }
 .btnCheckout small { display: block; font-size: 11px; opacity: 0.7; margin-top: 3px; font-weight: 300; }
 
 .orderMicro { display: flex; flex-direction: column; gap: 7px; margin-top: 14px; }
@@ -332,4 +334,114 @@
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* MOBILE PAY BAR — only shown on phones (see below) */
+.stickyCta { display: none; }
+
+/* ── Phones ─────────────────────────────────────────────────────────────────
+   Desktop keeps the two-column layout above. On a phone the page is one column
+   in selling order: what you get first, the price once there is context, and a
+   fixed pay bar so the button is always within reach. */
+@media (max-width: 720px) {
+  .nav { padding: 12px 16px; gap: 0; }
+  .navLogo { font-size: 18px; }
+  .navSecure { margin-left: 12px; padding-left: 12px; color: rgba(255,255,255,0.7); }
+
+  /* Steps: label under each dot, so all three fit the width */
+  .progressStrip { padding: 10px 12px 9px; }
+  .progressSteps { max-width: 360px; align-items: flex-start; }
+  .progStep {
+    flex: 0 0 88px; flex-direction: column; gap: 4px;
+    font-size: 11px; line-height: 1.2; text-align: center;
+  }
+  .progLine { margin: 11px -26px 0; min-width: 0; }
+
+  .pageWrap {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    /* bottom padding clears the fixed pay bar */
+    padding: 14px 14px calc(104px + env(safe-area-inset-bottom, 0px));
+  }
+  /* Let the left column's cards and the order box share one flow so they can be ordered */
+  .colLeft { display: contents; }
+  .secHero    { order: 1; }
+  .secInside  { order: 2; }
+  .secPreview { order: 3; }
+  .colRight   { order: 4; position: static; }
+  .secTrust   { order: 5; }
+  .secSummary { order: 6; }
+
+  .heroCard { padding: 22px 18px; border-radius: 16px; }
+  .heroTag { margin-bottom: 12px; }
+  .heroCard h1 { font-size: 24px; text-wrap: balance; }
+  .heroCard p { line-height: 1.5; }
+  .dogPill { display: flex; border-radius: 12px; padding: 9px 12px; line-height: 1.4; margin-top: 14px; }
+
+  .cardHeader { padding: 14px 16px 12px; }
+  .cardTitle { font-size: 15px; }
+  .cardBody { padding: 14px 16px; }
+
+  .insideItem { gap: 12px; padding: 12px 0; }
+  .insideItem:first-child { padding-top: 2px; }
+  .insideText h4 { font-size: 14px; line-height: 1.35; }
+  .insideText p { font-size: 13px; }
+
+  .previewRow { flex-direction: column; gap: 6px; }
+  .previewWeek { margin-top: 0; }
+  .previewDay { font-size: 13px; }
+  .previewEx { font-size: 13px; }
+  .previewUnlock { font-size: 14px; padding: 14px 0 6px; }
+
+  .trustItem { align-items: flex-start; font-size: 14px; line-height: 1.5; }
+  .trustItem:first-child { padding-top: 2px; }
+  .trustIcon { margin-top: 1px; }
+  .miniQuote { font-size: 14px; }
+
+  .summaryRow { font-size: 14px; }
+  .sumVal { min-width: 0; overflow-wrap: anywhere; }
+
+  .orderBox { border-color: var(--green); border-radius: 16px; }
+  .orderBoxHeader { padding: 18px 18px 14px; }
+  .orderPriceNew { font-size: 44px; }
+  .orderBoxBody { padding: 14px 18px 18px; }
+  .orderLine { font-size: 14px; }
+  .btnCheckout { padding: 18px 20px; font-size: 17px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  .btnCheckout small { font-size: 12px; margin-top: 5px; }
+  .orderMicro { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; }
+  .orderMicroItem { align-items: flex-start; line-height: 1.3; }
+  .guaranteeText { font-size: 13px; }
+  .urgencyBar { font-size: 13px; }
+  .bottomTrust { padding: 14px 16px; gap: 6px 14px; }
+
+  .stickyCta {
+    display: flex; align-items: center; gap: 12px;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: rgba(255,255,255,0.97);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 20px rgba(28,28,26,0.08);
+    transition: transform 0.25s ease, opacity 0.25s ease;
+  }
+  .stickyCtaHidden { transform: translateY(110%); opacity: 0; pointer-events: none; }
+  .stickyPrice { flex-shrink: 0; }
+  .stickyPriceRow { display: flex; align-items: baseline; gap: 6px; line-height: 1; }
+  .stickyNew {
+    font-family: var(--font-playfair), serif;
+    font-size: 26px; font-weight: 600; color: var(--green);
+  }
+  .stickyOld { font-size: 14px; color: var(--ink-light); text-decoration: line-through; }
+  .stickySub { font-size: 11px; color: var(--ink-light); line-height: 1.2; margin-top: 4px; }
+  .stickyBtn {
+    flex: 1; height: 52px;
+    background: var(--green); color: white;
+    border: none; border-radius: 99px; cursor: pointer;
+    font-family: var(--font-dm-sans), sans-serif; font-size: 16px; font-weight: 500;
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .stickyBtn:active { background: #155a3d; transform: scale(0.985); }
+  .stickyBtn:disabled { opacity: 0.75; cursor: default; }
 }

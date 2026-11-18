@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { trackEvent } from '@/lib/mixpanel-client'
 import { DISCOUNT_LABEL, LIST_PRICE_LABEL, PRICE_LABEL } from '@/lib/pricing'
 import s from './page.module.css'
@@ -106,10 +106,24 @@ export default function OrderPage() {
       .catch(() => { /* keep DEFAULT_DATA */ })
   }, [])
 
-  const handleCheckout = async () => {
+  // Phones get a fixed pay bar; it steps aside while the main pay button is on screen
+  const mainCtaRef = useRef<HTMLButtonElement>(null)
+  const [mainCtaVisible, setMainCtaVisible] = useState(false)
+
+  useEffect(() => {
+    const el = mainCtaRef.current
+    if (!el || typeof IntersectionObserver === 'undefined') return
+    const observer = new IntersectionObserver(([entry]) => setMainCtaVisible(entry.isIntersecting), { threshold: 0.6 })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  const handleCheckout = async (source: 'order_box' | 'sticky_bar' | 'preview') => {
+    if (checkoutState === 'loading') return
     setCheckoutState('loading')
 
     trackEvent('checkout_started', {
+      source,
       session_id: sessionId ?? undefined,
       dog_breed: data.dogBreed,
       problem_count: data.problems.length,
@@ -185,15 +199,15 @@ export default function OrderPage() {
         <div className={s.colLeft}>
 
           {/* HERO CARD */}
-          <div className={s.heroCard}>
+          <div className={`${s.heroCard} ${s.secHero}`}>
             <div className={s.heroTag}>✦ Almost there</div>
             <h1>Your plan is being <em>built for {data.dogName}.</em></h1>
-            <p>One payment and our AI will generate a complete, breed-specific 30-day training program tailored to {data.dogName}&apos;s exact profile and your situation. Delivered to your inbox in under 60 seconds.</p>
+            <p>One payment and our AI will generate a complete, breed-specific 30-day training program tailored to {data.dogName}&apos;s exact profile and your situation. Delivered to your inbox in a few minutes.</p>
             <div className={s.dogPill}>{dogPillText}</div>
           </div>
 
           {/* PLAN SUMMARY */}
-          <div className={s.card}>
+          <div className={`${s.card} ${s.secSummary}`}>
             <div className={s.cardHeader}>
               <div className={s.cardHeaderIcon}>📋</div>
               <div className={s.cardTitle}>Your plan summary</div>
@@ -235,7 +249,7 @@ export default function OrderPage() {
           </div>
 
           {/* WHAT'S INSIDE */}
-          <div className={s.card}>
+          <div className={`${s.card} ${s.secInside}`}>
             <div className={s.cardHeader}>
               <div className={s.cardHeaderIcon}>📦</div>
               <div className={s.cardTitle}>What&apos;s inside your plan</div>
@@ -265,7 +279,7 @@ export default function OrderPage() {
           </div>
 
           {/* SAMPLE PREVIEW */}
-          <div className={s.card}>
+          <div className={`${s.card} ${s.secPreview}`}>
             <div className={s.cardHeader}>
               <div className={s.cardHeaderIcon}>👁</div>
               <div className={s.cardTitle}>Preview — a glimpse of your plan</div>
@@ -301,12 +315,14 @@ export default function OrderPage() {
                   </div>
                 </div>
               </div>
-              <div className={s.previewUnlock}>🔒 Unlock all 30 days + full exercises →</div>
+              <button type="button" className={s.previewUnlock} onClick={() => handleCheckout('preview')} disabled={checkoutState === 'loading'}>
+                🔒 Unlock all 30 days + full exercises →
+              </button>
             </div>
           </div>
 
           {/* TRUST SIGNALS */}
-          <div className={s.card}>
+          <div className={`${s.card} ${s.secTrust}`}>
             <div className={s.cardHeader}>
               <div className={s.cardHeaderIcon}>🛡</div>
               <div className={s.cardTitle}>Why you can trust this</div>
@@ -314,7 +330,7 @@ export default function OrderPage() {
             <div className={s.cardBody}>
               <div className={s.trustList}>
                 {[
-                  { icon: '⚡', text: <><strong>Ready in under 60 seconds.</strong> The moment payment clears, your plan is generated and sent straight to your inbox. No waiting.</> },
+                  { icon: '⚡', text: <><strong>Ready in a few minutes.</strong> The moment payment clears, your plan is generated and sent straight to your inbox.</> },
                   { icon: '🎯', text: <><strong>Built only for {data.dogName}.</strong> Every section — the diagnostic, the exercises, the mistakes list — is generated from {data.dogName}&apos;s specific profile. Not a template with your dog&apos;s name dropped in.</> },
                   { icon: '📄', text: <><strong>A real, usable document.</strong> You get a polished PDF you can open on your phone during walks, print, or share with your partner. No app, no login, no faff.</> },
                   { icon: '🔄', text: <><strong>30-day money-back guarantee.</strong> If the plan isn&apos;t useful, email us within 30 days and we&apos;ll refund you in full. No questions, no forms.</> },
@@ -375,20 +391,22 @@ export default function OrderPage() {
               </div>
 
               <button
+                ref={mainCtaRef}
+                type="button"
                 className={s.btnCheckout}
-                onClick={handleCheckout}
+                onClick={() => handleCheckout('order_box')}
                 disabled={checkoutState === 'loading'}
                 style={checkoutState === 'loading' ? { opacity: 0.75, cursor: 'default' } : {}}
               >
                 {checkoutState === 'loading' ? 'Redirecting to secure payment…' : `Pay ${PRICE_LABEL} — Get my plan`}
-                {checkoutState === 'idle' && <small>Delivered to your inbox in &lt; 60 seconds</small>}
+                {checkoutState === 'idle' && <small>Delivered to your inbox in a few minutes</small>}
                 {checkoutState === 'error' && <small style={{ color: '#ffb3ae' }}>Something went wrong — please try again</small>}
               </button>
 
               <div className={s.orderMicro}>
                 <div className={s.orderMicroItem}><span className={s.microIcon}>🔒</span> Secured by Stripe · SSL encrypted</div>
                 <div className={s.orderMicroItem}><span className={s.microIcon}>↩️</span> 30-day money-back guarantee</div>
-                <div className={s.orderMicroItem}><span className={s.microIcon}>📧</span> Sent instantly to your inbox</div>
+                <div className={s.orderMicroItem}><span className={s.microIcon}>📧</span> Sent straight to your inbox</div>
                 <div className={s.orderMicroItem}><span className={s.microIcon}>🚫</span> No subscription — ever</div>
               </div>
 
@@ -409,12 +427,32 @@ export default function OrderPage() {
             <div className={s.bottomTrust}>
               <div className={s.btItem}>💳 Visa / Mastercard / Amex</div>
               <div className={s.btItem}>🔒 SSL secure</div>
-              <div className={s.btItem}>⚡ Instant delivery</div>
+              <div className={s.btItem}>⚡ Ready in minutes</div>
             </div>
 
           </div>
         </div>
 
+      </div>
+
+      {/* MOBILE PAY BAR — hidden on desktop, and while the main pay button is in view */}
+      <div className={`${s.stickyCta} ${mainCtaVisible ? s.stickyCtaHidden : ''}`} aria-hidden={mainCtaVisible}>
+        <div className={s.stickyPrice}>
+          <div className={s.stickyPriceRow}>
+            <span className={s.stickyNew}>{PRICE_LABEL}</span>
+            <span className={s.stickyOld}>{LIST_PRICE_LABEL}</span>
+          </div>
+          <div className={s.stickySub}>One-time · 30-day guarantee</div>
+        </div>
+        <button
+          type="button"
+          className={s.stickyBtn}
+          onClick={() => handleCheckout('sticky_bar')}
+          disabled={checkoutState === 'loading'}
+          tabIndex={mainCtaVisible ? -1 : undefined}
+        >
+          {checkoutState === 'loading' ? 'Redirecting…' : checkoutState === 'error' ? 'Try again →' : 'Get my plan →'}
+        </button>
       </div>
     </>
   )

@@ -349,7 +349,8 @@ export default function FormPage() {
   //   GEN_DELAYS.forEach((delay, i) => { setTimeout(() => setGenStepIndex(i), delay) })
   //   setTimeout(() => router.push('/order'), 7000)
 
-  const progress = ((step - 1) / 5) * 100
+  // Step n of 5 fills n fifths, so the bar is already visible on step 1
+  const progress = (step / 5) * 100
 
   const optionCard = (name: string, value: string, icon: string, label: React.ReactNode, checked: boolean, onChange: () => void) => (
     <label key={value} className={s.optionCard} onClick={onChange}>
@@ -421,7 +422,7 @@ export default function FormPage() {
       <div className={`${s.hero} ${step > 1 ? s.heroCollapsed : ''}`}>
         {heroTitle}
         <div className={s.trustRow}>
-          {['Breed-specific', 'Age-adapted', 'Problem-focused', 'Ready in 60 sec'].map((t) => (
+          {['Breed-specific', 'Age-adapted', 'Problem-focused'].map((t) => (
             <div key={t} className={s.trustItem}><span className={s.trustDot} />{t}</div>
           ))}
         </div>
@@ -621,7 +622,7 @@ export default function FormPage() {
             <div className={s.step}>
               <div className={s.stepIndicator}>Step 5 of 5</div>
               <div className={s.stepTitle}>Where to send your plan?</div>
-              <div className={s.stepSub}>Your personalized plan will be ready in under 60 seconds.</div>
+              <div className={s.stepSub}>Your personalized plan will be ready in a few minutes.</div>
 
               <div className={s.field}>
                 <label className={s.fieldLabel}>Email address <span className={s.required}>*</span></label>
