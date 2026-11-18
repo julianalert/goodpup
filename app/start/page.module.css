@@ -536,6 +536,14 @@
 .selectionHint { font-size: 13px; color: var(--ink-light); margin-top: 8px; }
 .selectionHintWarn { color: var(--amber) !important; }
 
+/* Shown for a moment while a finished quiz is forwarded to the order page */
+.forwardNote {
+  padding: 72px 24px;
+  text-align: center;
+  font-size: 15px;
+  color: var(--ink-light);
+}
+
 /* Hover effects only where there is a real pointer — on touch they stick after a tap */
 @media (hover: hover) {
   .optionLabel:hover { border-color: var(--green-mid); background: var(--green-pale); }

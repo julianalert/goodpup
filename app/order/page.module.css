@@ -117,6 +117,11 @@
 .cardTitle {
   font-size: 14px; font-weight: 500; color: var(--ink);
 }
+.cardEdit {
+  margin-left: auto; padding: 6px 0 6px 12px;
+  font-size: 13px; font-weight: 500; color: var(--green);
+  text-decoration: underline; text-underline-offset: 3px;
+}
 .cardBody { padding: 18px 22px; }
 
 /* WHAT'S INSIDE */

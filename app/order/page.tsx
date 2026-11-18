@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { trackEvent } from '@/lib/mixpanel-client'
 import { DISCOUNT_LABEL, LIST_PRICE_LABEL, PRICE_LABEL } from '@/lib/pricing'
 import s from './page.module.css'
@@ -359,6 +360,8 @@ export default function OrderPage() {
             <div className={s.cardHeader}>
               <div className={s.cardHeaderIcon}>📋</div>
               <div className={s.cardTitle}>Your plan summary</div>
+              {/* ?edit=1 stops /start from sending a finished quiz straight back here */}
+              <Link href="/start?edit=1" className={s.cardEdit}>Edit answers</Link>
             </div>
             <div className={s.cardBody}>
               <div className={s.summaryBlock}>

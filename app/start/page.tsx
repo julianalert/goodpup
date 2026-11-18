@@ -171,12 +171,27 @@ export default function FormPage() {
   const sessionId = useRef<string>('')
   const maxStep = useRef(0)
   const [ready, setReady] = useState(false)
+  // True while a returning visitor with a finished quiz is being sent on to /order
+  const [forwarding, setForwarding] = useState(false)
 
   const [form, setForm] = useState<FormData>(EMPTY_FORM)
 
   useEffect(() => {
     let cancelled = false
     const saved = loadSavedQuiz()
+
+    // A visitor who already finished the quiz goes straight to the order page instead
+    // of seeing the quiz again. /start?edit=1 (the "Edit answers" link on the order
+    // page) skips this so they can still change their answers.
+    const editing = new URLSearchParams(window.location.search).has('edit')
+    // The server decides (status 'completed', below). This is only a local guess used
+    // to hide the quiz while we ask, so a finished visitor doesn't see it flash by.
+    // The step-5-with-an-email case covers quizzes finished before maxStep was stored.
+    const looksFinished = Boolean(
+      saved && !editing &&
+      (saved.maxStep >= 5 || (saved.step === 5 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(saved.form.email)))
+    )
+    if (looksFinished) setForwarding(true)
 
     if (saved) {
       sessionId.current = saved.sessionId
@@ -189,20 +204,39 @@ export default function FormPage() {
     }
     setReady(true)
 
-    trackEvent('form_started', { session_id: sessionId.current, resumed: Boolean(saved), resumed_step: saved?.step })
+    trackEvent('form_started', { session_id: sessionId.current, resumed: Boolean(saved), resumed_step: saved?.step, looks_finished: looksFinished })
 
     registerOpen(sessionId.current).then((status) => {
+      if (cancelled) return
+
       // That quiz was already paid for — it's finished, so this visit is a new one.
-      if (status !== 'paid' || cancelled) return
-      sessionId.current = newSessionId()
-      maxStep.current = 0
-      setForm(EMPTY_FORM)
-      setStep(1)
-      registerOpen(sessionId.current)
+      if (status === 'paid') {
+        sessionId.current = newSessionId()
+        maxStep.current = 0
+        setForm(EMPTY_FORM)
+        setStep(1)
+        setForwarding(false)
+        registerOpen(sessionId.current)
+        return
+      }
+
+      // Confirmed complete on the server: hand the answers to the order page
+      // (same keys the normal submit uses) and go there.
+      if (saved && !editing && status === 'completed') {
+        try {
+          sessionStorage.setItem('pawcraft_form', JSON.stringify(saved.form))
+          sessionStorage.setItem('pawcraft_session_id', saved.sessionId)
+        } catch { /* ignore */ }
+        router.replace('/order')
+        return
+      }
+
+      // Not confirmed (save never reached the server, or we're offline): show the quiz
+      setForwarding(false)
     })
 
     return () => { cancelled = true }
-  }, [])
+  }, [router])
 
   // Keep the saved copy current on every answer and step change
   useEffect(() => {
@@ -325,6 +359,7 @@ export default function FormPage() {
       ...getStepPayload(4),
       ...getStepPayload(5),
     })
+    storeQuiz({ sessionId: sessionId.current, step: 5, maxStep: 5, form, updatedAt: Date.now() })
     setSaving(false)
 
     identifyUser(sessionId.current, { $email: form.email })
@@ -384,6 +419,15 @@ export default function FormPage() {
       <p className={s.heroSub}>Answer 5 quick questions so our AI can generate a program that actually fits your dog, not a generic guide.</p>
     </>
   )
+
+  if (forwarding) {
+    return (
+      <>
+        {header}
+        <p className={s.forwardNote}>Taking you back to your plan…</p>
+      </>
+    )
+  }
 
   if (generating) {
     return (
