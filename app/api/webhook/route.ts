@@ -34,9 +34,10 @@ export async function POST(req: NextRequest) {
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session
 
-    // Only process paid sessions (mode=payment is always 'paid' on completion,
-    // but guard against subscription free trials etc.)
-    if (session.payment_status !== 'paid') {
+    // Only process completed orders. 'paid' is the normal case; 'no_payment_required'
+    // is a checkout whose total came to $0 because of a 100%-off promotion code,
+    // which is still an order that must receive its plan.
+    if (session.payment_status !== 'paid' && session.payment_status !== 'no_payment_required') {
       return NextResponse.json({ received: true })
     }
 

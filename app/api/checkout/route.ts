@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe, PRICE_CENTS } from '@/lib/stripe'
 import { createServerClient } from '@/lib/supabase'
-import { SITE_URL } from '@/lib/site'
 
 export async function POST(req: NextRequest) {
   let session_id: string
@@ -58,14 +57,15 @@ export async function POST(req: NextRequest) {
             product_data: {
               name: productName,
               description,
-              // Must be a public URL (Stripe fetches it), so always the live site's copy
-              images: [`${SITE_URL}/icon.png`],
             },
             unit_amount: PRICE_CENTS,
           },
           quantity: 1,
         },
       ],
+      // Shows Stripe's "Add promotion code" field. It accepts the customer-facing
+      // promotion codes attached to a coupon in the Stripe dashboard.
+      allow_promotion_codes: true,
       // Reassurance shown right above the Pay button
       custom_text: {
         submit: {
