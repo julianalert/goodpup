@@ -312,12 +312,18 @@ export default function FormPage() {
   const submit = async () => {
     setSaving(true)
     maxStep.current = 5
-    // Save final step with status = 'completed'
+    // Final save: status = 'completed', and every answer again rather than just the email.
+    // Steps 1-4 are saved in the background and can be lost (network blip, or a resumed
+    // quiz whose row no longer exists); this guarantees the completed row is whole,
+    // so checkout and the generated plan always have the dog's details.
     await saveStepToApi({
       session_id: sessionId.current,
       current_step: 5,
-      email: form.email,
-      status: 'completed',
+      ...getStepPayload(1),
+      ...getStepPayload(2),
+      ...getStepPayload(3),
+      ...getStepPayload(4),
+      ...getStepPayload(5),
     })
     setSaving(false)
 

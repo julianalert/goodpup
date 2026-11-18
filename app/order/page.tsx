@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import { trackEvent } from '@/lib/mixpanel-client'
 import { DISCOUNT_LABEL, LIST_PRICE_LABEL, PRICE_LABEL } from '@/lib/pricing'
 import s from './page.module.css'
@@ -339,12 +340,14 @@ export default function OrderPage() {
 
               <div className={s.miniTestimonial}>
                 <div className={s.miniStars}>★★★★★</div>
-                <div className={s.miniQuote}>&ldquo;My trainer quoted me $600 for a 6-session package. I tried PawCraft first for {PRICE_LABEL}. Honestly, the plan was more detailed than what he gave me in session one.&rdquo;</div>
+                <div className={s.miniQuote}>&ldquo;A trainer quoted me $600 for six sessions. I tried PawCraft first for {PRICE_LABEL}, and it gave me everything I needed to train Nala myself.&rdquo;</div>
                 <div className={s.miniAuthor}>
-                  <div className={s.miniAvatar}>JK</div>
+                  <div className={s.miniAvatar}>
+                    <Image src="/images/carine.jpeg" alt="Carine P." width={120} height={120} />
+                  </div>
                   <div>
-                    <div className={s.miniName}>Jamie K.</div>
-                    <div className={s.miniDog}>Bruno · French Bulldog · 3 years</div>
+                    <div className={s.miniName}>Carine P.</div>
+                    <div className={s.miniDog}>Nala · Dogue de Bordeaux · 6 months</div>
                   </div>
                 </div>
               </div>

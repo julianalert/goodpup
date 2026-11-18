@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe, PRICE_CENTS } from '@/lib/stripe'
 import { createServerClient } from '@/lib/supabase'
+import { SITE_URL } from '@/lib/site'
 
 export async function POST(req: NextRequest) {
   let session_id: string
@@ -31,12 +32,21 @@ export async function POST(req: NextRequest) {
     .eq('session_id', session_id)
     .maybeSingle()
 
-  const dogName  = submission?.dog_name  ?? 'your dog'
-  const dogBreed = submission?.dog_breed ?? ''
+  const dogName  = submission?.dog_name?.trim()  ?? ''
+  const dogBreed = submission?.dog_breed?.trim() ?? ''
   const email    = submission?.email     ?? undefined
 
-  // Build a human-readable product description
-  const description = [dogBreed, dogName].filter(Boolean).join(' · ')
+  // What the buyer reads on Stripe's page, left of the card form.
+  // "PawCraft" stays in the name: the Stripe account is shared with other products,
+  // so it is what identifies this purchase on the page, the receipt and the dashboard.
+  const productName = dogName
+    ? `PawCraft · ${dogName}'s 30-Day Training Plan`
+    : 'PawCraft · Personalized 30-Day Training Plan'
+
+  const contents = 'temperament diagnostic, day-by-day program, exercises with timings, mistakes to avoid and weekly checklist'
+  const description = dogName
+    ? `Built for ${dogName}${dogBreed ? `, your ${dogBreed}` : ''}: ${contents}.`
+    : `${contents.charAt(0).toUpperCase()}${contents.slice(1)}.`
 
   try {
     const checkoutSession = await stripe.checkout.sessions.create({
@@ -46,14 +56,22 @@ export async function POST(req: NextRequest) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: 'PawCraft — Personalized 30-Day Training Plan',
-              description: description || undefined,
+              name: productName,
+              description,
+              // Must be a public URL (Stripe fetches it), so always the live site's copy
+              images: [`${SITE_URL}/icon.png`],
             },
             unit_amount: PRICE_CENTS,
           },
           quantity: 1,
         },
       ],
+      // Reassurance shown right above the Pay button
+      custom_text: {
+        submit: {
+          message: 'One-time payment, no subscription. Your plan arrives by email in a few minutes.',
+        },
+      },
       // Pre-fill customer email if we have it
       ...(email ? { customer_email: email } : {}),
       // Link back to our submission row via metadata
