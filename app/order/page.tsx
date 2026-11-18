@@ -301,7 +301,7 @@ export default function OrderPage() {
           <div className={`${s.card} ${s.secInside}`}>
             <div className={s.cardHeader}>
               <div className={s.cardHeaderIcon}>📦</div>
-              <div className={s.cardTitle}>What&apos;s inside {name}&apos;s plan</div>
+              <h2 className={s.cardTitle}>What&apos;s inside {name}&apos;s plan</h2>
             </div>
             <div className={s.cardBody}>
               <div className={s.insideList}>
@@ -318,39 +318,17 @@ export default function OrderPage() {
             </div>
           </div>
 
-          {/* TRUST SIGNALS */}
-          <div className={`${s.card} ${s.secTrust}`}>
-            <div className={s.cardHeader}>
-              <div className={s.cardHeaderIcon}>🛡</div>
-              <div className={s.cardTitle}>Why you can trust this</div>
-            </div>
-            <div className={s.cardBody}>
-              <div className={s.trustList}>
-                {[
-                  { icon: '⚡', text: <><strong>Ready in a few minutes.</strong> The moment payment clears, your plan is generated and sent straight to your inbox.</> },
-                  { icon: '🎯', text: <><strong>Built only for {data.dogName}.</strong> Every section (the diagnostic, the exercises, the mistakes list) is generated from {data.dogName}&apos;s specific profile. Not a template with your dog&apos;s name dropped in.</> },
-                  { icon: '📄', text: <><strong>A real, usable document.</strong> You get a polished PDF you can open on your phone during walks, print, or share with your partner. No app, no login, no faff.</> },
-                  { icon: '🔒', text: <><strong>Safe &amp; secure payment.</strong> Processed by Stripe. We never see or store your card details.</> },
-                ].map((item, i) => (
-                  <div key={i} className={s.trustItem}>
-                    <span className={s.trustIcon}>{item.icon}</span>
-                    <span>{item.text}</span>
-                  </div>
-                ))}
+          {/* TESTIMONIAL */}
+          <div className={`${s.miniTestimonial} ${s.secQuote}`}>
+            <div className={s.miniStars}>★★★★★</div>
+            <div className={s.miniQuote}>&ldquo;A trainer quoted me $600 for six sessions. I tried PawCraft first for {PRICE_LABEL}, and it gave me everything I needed to train Nala myself.&rdquo;</div>
+            <div className={s.miniAuthor}>
+              <div className={s.miniAvatar}>
+                <Image src="/images/carine.jpeg" alt="Carine P." width={120} height={120} />
               </div>
-
-              <div className={s.miniTestimonial}>
-                <div className={s.miniStars}>★★★★★</div>
-                <div className={s.miniQuote}>&ldquo;A trainer quoted me $600 for six sessions. I tried PawCraft first for {PRICE_LABEL}, and it gave me everything I needed to train Nala myself.&rdquo;</div>
-                <div className={s.miniAuthor}>
-                  <div className={s.miniAvatar}>
-                    <Image src="/images/carine.jpeg" alt="Carine P." width={120} height={120} />
-                  </div>
-                  <div>
-                    <div className={s.miniName}>Carine P.</div>
-                    <div className={s.miniDog}>Nala · Dogue de Bordeaux · 6 months</div>
-                  </div>
-                </div>
+              <div>
+                <div className={s.miniName}>Carine P.</div>
+                <div className={s.miniDog}>Nala · Dogue de Bordeaux · 6 months</div>
               </div>
             </div>
           </div>
@@ -359,7 +337,7 @@ export default function OrderPage() {
           <div className={`${s.card} ${s.secSummary}`}>
             <div className={s.cardHeader}>
               <div className={s.cardHeaderIcon}>📋</div>
-              <div className={s.cardTitle}>Your plan summary</div>
+              <h2 className={s.cardTitle}>Your plan summary</h2>
               {/* ?edit=1 stops /start from sending a finished quiz straight back here */}
               <Link href="/start?edit=1" className={s.cardEdit}>Edit answers</Link>
             </div>
@@ -449,7 +427,7 @@ export default function OrderPage() {
               <div className={s.orderMicro}>
                 <div className={s.orderMicroItem}><span className={s.microIcon}>🔒</span> Secured by Stripe · SSL encrypted</div>
                 <div className={s.orderMicroItem}><span className={s.microIcon}>📧</span> Sent straight to your inbox</div>
-                <div className={s.orderMicroItem}><span className={s.microIcon}>🐾</span> Your own personal space online</div>
+                <div className={s.orderMicroItem}><span className={s.microIcon}>🐾</span> Accessible online from your personal space</div>
                 <div className={s.orderMicroItem}><span className={s.microIcon}>🚫</span> No subscription, ever</div>
               </div>
 
