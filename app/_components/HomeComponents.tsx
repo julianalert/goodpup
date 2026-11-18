@@ -1,22 +1,43 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useId } from 'react'
+import { PiPlusBold } from 'react-icons/pi'
 import s from '../page.module.css'
 
 export function FaqItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false)
+  const answerId = useId()
   return (
-    <div className={s.faqItem} onClick={() => setOpen(!open)}>
-      <div className={s.faqQuestion}>
+    <div className={`${s.faqItem} ${open ? s.faqItemOpen : ''}`}>
+      <button
+        type="button"
+        className={s.faqQuestion}
+        aria-expanded={open}
+        aria-controls={answerId}
+        onClick={() => setOpen(!open)}
+      >
         {question}
-        <span className={`${s.faqIcon} ${open ? s.faqIconOpen : ''}`}>+</span>
+        <span className={`${s.faqIcon} ${open ? s.faqIconOpen : ''}`} aria-hidden="true">
+          <PiPlusBold />
+        </span>
+      </button>
+      <div id={answerId} className={`${s.faqAnswer} ${open ? s.faqAnswerOpen : ''}`}>
+        <div className={s.faqAnswerInner}>{answer}</div>
       </div>
-      <div className={`${s.faqAnswer} ${open ? s.faqAnswerOpen : ''}`}>{answer}</div>
     </div>
   )
 }
 
-export function AnimateOnScroll({ children, className }: { children: React.ReactNode; className?: string }) {
+export function AnimateOnScroll({
+  children,
+  className,
+  delay = 0,
+}: {
+  children: React.ReactNode
+  className?: string
+  /** Stagger delay in ms */
+  delay?: number
+}) {
   const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
 
@@ -39,6 +60,7 @@ export function AnimateOnScroll({ children, className }: { children: React.React
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0)' : 'translateY(20px)',
         transition: 'opacity 0.6s ease, transform 0.6s ease',
+        transitionDelay: delay ? `${delay}ms` : undefined,
       }}
     >
       {children}
