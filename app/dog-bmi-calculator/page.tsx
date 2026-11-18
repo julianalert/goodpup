@@ -87,7 +87,7 @@ export default function DogBmiCalculatorPage() {
       />
 
       {/* NAV */}
-      <SiteNav ctaHref="/form" ctaLabel="Get my dog's plan →" />
+      <SiteNav ctaHref="/start" ctaLabel="Get my dog's plan →" />
 
       <main>
         {/* HERO */}
@@ -360,7 +360,7 @@ export default function DogBmiCalculatorPage() {
             <p>
               Good nutrition and weight management set your dog up physically. A personalised training plan gives them the mental stimulation and structure they need to thrive every day.
             </p>
-            <Link href="/form" className={s.btnPrimary}>Get my dog&apos;s plan →</Link>
+            <Link href="/start" className={s.btnPrimary}>Get my dog&apos;s plan →</Link>
           </div>
         </div>
 

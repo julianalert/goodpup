@@ -87,7 +87,7 @@ export default function DogFoodCalculatorPage() {
       />
 
       {/* NAV */}
-      <SiteNav ctaHref="/form" ctaLabel="Get my dog's plan →" />
+      <SiteNav ctaHref="/start" ctaLabel="Get my dog's plan →" />
 
       <main>
         {/* HERO */}
@@ -364,7 +364,7 @@ export default function DogFoodCalculatorPage() {
             <p>
               A well-fed dog is a dog with the energy and focus to learn. Give yours a personalised 30-day training plan built around their breed, age, and specific behaviour challenges.
             </p>
-            <Link href="/form" className={s.btnPrimary}>Get my dog&apos;s plan →</Link>
+            <Link href="/start" className={s.btnPrimary}>Get my dog&apos;s plan →</Link>
           </div>
         </div>
 

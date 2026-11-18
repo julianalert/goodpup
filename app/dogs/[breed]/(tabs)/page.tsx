@@ -127,7 +127,7 @@ export default async function BreedOverviewPage({
             The breed profile tells you what&apos;s typical. Your plan is built around what&apos;s
             specific to your dog.
           </p>
-          <Link href="/form" className="cta-btn">
+          <Link href="/start" className="cta-btn">
             Build my dog&apos;s plan →
           </Link>
           <div className="cta-micro">30-day guarantee · Delivered in 60 sec</div>

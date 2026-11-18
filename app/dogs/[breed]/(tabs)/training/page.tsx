@@ -103,7 +103,7 @@ export default async function BreedTrainingPage({
             General training principles aren&apos;t enough. Your dog&apos;s plan accounts for their
             age, problem behaviours, and your schedule.
           </p>
-          <Link href="/form" className="cta-btn">
+          <Link href="/start" className="cta-btn">
             Build my dog&apos;s plan →
           </Link>
           <div className="cta-micro">30-day guarantee · Delivered in 60 sec</div>

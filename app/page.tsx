@@ -134,7 +134,7 @@ export default function LandingPage() {
       />
 
       {/* NAV */}
-      <SiteNav ctaHref="#pricing" ctaLabel="Get my plan →" />
+      <SiteNav ctaHref="/start" ctaLabel="Get my plan →" />
 
       {/* HERO */}
       <header className={s.hero}>
@@ -144,7 +144,7 @@ export default function LandingPage() {
             <h1>A personalized training plan for your dog, <em>built in minutes.</em></h1>
             <p className={s.heroSub}>Answer a few questions about your dog and get a custom training plan that actually fits them: no generic advice, no guesswork.</p>
             <div className={s.heroCtaRow}>
-              <Link href="/form" className={s.btnPrimary}>
+              <Link href="/start" className={s.btnPrimary}>
                 Build my dog&apos;s plan <PiArrowRightBold aria-hidden="true" />
               </Link>
               <a href="#inside" className={s.btnGhost}>See what&apos;s inside</a>
@@ -469,7 +469,7 @@ export default function LandingPage() {
           </div>
 
           <div className={s.centerCta}>
-            <Link href="/form" className={s.btnPrimary}>
+            <Link href="/start" className={s.btnPrimary}>
               Start with my dog&apos;s profile <PiArrowRightBold aria-hidden="true" />
             </Link>
             <span className={s.centerCtaMicro}>Takes about 2 minutes</span>
@@ -708,7 +708,7 @@ export default function LandingPage() {
                     <li key={f} className={s.priceFeature}><PiCheckCircleFill aria-hidden="true" /> {f}</li>
                   ))}
                 </ul>
-                <Link href="/form" className={s.btnCtaMain}>Build my dog&apos;s plan <PiArrowRightBold aria-hidden="true" /></Link>
+                <Link href="/start" className={s.btnCtaMain}>Build my dog&apos;s plan <PiArrowRightBold aria-hidden="true" /></Link>
                 <div className={s.pricingMicro}>
                   <span><PiLockSimpleFill aria-hidden="true" /> Secure payment</span>
                   <span><PiShieldCheckFill aria-hidden="true" /> 30-day guarantee</span>
@@ -754,7 +754,7 @@ export default function LandingPage() {
           </div>
           <h2>Stop guessing.<br /><em>Start with the right plan.</em></h2>
           <p>Your dog isn&apos;t bad. They just need an approach built for them, not a recycled guide written for every dog on the planet.</p>
-          <Link href="/form" className={s.btnLight}>
+          <Link href="/start" className={s.btnLight}>
             Get my dog&apos;s plan for {PRICE_LABEL} <PiArrowRightBold aria-hidden="true" />
           </Link>
           <div className={s.finalMicro}>

@@ -4,6 +4,6 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-export default function FormLayout({ children }: { children: React.ReactNode }) {
+export default function StartLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }

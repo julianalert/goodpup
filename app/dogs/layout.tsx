@@ -9,7 +9,7 @@ import { SITE_EMAIL } from '@/lib/site'
 export default function DogsLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <SiteNav ctaHref="/form" ctaLabel="Get my dog's plan →" />
+      <SiteNav ctaHref="/start" ctaLabel="Get my dog's plan →" />
       <main>{children}</main>
       <footer className="dogs-footer">
         <div className="dogs-footer-inner">

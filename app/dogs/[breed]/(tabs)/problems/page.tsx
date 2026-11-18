@@ -111,7 +111,7 @@ export default async function BreedProblemsPage({
             Your dog&apos;s problems often share the same root cause. A plan that addresses the
             source fixes all of them.
           </p>
-          <Link href="/form" className="cta-btn">
+          <Link href="/start" className="cta-btn">
             Build my dog&apos;s plan →
           </Link>
           <div className="cta-micro">30-day guarantee · Delivered in 60 sec</div>

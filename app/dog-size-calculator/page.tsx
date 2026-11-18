@@ -87,7 +87,7 @@ export default function DogSizeCalculatorPage() {
       />
 
       {/* NAV */}
-      <SiteNav ctaHref="/form" ctaLabel="Get my dog's plan →" />
+      <SiteNav ctaHref="/start" ctaLabel="Get my dog's plan →" />
 
       <main>
         {/* HERO */}
@@ -358,7 +358,7 @@ export default function DogSizeCalculatorPage() {
             <p>
               Get a personalised 30-day training plan built specifically for your dog&apos;s breed, age, and behaviour challenges — so you&apos;re ready for every stage of their growth.
             </p>
-            <Link href="/form" className={s.btnPrimary}>Get my dog&apos;s plan →</Link>
+            <Link href="/start" className={s.btnPrimary}>Get my dog&apos;s plan →</Link>
           </div>
         </div>
 
