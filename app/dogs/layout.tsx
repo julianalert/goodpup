@@ -1,25 +1,15 @@
 import './dogs.css'
 import Link from 'next/link'
 import Image from 'next/image'
-import { FaInstagram, FaTiktok } from 'react-icons/fa'
+import { FaInstagram } from 'react-icons/fa'
 import { HiOutlineMail } from 'react-icons/hi'
-import NavToolsDropdown from '@/app/_components/NavToolsDropdown'
+import SiteNav from '@/app/_components/SiteNav'
 import { SITE_EMAIL } from '@/lib/site'
 
 export default function DogsLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <nav className="dogs-nav">
-        <Link href="/" className="dogs-nav-logo">
-          <Image src="/icon.png" alt="" width={28} height={28} className="appIcon" />
-          Paw<span>Craft</span>
-        </Link>
-        <div className="dogs-nav-links">
-          <Link href="/dogs" className="dogs-nav-link">Dogs</Link>
-          <NavToolsDropdown />
-        </div>
-        <Link href="/form" className="dogs-nav-cta">Get my dog&apos;s plan →</Link>
-      </nav>
+      <SiteNav ctaHref="/form" ctaLabel="Get my dog's plan →" />
       <main>{children}</main>
       <footer className="dogs-footer">
         <div className="dogs-footer-inner">
@@ -31,9 +21,6 @@ export default function DogsLayout({ children }: { children: React.ReactNode }) 
           <div className="dogs-footer-social">
             <a href="https://www.instagram.com/trypawcraft/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <FaInstagram />
-            </a>
-            <a href="https://www.tiktok.com/@seraphova" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-              <FaTiktok />
             </a>
             <a href={`mailto:${SITE_EMAIL}`} aria-label="Contact">
               <HiOutlineMail />

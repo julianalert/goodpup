@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
-import { FaInstagram, FaTiktok } from 'react-icons/fa'
+import { FaInstagram } from 'react-icons/fa'
 import { HiOutlineMail } from 'react-icons/hi'
 import { FaqItem, AnimateOnScroll } from './_components/HomeComponents'
-import NavToolsDropdown from './_components/NavToolsDropdown'
+import SiteNav from './_components/SiteNav'
 import { LIST_PRICE_LABEL, PRICE_LABEL } from '@/lib/pricing'
 import s from './page.module.css'
 import { SITE_EMAIL } from '@/lib/site'
@@ -76,17 +76,7 @@ export default function LandingPage() {
       />
 
       {/* NAV */}
-      <nav className={s.nav}>
-        <Link href="/" className={s.navLogo}>
-          <img src="/icon.png" alt="" className="appIcon" width={28} height={28} />
-          Paw<span>Craft</span>
-        </Link>
-        <div className={s.navLinks}>
-          <Link href="/dogs" className={s.navLink}>Dogs</Link>
-          <NavToolsDropdown />
-        </div>
-        <a href="#pricing" className={s.navCta}>Get my plan →</a>
-      </nav>
+      <SiteNav ctaHref="#pricing" ctaLabel="Get my plan →" />
 
       {/* HERO */}
       <div className={s.hero}>
@@ -395,9 +385,6 @@ export default function LandingPage() {
           <div className={s.footerSocial}>
             <a href="https://www.instagram.com/trypawcraft/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <FaInstagram />
-            </a>
-            <a href="https://www.tiktok.com/@seraphova" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-              <FaTiktok />
             </a>
             <a href={`mailto:${SITE_EMAIL}`} aria-label="Contact">
               <HiOutlineMail />

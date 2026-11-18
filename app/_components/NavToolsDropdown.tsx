@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import s from './NavToolsDropdown.module.css'
 
-const TOOLS = [
+export const TOOLS = [
   { label: '🥣 Dog Food Calculator', href: '/dog-food-calculator' },
   { label: '📏 Puppy Size Calculator', href: '/dog-size-calculator' },
   { label: '⚖️ Dog BMI Calculator', href: '/dog-bmi-calculator' },

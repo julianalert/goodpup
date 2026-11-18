@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
-import { FaInstagram, FaTiktok } from 'react-icons/fa'
+import { FaInstagram } from 'react-icons/fa'
 import { HiOutlineMail } from 'react-icons/hi'
 import s from './page.module.css'
 import { SITE_EMAIL } from '@/lib/site'
@@ -261,9 +261,6 @@ export default function AffiliatesPage() {
           <div className={s.footerSocial}>
             <a href="https://www.instagram.com/trypawcraft/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <FaInstagram />
-            </a>
-            <a href="https://www.tiktok.com/@seraphova" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-              <FaTiktok />
             </a>
             <a href={`mailto:${SITE_EMAIL}`} aria-label="Contact">
               <HiOutlineMail />

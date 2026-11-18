@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
-import { FaInstagram, FaTiktok } from 'react-icons/fa'
+import { FaInstagram } from 'react-icons/fa'
 import { HiOutlineMail } from 'react-icons/hi'
-import NavToolsDropdown from '@/app/_components/NavToolsDropdown'
+import SiteNav from '@/app/_components/SiteNav'
 import DogSizeCalculator from './_components/DogSizeCalculator'
 import { CalcFaqItem } from './_components/CalcFaqItem'
 import s from './page.module.css'
@@ -87,17 +87,7 @@ export default function DogSizeCalculatorPage() {
       />
 
       {/* NAV */}
-      <nav className={s.nav}>
-        <Link href="/" className={s.navLogo}>
-          <img src="/icon.png" alt="" className="appIcon" width={28} height={28} />
-          Paw<span>Craft</span>
-        </Link>
-        <div className={s.navLinks}>
-          <Link href="/dogs" className={s.navLink}>Dogs</Link>
-          <NavToolsDropdown />
-        </div>
-        <Link href="/form" className={s.navCta}>Get my dog&apos;s plan →</Link>
-      </nav>
+      <SiteNav ctaHref="/form" ctaLabel="Get my dog's plan →" />
 
       <main>
         {/* HERO */}
@@ -383,9 +373,6 @@ export default function DogSizeCalculatorPage() {
             <div className={s.footerSocial}>
               <a href="https://www.instagram.com/trypawcraft/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                 <FaInstagram />
-              </a>
-              <a href="https://www.tiktok.com/@seraphova" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-                <FaTiktok />
               </a>
               <a href={`mailto:${SITE_EMAIL}`} aria-label="Contact">
                 <HiOutlineMail />

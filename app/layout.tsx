@@ -59,7 +59,6 @@ const orgSchema = {
   logo: `${BASE_URL}/icon.png`,
   sameAs: [
     'https://www.instagram.com/trypawcraft/',
-    'https://www.tiktok.com/@seraphova',
   ],
   contactPoint: {
     '@type': 'ContactPoint',
