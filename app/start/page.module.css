@@ -1,32 +1,51 @@
+/*
+ * Mobile-first: the base rules are the phone layout.
+ * Larger screens are layered on in the min-width: 641px block at the bottom.
+ */
+
 /* HEADER */
 .header {
   background: var(--green);
-  padding: 20px 24px;
+  padding: 12px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
 }
 .logo {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
   font-family: var(--font-playfair), serif;
   color: white;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 600;
   letter-spacing: -0.01em;
 }
 .logo span { font-weight: 400; }
 .headerBadge {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 11px;
-  color: rgba(255,255,255,0.6);
+  line-height: 1.5;
+  color: rgba(255,255,255,0.75);
   background: rgba(255,255,255,0.1);
-  padding: 4px 12px;
+  padding: 4px 10px;
   border-radius: 99px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.01em;
+}
+@media (max-width: 359px) {
+  .header { padding: 12px; gap: 8px; }
+  .logo { font-size: 16px; }
+  .headerBadge { font-size: 10px; padding: 3px 8px; letter-spacing: 0; }
 }
 
 /* HERO */
 .hero {
   background: var(--green);
-  padding: 48px 24px 64px;
+  padding: 14px 20px 44px;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -47,47 +66,39 @@
   background: rgba(255,255,255,0.03);
   bottom: -60px; left: 40px;
 }
-.heroEyebrow {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.55);
-  background: rgba(255,255,255,0.08);
-  padding: 5px 14px;
-  border-radius: 99px;
-  margin-bottom: 20px;
-}
 .hero h1 {
   font-family: var(--font-playfair), serif;
-  font-size: clamp(28px, 5vw, 42px);
+  font-size: 24px;
   font-weight: 600;
   color: white;
-  line-height: 1.15;
-  margin-bottom: 14px;
+  line-height: 1.2;
+  margin-bottom: 10px;
+  text-wrap: balance;
 }
 .hero h1 em { font-weight: 400; }
 
 .heroSub {
-  color: rgba(255,255,255,0.65);
-  font-size: 16px;
+  color: rgba(255,255,255,0.7);
+  font-size: 14px;
   font-weight: 300;
+  line-height: 1.45;
   max-width: 440px;
-  margin: 0 auto 32px;
+  margin: 0 auto 14px;
+  text-wrap: pretty;
 }
+
 .trustRow {
   display: flex;
   justify-content: center;
-  gap: 24px;
+  gap: 4px 14px;
   flex-wrap: wrap;
 }
 .trustItem {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   font-size: 12px;
-  color: rgba(255,255,255,0.6);
+  color: rgba(255,255,255,0.7);
 }
 .trustDot {
   width: 5px; height: 5px;
@@ -96,17 +107,28 @@
   flex-shrink: 0;
 }
 
+@media (max-width: 640px) {
+  /* Keep the trust row to one line on phones: three items fit, four wrap */
+  .trustItem:last-child { display: none; }
+  /* After step 1 the intro collapses to a thin band so the question is at the top */
+  .heroCollapsed { padding: 0; height: 36px; }
+  .heroCollapsed > *,
+  .heroCollapsed::before,
+  .heroCollapsed::after { display: none; }
+}
+
 /* FORM CARD */
 .formWrap {
   max-width: 640px;
-  margin: -32px auto 0;
-  padding: 0 16px 64px;
+  margin: -28px auto 0;
+  /* bottom padding clears the fixed action bar */
+  padding: 0 12px calc(104px + env(safe-area-inset-bottom, 0px));
   position: relative;
   z-index: 2;
 }
 .formCard {
   background: white;
-  border-radius: 20px;
+  border-radius: 16px;
   box-shadow: 0 4px 32px rgba(28,28,26,0.08), 0 1px 4px rgba(28,28,26,0.04);
   overflow: hidden;
 }
@@ -122,7 +144,7 @@
 
 /* STEPS */
 .step {
-  padding: 32px 32px 28px;
+  padding: 22px 18px 20px;
   animation: fadeIn 0.3s ease;
 }
 
@@ -136,23 +158,24 @@
 }
 .stepTitle {
   font-family: var(--font-playfair), serif;
-  font-size: 22px;
+  font-size: 21px;
   font-weight: 600;
   color: var(--ink);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   line-height: 1.25;
 }
 .stepSub {
-  font-size: 13px;
+  font-size: 14px;
+  line-height: 1.45;
   color: var(--ink-light);
-  margin-bottom: 28px;
+  margin-bottom: 20px;
 }
 
 /* FIELDS */
 .field { margin-bottom: 20px; }
 .fieldLabel {
   display: block;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--ink-mid);
   margin-bottom: 8px;
@@ -163,9 +186,11 @@
 .select,
 .textarea {
   width: 100%;
+  min-height: 48px;
   padding: 12px 14px;
   font-family: var(--font-dm-sans), sans-serif;
-  font-size: 14px;
+  /* 16px minimum: anything smaller makes iOS Safari zoom the page on focus */
+  font-size: 16px;
   color: var(--ink);
   background: var(--cream);
   border: 1.5px solid var(--border);
@@ -183,7 +208,7 @@
   box-shadow: 0 0 0 3px rgba(26,107,74,0.08);
 }
 .input::placeholder { color: var(--ink-light); }
-.textarea { resize: vertical; min-height: 90px; }
+.textarea { resize: vertical; min-height: 96px; line-height: 1.45; }
 
 .selectWrap { position: relative; }
 .selectWrap::after {
@@ -198,18 +223,14 @@
 }
 .select { padding-right: 36px; cursor: pointer; }
 
-.fieldRow { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-@media (max-width: 480px) { .fieldRow { grid-template-columns: 1fr; } }
+.fieldRow { display: grid; grid-template-columns: 1fr; }
 
-/* OPTION CARDS */
-.optionGrid { display: grid; gap: 10px; }
-.optionGridCols2 { grid-template-columns: 1fr 1fr; }
-.optionGridCols3 { grid-template-columns: 1fr 1fr 1fr; }
-@media (max-width: 480px) {
-  .optionGridCols2, .optionGridCols3 { grid-template-columns: 1fr 1fr; }
-}
+/* OPTION CARDS — compact rows on phones (icon left, text right) */
+.optionGrid { display: grid; gap: 8px; grid-template-columns: 1fr 1fr; }
+/* An odd one out spans the full row instead of leaving a hole */
+.optionGrid > .optionCard:last-child:nth-child(odd) { grid-column: 1 / -1; }
 
-.optionCard { position: relative; cursor: pointer; }
+.optionCard { position: relative; cursor: pointer; display: block; -webkit-tap-highlight-color: transparent; }
 .optionCard input[type="radio"],
 .optionCard input[type="checkbox"] {
   position: absolute;
@@ -218,69 +239,70 @@
 }
 .optionLabel {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 14px 10px;
+  gap: 10px;
+  height: 100%;
+  min-height: 58px;
+  padding: 10px 12px;
   background: var(--cream);
   border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  text-align: center;
+  border-radius: 12px;
+  text-align: left;
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.1s ease;
   user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
 }
-.optionLabel:hover {
-  border-color: var(--green-mid);
-  background: var(--green-pale);
-}
+.optionLabel:active { transform: scale(0.98); }
 .optionLabelSelected {
   border-color: var(--green) !important;
   background: var(--green-light) !important;
   color: var(--green);
 }
-.optionIcon { font-size: 22px; line-height: 1; }
-.optionText { font-size: 13px; font-weight: 500; color: var(--ink); line-height: 1.3; }
-.optionText small { display: block; font-weight: 300; opacity: 0.7; }
+.optionIcon { font-size: 22px; line-height: 1; flex-shrink: 0; }
+.optionText { font-size: 14px; font-weight: 500; color: var(--ink); line-height: 1.25; min-width: 0; }
+.optionText small { display: block; font-size: 12px; font-weight: 300; opacity: 0.7; margin-top: 1px; }
 .optionLabelSelected .optionText { color: var(--green); }
 
-/* PROBLEM TAGS */
-.problemGrid { display: flex; flex-wrap: wrap; gap: 8px; }
-.problemTag { position: relative; cursor: pointer; }
+/* PROBLEM TAGS — two even columns of big tap targets on phones */
+.problemGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.problemTag { position: relative; cursor: pointer; display: block; -webkit-tap-highlight-color: transparent; }
 .problemTagLabel {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
+  gap: 8px;
+  height: 100%;
+  min-height: 52px;
+  padding: 8px 12px;
   background: var(--cream);
   border: 1.5px solid var(--border);
-  border-radius: 99px;
-  font-size: 13px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.25;
   color: var(--ink-mid);
   cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
+  transition: border-color 0.15s, background 0.15s, color 0.15s, transform 0.1s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
 }
-.problemTagLabel:hover {
-  border-color: var(--green-mid);
-  color: var(--green);
-}
+.problemTagLabel:active { transform: scale(0.98); }
 .problemTagLabelSelected {
   background: var(--green-light) !important;
   border-color: var(--green) !important;
   color: var(--green) !important;
   font-weight: 500;
 }
-.tagIcon { font-size: 15px; }
+.tagIcon { font-size: 18px; line-height: 1; flex-shrink: 0; }
 
 /* RANGE SLIDER */
-.rangeWrap { padding: 4px 0 8px; }
+.rangeWrap { padding: 12px 0 8px; }
 .rangeInput {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 4px;
+  height: 6px;
   background: var(--cream-dark);
   border-radius: 99px;
   outline: none;
@@ -288,23 +310,32 @@
   border: none;
   padding: 0;
   box-shadow: none;
+  touch-action: pan-y;
 }
+/* 30px thumb: easy to grab with a thumb */
 .rangeInput::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 20px; height: 20px;
+  width: 30px; height: 30px;
   border-radius: 50%;
   background: var(--green);
   cursor: pointer;
-  border: 3px solid white;
-  box-shadow: 0 1px 4px rgba(26,107,74,0.3);
+  border: 4px solid white;
+  box-shadow: 0 1px 6px rgba(26,107,74,0.35);
   transition: transform 0.15s;
 }
-.rangeInput::-webkit-slider-thumb:hover { transform: scale(1.15); }
+.rangeInput::-moz-range-thumb {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--green);
+  cursor: pointer;
+  border: 4px solid white;
+  box-shadow: 0 1px 6px rgba(26,107,74,0.35);
+}
 .rangeLabels { display: flex; justify-content: space-between; margin-top: 8px; }
-.rangeLabel { font-size: 11px; color: var(--ink-light); }
+.rangeLabel { font-size: 12px; color: var(--ink-light); }
 .rangeValueDisplay {
   text-align: center;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 500;
   color: var(--green);
   margin-bottom: 8px;
@@ -327,47 +358,62 @@
   border-left-color: var(--green) !important;
 }
 
-/* STEP FOOTER */
+/* STEP FOOTER — on phones a fixed action bar, always within thumb reach */
 .stepFooter {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 50;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 20px 32px;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+  background: rgba(255,255,255,0.96);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   border-top: 1px solid var(--border);
-  background: var(--cream);
+  box-shadow: 0 -4px 20px rgba(28,28,26,0.06);
 }
+.footerActions { display: flex; flex: 1; gap: 8px; align-items: center; }
 .btnBack {
-  background: none;
-  border: 1.5px solid var(--border);
+  flex-shrink: 0;
+  height: 52px;
+  background: white;
+  border: 1.5px solid var(--border-med);
   border-radius: 99px;
-  padding: 10px 20px;
+  padding: 0 18px;
   font-family: var(--font-dm-sans), sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--ink-mid);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: border-color 0.15s, color 0.15s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
-.btnBack:hover { border-color: var(--ink-mid); color: var(--ink); }
 .btnNext {
+  flex: 1;
+  height: 52px;
   background: var(--green);
   border: none;
   border-radius: 99px;
-  padding: 12px 28px;
+  padding: 0 24px;
   font-family: var(--font-dm-sans), sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: white;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: background 0.15s, transform 0.15s;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
-.btnNext:hover { background: #155a3d; transform: translateY(-1px); }
-.btnNext:active { transform: translateY(0); }
+.btnNext:active { background: #155a3d; transform: scale(0.985); }
+.btnBack:disabled, .btnNext:disabled { opacity: 0.6; cursor: default; }
 
 /* STEP DOTS */
-.stepDots { display: flex; gap: 6px; align-items: center; }
+/* Hidden on phones: the progress bar and "Step n of 5" already say it */
+.stepDots { display: none; gap: 6px; align-items: center; }
 .stepDot {
   width: 6px; height: 6px;
   border-radius: 50%;
@@ -402,7 +448,7 @@
 }
 .summaryRow:last-child { border-bottom: none; }
 .summaryKey { color: var(--ink-light); flex-shrink: 0; }
-.summaryVal { color: var(--ink); font-weight: 500; text-align: right; }
+.summaryVal { color: var(--ink); font-weight: 500; text-align: right; min-width: 0; overflow-wrap: anywhere; }
 .summaryTags { display: flex; flex-wrap: wrap; gap: 5px; justify-content: flex-end; }
 .summaryTag {
   font-size: 12px;
@@ -413,7 +459,7 @@
 }
 
 /* SUCCESS / GENERATING */
-.successStep { padding: 48px 32px; text-align: center; }
+.successStep { padding: 36px 20px; text-align: center; }
 .successIcon {
   width: 64px; height: 64px;
   border-radius: 50%;
@@ -472,7 +518,7 @@
 
 /* VALIDATION */
 .fieldError {
-  font-size: 12px;
+  font-size: 13px;
   color: #B84034;
   margin-top: 5px;
 }
@@ -481,10 +527,92 @@
 }
 
 /* SELECTION HINT */
-.selectionHint { font-size: 12px; color: var(--ink-light); margin-top: 8px; }
+.selectionHint { font-size: 13px; color: var(--ink-light); margin-top: 8px; }
 .selectionHintWarn { color: var(--amber) !important; }
 
-@media (max-width: 480px) {
-  .step { padding: 24px 20px 20px; }
-  .stepFooter { padding: 16px 20px; }
+/* Hover effects only where there is a real pointer — on touch they stick after a tap */
+@media (hover: hover) {
+  .optionLabel:hover { border-color: var(--green-mid); background: var(--green-pale); }
+  .problemTagLabel:hover { border-color: var(--green-mid); color: var(--green); }
+  .btnBack:hover { border-color: var(--ink-mid); color: var(--ink); }
+  .btnNext:hover { background: #155a3d; transform: translateY(-1px); }
+  .rangeInput::-webkit-slider-thumb:hover { transform: scale(1.1); }
+}
+
+@media (min-width: 481px) {
+  .fieldRow { grid-template-columns: 1fr 1fr; gap: 14px; }
+}
+
+/* ── Tablet & desktop ─────────────────────────────────────── */
+@media (min-width: 641px) {
+  .header { padding: 20px 24px; }
+  .logo { font-size: 18px; }
+  .headerBadge { padding: 4px 12px; letter-spacing: 0.06em; }
+
+  .hero { padding: 40px 24px 64px; }
+  .hero h1 { font-size: clamp(28px, 5vw, 42px); line-height: 1.15; margin-bottom: 14px; }
+  .heroSub { font-size: 16px; line-height: 1.65; margin-bottom: 32px; }
+  .trustRow { gap: 24px; }
+
+  .formWrap { margin-top: -32px; padding: 0 16px 64px; }
+  .formCard { border-radius: 20px; }
+
+  .step { padding: 32px 32px 28px; }
+  .stepTitle { font-size: 22px; margin-bottom: 6px; }
+  .stepSub { font-size: 13px; margin-bottom: 28px; }
+  .fieldLabel { font-size: 13px; }
+  .input, .select, .textarea { font-size: 14px; min-height: 0; }
+  .textarea { min-height: 90px; }
+
+  /* Option cards go back to centred tiles */
+  .optionGrid { gap: 10px; }
+  .optionGridCols3 { grid-template-columns: 1fr 1fr 1fr; }
+  .optionGrid > .optionCard:last-child:nth-child(odd) { grid-column: auto; }
+  .optionLabel {
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    min-height: 0;
+    padding: 14px 10px;
+    border-radius: var(--radius-sm);
+    text-align: center;
+  }
+  .optionText { font-size: 13px; line-height: 1.3; }
+  .optionText small { font-size: inherit; }
+
+  /* Problems go back to wrapping pills */
+  .problemGrid { display: flex; flex-wrap: wrap; }
+  .problemTagLabel {
+    min-height: 0;
+    padding: 8px 14px;
+    border-radius: 99px;
+    font-size: 13px;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .tagIcon { font-size: 15px; }
+
+  .rangeWrap { padding: 4px 0 8px; }
+  .rangeInput { height: 4px; }
+  .rangeInput::-webkit-slider-thumb { width: 20px; height: 20px; border-width: 3px; }
+  .rangeValueDisplay { font-size: 16px; }
+  .rangeLabel { font-size: 11px; }
+
+  /* Footer sits inside the card again */
+  .stepFooter {
+    position: static;
+    justify-content: space-between;
+    padding: 20px 32px;
+    background: var(--cream);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+  .stepDots { display: flex; }
+  .footerActions { flex: none; gap: 10px; }
+  .btnBack { height: auto; padding: 10px 20px; font-size: 14px; background: none; border-color: var(--border); }
+  .btnNext { flex: none; height: auto; padding: 12px 28px; font-size: 14px; }
+
+  .successStep { padding: 48px 32px; }
+  .fieldError, .selectionHint { font-size: 12px; }
 }

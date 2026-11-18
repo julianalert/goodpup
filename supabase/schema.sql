@@ -40,6 +40,8 @@ CREATE TABLE submissions (
   -- plan_status: 'pending' | 'generating' | 'ready' | 'failed'
 
   -- Tracking
+  -- current_step: 0 = quiz opened, nothing submitted yet; 1–5 = last step submitted.
+  -- The API route always sets it explicitly (0 when /start loads).
   current_step  INTEGER      NOT NULL DEFAULT 1,
   status        TEXT         NOT NULL DEFAULT 'partial',
   -- status values: 'partial' | 'completed' | 'paid'

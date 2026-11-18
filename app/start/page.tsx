@@ -18,6 +18,79 @@ async function saveStepToApi(data: Record<string, unknown>): Promise<void> {
   }
 }
 
+// Tell the server the quiz was opened. Creates the row once per session_id; for a
+// returning visitor it changes nothing and returns the status of their existing row.
+async function registerOpen(sessionId: string): Promise<string | null> {
+  try {
+    const res = await fetch('/api/submission', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: sessionId, event: 'open' }),
+    })
+    if (!res.ok) return null
+    const json = await res.json()
+    return typeof json.status === 'string' ? json.status : null
+  } catch (err) {
+    console.error('[form] registerOpen failed:', err)
+    return null
+  }
+}
+
+function newSessionId(): string {
+  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
+  // Older browsers / non-secure contexts: build a v4 UUID by hand (the API only accepts UUIDs)
+  const b = crypto.getRandomValues(new Uint8Array(16))
+  b[6] = (b[6] & 0x0f) | 0x40
+  b[8] = (b[8] & 0x3f) | 0x80
+  const h = Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('')
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`
+}
+
+// ── Resume ─────────────────────────────────────────────────────────────────
+// The quiz in progress lives in localStorage so a returning visitor picks up
+// where they left off, on the same session_id (= the same database row).
+const STORAGE_KEY = 'pawcraft_quiz'
+const RESUME_TTL_MS = 30 * 24 * 60 * 60 * 1000 // forget a quiz untouched for 30 days
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+interface SavedQuiz {
+  sessionId: string
+  step: number
+  /** Highest step already submitted to the server */
+  maxStep: number
+  form: FormData
+  updatedAt: number
+}
+
+function loadSavedQuiz(): SavedQuiz | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return null
+    const saved = JSON.parse(raw) as Partial<SavedQuiz>
+    if (
+      typeof saved.sessionId !== 'string' || !UUID_REGEX.test(saved.sessionId) ||
+      typeof saved.step !== 'number' || saved.step < 1 || saved.step > 5 ||
+      typeof saved.updatedAt !== 'number' || Date.now() - saved.updatedAt > RESUME_TTL_MS ||
+      !saved.form || typeof saved.form !== 'object'
+    ) return null
+    return {
+      sessionId: saved.sessionId,
+      step: Math.floor(saved.step),
+      maxStep: typeof saved.maxStep === 'number' ? saved.maxStep : 0,
+      form: { ...EMPTY_FORM, ...saved.form, problems: Array.isArray(saved.form.problems) ? saved.form.problems : [] },
+      updatedAt: saved.updatedAt,
+    }
+  } catch {
+    return null
+  }
+}
+
+function storeQuiz(quiz: SavedQuiz) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(quiz))
+  } catch { /* private mode / storage full — resume just won't be available */ }
+}
+
 const PROBLEM_LABELS: Record<string, string> = {
   leash_pulling: 'Pulls on leash',
   recall: "Won't come when called",
@@ -61,6 +134,19 @@ interface FormData {
   email: string
 }
 
+const EMPTY_FORM: FormData = {
+  dogName: '',
+  dogBreed: '',
+  dogAge: '',
+  problems: [],
+  problemContext: '',
+  experience: '',
+  living: '',
+  dailyTime: 20,
+  trainingHistory: '',
+  email: '',
+}
+
 const GEN_STEPS = [
   'Analysing breed profile & temperament',
   'Identifying root causes of issues',
@@ -80,27 +166,49 @@ export default function FormPage() {
   const [genStepIndex, setGenStepIndex] = useState(-1)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
-  // Stable session ID — created once per page load, persisted across steps
-  const sessionId = useRef<string>(
-    typeof crypto !== 'undefined' ? crypto.randomUUID() : Math.random().toString(36).slice(2)
-  )
+  // One session ID per visitor (not per page load): restored from localStorage when
+  // they come back, so their progress and their database row are reused.
+  const sessionId = useRef<string>('')
+  const maxStep = useRef(0)
+  const [ready, setReady] = useState(false)
 
-  const [form, setForm] = useState<FormData>({
-    dogName: '',
-    dogBreed: '',
-    dogAge: '',
-    problems: [],
-    problemContext: '',
-    experience: '',
-    living: '',
-    dailyTime: 20,
-    trainingHistory: '',
-    email: '',
-  })
+  const [form, setForm] = useState<FormData>(EMPTY_FORM)
 
   useEffect(() => {
-    trackEvent('form_started', { session_id: sessionId.current })
+    let cancelled = false
+    const saved = loadSavedQuiz()
+
+    if (saved) {
+      sessionId.current = saved.sessionId
+      maxStep.current = saved.maxStep
+      setForm(saved.form)
+      setStep(saved.step)
+    } else if (!sessionId.current) {
+      // Guarded so a re-run of this effect (React StrictMode in dev) reuses the same ID
+      sessionId.current = newSessionId()
+    }
+    setReady(true)
+
+    trackEvent('form_started', { session_id: sessionId.current, resumed: Boolean(saved), resumed_step: saved?.step })
+
+    registerOpen(sessionId.current).then((status) => {
+      // That quiz was already paid for — it's finished, so this visit is a new one.
+      if (status !== 'paid' || cancelled) return
+      sessionId.current = newSessionId()
+      maxStep.current = 0
+      setForm(EMPTY_FORM)
+      setStep(1)
+      registerOpen(sessionId.current)
+    })
+
+    return () => { cancelled = true }
   }, [])
+
+  // Keep the saved copy current on every answer and step change
+  useEffect(() => {
+    if (!ready) return
+    storeQuiz({ sessionId: sessionId.current, step, maxStep: maxStep.current, form, updatedAt: Date.now() })
+  }, [ready, step, form])
 
   const set = useCallback(<K extends keyof FormData>(key: K, value: FormData[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -135,7 +243,14 @@ export default function FormPage() {
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Please enter a valid email address'
     }
     setErrors(e)
-    return Object.keys(e).length === 0
+    const ok = Object.keys(e).length === 0
+    // On a phone the failing field is often off-screen — bring it into view
+    if (!ok) {
+      requestAnimationFrame(() => {
+        document.querySelector(`.${CSS.escape(s.fieldError)}`)?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+      })
+    }
+    return ok
   }
 
   // Map each step number to the fields that were filled on that step
@@ -168,9 +283,12 @@ export default function FormPage() {
 
   // Steps 1-4: fire-and-forget, never blocks navigation or shows spinner
   const saveStepBackground = (currentStep: number) => {
+    // current_step only ever moves forward, so going Back and re-submitting an
+    // earlier step doesn't make the funnel think the visitor never got further
+    maxStep.current = Math.max(maxStep.current, currentStep)
     saveStepToApi({
       session_id: sessionId.current,
-      current_step: currentStep,
+      current_step: maxStep.current,
       ...getStepPayload(currentStep),
     })
   }
@@ -193,6 +311,7 @@ export default function FormPage() {
 
   const submit = async () => {
     setSaving(true)
+    maxStep.current = 5
     // Save final step with status = 'completed'
     await saveStepToApi({
       session_id: sessionId.current,
@@ -242,20 +361,29 @@ export default function FormPage() {
     </label>
   )
 
+  const header = (
+    <div className={s.header}>
+      <div className={s.logo}>
+        <img src="/icon.png" alt="" className="appIcon" width={28} height={28} />
+        Paw<span>Craft</span>
+      </div>
+      <span className={s.headerBadge}>Takes 2 minutes</span>
+    </div>
+  )
+
+  const heroTitle = (
+    <>
+      <h1>Tell us about your dog.<br />We&apos;ll build <em>their 30-day personalised training plan.</em></h1>
+      <p className={s.heroSub}>Answer 5 quick questions so our AI can generate a program that actually fits your dog, not a generic guide.</p>
+    </>
+  )
+
   if (generating) {
     return (
       <>
-        <div className={s.header}>
-          <div className={s.logo}>
-            <img src="/icon.png" alt="" className="appIcon" width={28} height={28} />
-            Paw<span>Craft</span>
-          </div>
-          <span className={s.headerBadge}>30-Day Training Plan</span>
-        </div>
+        {header}
         <div className={s.hero}>
-          <div className={s.heroEyebrow}>Takes 2 minutes · Instant results</div>
-          <h1>Tell us about your dog.<br />We&apos;ll build <em>their 30-day personalised training plan.</em></h1>
-          <p className={s.heroSub}>Answer 5 quick questions so our AI can generate a program that actually fits your dog, not a generic guide.</p>
+          {heroTitle}
         </div>
         <div className={s.formWrap}>
           <div className={s.formCard}>
@@ -287,18 +415,11 @@ export default function FormPage() {
 
   return (
     <>
-      <div className={s.header}>
-        <div className={s.logo}>
-          <img src="/icon.png" alt="" className="appIcon" width={28} height={28} />
-          Paw<span>Craft</span>
-        </div>
-        <span className={s.headerBadge}>30-Day Training Plan</span>
-      </div>
+      {header}
 
-      <div className={s.hero}>
-        <div className={s.heroEyebrow}>Takes 2 minutes · Instant results</div>
-        <h1>Tell us about your dog.<br />We&apos;ll build <em>their 30-day personalised training plan.</em></h1>
-        <p className={s.heroSub}>Answer 5 quick questions so our AI can generate a program that actually fits your dog, not a generic guide.</p>
+      {/* On mobile the intro only shows on step 1, so later questions start at the top of the screen */}
+      <div className={`${s.hero} ${step > 1 ? s.heroCollapsed : ''}`}>
+        {heroTitle}
         <div className={s.trustRow}>
           {['Breed-specific', 'Age-adapted', 'Problem-focused', 'Ready in 60 sec'].map((t) => (
             <div key={t} className={s.trustItem}><span className={s.trustDot} />{t}</div>
@@ -329,6 +450,9 @@ export default function FormPage() {
                     value={form.dogName}
                     onChange={(e) => set('dogName', e.target.value)}
                     autoComplete="off"
+                    autoCapitalize="words"
+                    autoCorrect="off"
+                    enterKeyHint="next"
                   />
                   {errors.dogName && <div className={s.fieldError}>{errors.dogName}</div>}
                 </div>
@@ -341,6 +465,8 @@ export default function FormPage() {
                     value={form.dogBreed}
                     onChange={(e) => set('dogBreed', e.target.value)}
                     autoComplete="off"
+                    autoCapitalize="words"
+                    enterKeyHint="done"
                   />
                   {errors.dogBreed && <div className={s.fieldError}>{errors.dogBreed}</div>}
                 </div>
@@ -504,8 +630,14 @@ export default function FormPage() {
                   className={`${s.input} ${errors.email ? s.inputError : ''}`}
                   placeholder="you@email.com"
                   autoComplete="email"
+                  inputMode="email"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  enterKeyHint="go"
                   value={form.email}
                   onChange={(e) => set('email', e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') goNext() }}
                 />
                 {errors.email && <div className={s.fieldError}>{errors.email}</div>}
               </div>
@@ -556,11 +688,11 @@ export default function FormPage() {
                 />
               ))}
             </div>
-            <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <div className={s.footerActions}>
               {step > 1 && (
-                <button className={s.btnBack} onClick={goBack} disabled={saving}>← Back</button>
+                <button type="button" className={s.btnBack} onClick={goBack} disabled={saving}>← Back</button>
               )}
-              <button className={s.btnNext} onClick={goNext} disabled={saving}>
+              <button type="button" className={s.btnNext} onClick={goNext} disabled={saving}>
                 {saving ? 'Saving…' : step === 5 ? 'Generate my plan' : 'Continue'}
                 {!saving && <span>→</span>}
               </button>

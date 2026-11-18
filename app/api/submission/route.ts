@@ -38,6 +38,45 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid session_id' }, { status: 400 })
   }
 
+  const sessionId = body.session_id
+
+  // ── Quiz opened ──────────────────────────────────────────────────────────
+  // Sent once when /start loads. Creates the row at current_step 0 so the admin
+  // funnel can count opens. A returning visitor reuses their session_id, so the
+  // insert is skipped (never a second row, never a reset of their progress) and
+  // we report the existing row's status instead.
+  if (body.event === 'open') {
+    try {
+      const supabase = createServerClient()
+
+      const { data: inserted, error } = await supabase
+        .from('submissions')
+        .upsert({ session_id: sessionId, current_step: 0 }, { onConflict: 'session_id', ignoreDuplicates: true })
+        .select('session_id')
+
+      if (error) {
+        console.error('[api/submission] Supabase error (open):', error.message)
+        return NextResponse.json({ error: 'Database error' }, { status: 500 })
+      }
+
+      if (inserted && inserted.length > 0) {
+        return NextResponse.json({ ok: true, created: true, status: 'partial' })
+      }
+
+      const { data: existing } = await supabase
+        .from('submissions')
+        .select('status')
+        .eq('session_id', sessionId)
+        .maybeSingle()
+
+      return NextResponse.json({ ok: true, created: false, status: existing?.status ?? 'partial' })
+    } catch (err) {
+      console.error('[api/submission] Unexpected error (open):', err)
+      return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    }
+  }
+
+  // ── Step save ────────────────────────────────────────────────────────────
   // Strip any keys that are not in the whitelist
   const payload: Partial<SubmissionRow> = {}
   for (const key of ALLOWED_FIELDS) {
@@ -55,13 +94,31 @@ export async function POST(req: NextRequest) {
   try {
     const supabase = createServerClient()
 
-    const { error } = await supabase
+    // Update the visitor's existing row. Paid rows are never touched: a browser
+    // that still remembers an old session must not downgrade a paid order.
+    const { data: updated, error } = await supabase
       .from('submissions')
-      .upsert(payload as SubmissionRow, { onConflict: 'session_id' })
+      .update(payload)
+      .eq('session_id', sessionId)
+      .neq('status', 'paid')
+      .select('session_id')
 
     if (error) {
       console.error('[api/submission] Supabase error:', error.message)
       return NextResponse.json({ error: 'Database error' }, { status: 500 })
+    }
+
+    // Nothing updated: either the row doesn't exist yet (the open ping was lost)
+    // or it is paid. Insert-if-missing covers the first and leaves the second alone.
+    if (!updated || updated.length === 0) {
+      const { error: insertError } = await supabase
+        .from('submissions')
+        .upsert(payload as SubmissionRow, { onConflict: 'session_id', ignoreDuplicates: true })
+
+      if (insertError) {
+        console.error('[api/submission] Supabase error:', insertError.message)
+        return NextResponse.json({ error: 'Database error' }, { status: 500 })
+      }
     }
 
     return NextResponse.json({ ok: true })

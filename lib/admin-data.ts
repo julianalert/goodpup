@@ -244,6 +244,9 @@ export interface AdminStats {
   range: RangeKey
   generatedAt: string
   totals: {
+    /** Rows created when /start loads (every row) */
+    opens: number
+    /** Step 1 submitted */
     starts: number
     emails: number
     checkouts: number
@@ -324,7 +327,8 @@ function ratio(num: number, den: number): number {
 
 function buildFunnel(rows: Row[]): FunnelStage[] {
   const defs: { key: string; label: string; hint: string; test: (r: Row) => boolean }[] = [
-    { key: 'step1',    label: 'Step 1 · About the dog',   hint: 'Row created when step 1 is submitted', test: () => true },
+    { key: 'open',     label: 'Opened the quiz',          hint: 'Row created when /start loads',         test: () => true },
+    { key: 'step1',    label: 'Step 1 · About the dog',   hint: 'current_step ≥ 1',                      test: (r) => reachedStep(r, 1) },
     { key: 'step2',    label: 'Step 2 · Problems',        hint: 'current_step ≥ 2',                      test: (r) => reachedStep(r, 2) },
     { key: 'step3',    label: 'Step 3 · Situation',       hint: 'current_step ≥ 3',                      test: (r) => reachedStep(r, 3) },
     { key: 'step4',    label: 'Step 4 · Time & history',  hint: 'current_step ≥ 4',                      test: (r) => reachedStep(r, 4) },
@@ -433,7 +437,7 @@ function buildSeries(rows: Row[], since: Date | null): AdminStats['series'] {
     const created = new Date(row.created_at)
     const key = dayKey(bucket === 'week' ? weekStart(created) : created)
     const point = buckets.get(key) ?? { date: key, starts: 0, emails: 0, paid: 0 }
-    point.starts += 1
+    if (reachedStep(row, 1)) point.starts += 1
     if (hasEmail(row)) point.emails += 1
     if (row.status === 'paid') point.paid += 1
     buckets.set(key, point)
@@ -451,6 +455,7 @@ export async function getAdminStats(range: RangeKey): Promise<AdminStats> {
   const [rows, chargeFetch] = await Promise.all([fetchRows(since), fetchCharges(since)])
 
   const paidRows = rows.filter((r) => r.status === 'paid')
+  const startedRows = rows.filter((r) => reachedStep(r, 1))
   const revenue = computeRevenue(chargeFetch, paidRows)
   const emailRows = rows.filter(hasEmail)
   const checkoutRows = rows.filter((r) => Boolean(r.stripe_session_id) || r.status === 'paid')
@@ -515,11 +520,12 @@ export async function getAdminStats(range: RangeKey): Promise<AdminStats> {
     range,
     generatedAt: new Date().toISOString(),
     totals: {
-      starts: rows.length,
+      opens: rows.length,
+      starts: startedRows.length,
       emails: emailRows.length,
       checkouts: checkoutRows.length,
       paid: paidRows.length,
-      conversion: ratio(paidRows.length, rows.length),
+      conversion: ratio(paidRows.length, startedRows.length),
       emailConversion: ratio(paidRows.length, emailRows.length),
     },
     revenue,

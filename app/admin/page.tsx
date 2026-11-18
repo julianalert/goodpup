@@ -105,7 +105,8 @@ function Dashboard({ stats }: { stats: AdminStats }) {
         </div>
 
         <Tile label="Paid orders" value={fmtInt(totals.paid)} sub={`${fmtMoney(avgOrder)} avg order`} />
-        <Tile label="Form starts" value={fmtInt(totals.starts)} sub="Step 1 submitted" />
+        <Tile label="Quiz opens" value={fmtInt(totals.opens)} sub="Loaded /start" />
+        <Tile label="Form starts" value={fmtInt(totals.starts)} sub={`Step 1 submitted · ${fmtPct(totals.opens ? totals.starts / totals.opens : 0, 0)} of opens`} />
         <Tile label="Emails captured" value={fmtInt(totals.emails)} sub={`${fmtPct(totals.starts ? totals.emails / totals.starts : 0, 0)} of starts`} />
         <Tile label="Checkouts started" value={fmtInt(totals.checkouts)} sub={`${fmtPct(totals.emails ? totals.checkouts / totals.emails : 0, 0)} of emails`} />
         <Tile label="Start → paid" value={fmtPct(totals.conversion)} sub="Overall conversion" />
@@ -117,8 +118,9 @@ function Dashboard({ stats }: { stats: AdminStats }) {
         <div className={s.cardHead}>
           <h2 className={s.cardTitle}>Sales funnel</h2>
           <p className={s.cardHint}>
-            Visits aren&apos;t stored in the database; see Google Analytics or Mixpanel for traffic. The funnel starts
-            when step 1 of the form is submitted.
+            The funnel starts when the quiz page (/start) loads; a returning visitor resumes their existing row rather
+            than creating a new one. Opens are recorded from 18 Nov 2026 — before that a row was only created when
+            step 1 was submitted, so older periods show every open as a start.
           </p>
         </div>
         <FunnelChart stages={funnel} />
