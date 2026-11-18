@@ -1,0 +1,229 @@
+/* ── Page frame ─────────────────────────────────────────────────────────── */
+.page {
+  min-height: 100vh;
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.header {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--green);
+  color: white;
+  padding: 12px 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  flex-wrap: wrap;
+}
+.headerLeft, .headerRight { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+
+.brand {
+  font-family: var(--font-playfair), serif;
+  font-size: 20px; font-weight: 600;
+  color: white; text-decoration: none; white-space: nowrap;
+}
+.brand span { font-style: italic; font-weight: 400; color: rgba(255,255,255,0.7); }
+
+.ranges { display: flex; flex-wrap: wrap; gap: 4px; background: rgba(255,255,255,0.1); padding: 3px; border-radius: 20px; max-width: 100%; }
+.rangeLink {
+  font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.75);
+  text-decoration: none; padding: 5px 12px; border-radius: 99px; white-space: nowrap;
+}
+.rangeLink:hover { color: white; }
+.rangeActive { background: white; color: var(--green); }
+.rangeActive:hover { color: var(--green); }
+
+.updated { font-size: 12px; color: rgba(255,255,255,0.6); white-space: nowrap; }
+.logout {
+  font: inherit; font-size: 13px; font-weight: 500;
+  color: white; background: transparent;
+  border: 1px solid rgba(255,255,255,0.35); border-radius: 99px;
+  padding: 5px 14px; cursor: pointer;
+}
+.logout:hover { background: rgba(255,255,255,0.12); }
+
+.main {
+  max-width: 1120px; margin: 0 auto;
+  padding: 28px 24px 80px;
+  display: flex; flex-direction: column; gap: 20px;
+}
+@media (max-width: 600px) {
+  .main { padding: 16px 16px 60px; }
+}
+
+.errorBox {
+  background: var(--red-light); color: var(--red);
+  border: 1px solid rgba(184,64,52,0.25); border-radius: var(--radius);
+  padding: 14px 18px; font-size: 14px;
+}
+
+/* ── Cards ──────────────────────────────────────────────────────────────── */
+.card {
+  background: white; border: 1px solid var(--border); border-radius: 16px;
+  padding: 20px 22px;
+}
+.cardHead { margin-bottom: 14px; }
+.cardTitle { font-size: 15px; font-weight: 600; color: var(--ink); margin: 0 0 2px; }
+.cardHint { font-size: 12.5px; color: var(--ink-light); margin: 0; line-height: 1.5; }
+.sectionTitle {
+  font-family: var(--font-playfair), serif;
+  font-size: 22px; font-weight: 600; margin: 12px 0 -8px;
+}
+.empty { font-size: 13px; color: var(--ink-light); margin: 0; }
+
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+@media (max-width: 900px) { .grid3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+
+/* ── KPI tiles ──────────────────────────────────────────────────────────── */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+.tile {
+  background: white; border: 1px solid var(--border); border-radius: 14px;
+  padding: 16px 18px; min-width: 0;
+}
+.tileHero { grid-column: span 2; grid-row: span 2; display: flex; flex-direction: column; justify-content: center; }
+.tileLabel { font-size: 12px; font-weight: 500; color: var(--ink-light); margin: 0 0 6px; letter-spacing: 0.01em; }
+.tileValue { font-size: 26px; font-weight: 600; color: var(--ink); margin: 0; line-height: 1.1; }
+.tileSub { font-size: 12px; color: var(--ink-light); margin: 6px 0 0; line-height: 1.45; }
+.hero { font-size: 52px; font-weight: 600; color: var(--green); margin: 0; line-height: 1; letter-spacing: -0.02em; }
+@media (max-width: 900px) {
+  .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tileHero { grid-column: span 3; grid-row: auto; }
+}
+@media (max-width: 560px) {
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tileHero { grid-column: span 2; }
+  .hero { font-size: 40px; }
+}
+
+/* ── Tables ─────────────────────────────────────────────────────────────── */
+.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.muted { color: var(--ink-light); font-weight: 400; }
+.mono { font-size: 13px; }
+.nowrap { white-space: nowrap; }
+.link { color: var(--green); font-weight: 500; text-decoration: none; }
+.link:hover { text-decoration: underline; }
+
+.tableWrap { overflow-x: auto; margin: 0 -22px; padding: 0 22px; }
+.dataTable { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.dataTable th {
+  text-align: left; font-size: 11.5px; font-weight: 500; color: var(--ink-light);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 6px 10px 8px; border-bottom: 1px solid var(--border);
+}
+.dataTable th.num { text-align: right; }
+.dataTable td { padding: 9px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.dataTable tbody tr:last-child td { border-bottom: none; }
+.dataTable td:first-child, .dataTable th:first-child { padding-left: 0; }
+.dataTable td:last-child, .dataTable th:last-child { padding-right: 0; }
+
+.badge {
+  display: inline-block; font-size: 11.5px; font-weight: 500;
+  padding: 2px 9px; border-radius: 99px; text-transform: capitalize;
+}
+.badgeGood { background: var(--green-light); color: var(--green); }
+.badgeBad { background: var(--red-light); color: var(--red); }
+.badgeNeutral { background: var(--amber-light); color: var(--amber); }
+
+/* ── Stat lists (dl) ────────────────────────────────────────────────────── */
+.statList { display: flex; flex-direction: column; gap: 0; margin: 0; }
+.stat {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 14px;
+}
+.stat:last-child { border-bottom: none; }
+.stat dt { color: var(--ink-mid); }
+.stat dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+.statAlert dd { color: var(--red); }
+
+/* ── Funnel ─────────────────────────────────────────────────────────────── */
+.funnel { width: 100%; border-collapse: collapse; font-size: 14px; }
+.funnel th {
+  text-align: left; font-size: 11.5px; font-weight: 500; color: var(--ink-light);
+  text-transform: uppercase; letter-spacing: 0.06em; padding: 0 10px 8px;
+}
+.funnel th.num { text-align: right; }
+.funnel td { padding: 7px 10px; vertical-align: middle; }
+.funnel td:first-child, .funnel th:first-child { padding-left: 0; }
+.funnel td:last-child, .funnel th:last-child { padding-right: 0; }
+.funnelLabel { white-space: nowrap; color: var(--ink-mid); font-weight: 500; }
+.funnelBarCell { width: 100%; }
+.track { height: 20px; background: var(--cream); border-radius: 4px; overflow: hidden; }
+.bar { height: 100%; background: var(--green-mid); border-radius: 0 4px 4px 0; transition: width 0.3s ease; }
+.barPaid { background: var(--green); }
+@media (max-width: 640px) {
+  .funnel { display: block; }
+  .funnel thead { display: none; }
+  .funnel tbody, .funnel tr { display: block; }
+  .funnel tr { padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .funnel td { display: inline-block; padding: 2px 12px 2px 0; }
+  .funnel td[data-label]::after { content: attr(data-label); font-size: 11px; color: var(--ink-light); margin-left: 4px; }
+  .funnelBarCell { display: block !important; width: 100%; padding: 4px 0 !important; }
+}
+
+/* ── Trend chart ────────────────────────────────────────────────────────── */
+.trend { display: flex; flex-direction: column; gap: 8px; }
+.legend { display: flex; gap: 18px; font-size: 12.5px; color: var(--ink-mid); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.swatchStarts { background: #B9B5AB; }
+.swatchPaid { background: var(--green); }
+.trendSvg { width: 100%; height: auto; display: block; font-family: inherit; }
+.grid { stroke: var(--cream-dark); stroke-width: 1; }
+.axis { stroke: var(--border-med); stroke-width: 1; }
+.tick { font-size: 11px; fill: var(--ink-light); }
+.hit { fill: transparent; }
+.colStarts { fill: #B9B5AB; }
+.colPaid { fill: var(--green); }
+.col:hover .hit { fill: rgba(28,28,26,0.04); }
+.col:hover .colStarts { fill: #A09C92; }
+.col:hover .colPaid { fill: #145539; }
+
+.tableView { margin-top: 4px; font-size: 13px; }
+.tableView summary { cursor: pointer; color: var(--ink-light); font-size: 12.5px; }
+.tableView table { margin-top: 10px; max-width: 480px; }
+
+/* ── Breakdown cards ────────────────────────────────────────────────────── */
+.breakdown { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.breakdown th {
+  text-align: left; font-size: 11px; font-weight: 500; color: var(--ink-light);
+  text-transform: uppercase; letter-spacing: 0.06em; padding: 0 8px 6px;
+}
+.breakdown th.num { text-align: right; }
+.breakdown td { padding: 5px 8px; vertical-align: middle; }
+.breakdown td:first-child, .breakdown th:first-child { padding-left: 0; }
+.breakdown td:last-child, .breakdown th:last-child { padding-right: 0; }
+.breakdownLabel { color: var(--ink-mid); max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.breakdownBarCell { width: 100%; min-width: 60px; }
+.trackThin { height: 8px; background: var(--cream); border-radius: 99px; overflow: hidden; }
+.barThin { height: 100%; background: var(--green-mid); border-radius: 99px; }
+
+/* ── Login ──────────────────────────────────────────────────────────────── */
+.loginPage {
+  min-height: 100vh; background: var(--cream);
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.loginCard {
+  background: white; border: 1px solid var(--border); border-radius: 18px;
+  padding: 32px 30px; width: 100%; max-width: 380px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.loginBrand { font-family: var(--font-playfair), serif; font-size: 20px; font-weight: 600; color: var(--green); margin: 0 0 4px; }
+.loginBrand span { font-style: italic; font-weight: 400; color: var(--ink-light); }
+.loginTitle { font-size: 22px; font-weight: 600; margin: 0 0 10px; }
+.loginLabel { font-size: 13px; font-weight: 500; color: var(--ink-mid); }
+.loginInput {
+  font: inherit; font-size: 15px;
+  padding: 11px 14px; border: 1.5px solid var(--border-med); border-radius: var(--radius-sm);
+  background: var(--cream); color: var(--ink); outline: none;
+}
+.loginInput:focus { border-color: var(--border-focus); background: white; }
+.loginError { font-size: 13px; color: var(--red); margin: 0; }
+.loginButton {
+  font: inherit; font-size: 15px; font-weight: 500;
+  background: var(--green); color: white; border: none; border-radius: 99px;
+  padding: 12px 20px; margin-top: 6px; cursor: pointer;
+}
+.loginButton:hover { background: #145539; }
