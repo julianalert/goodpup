@@ -41,6 +41,69 @@ const AGE_LABELS: Record<string, string> = {
   senior: 'Senior (7+ years)',
 }
 
+// ── Personalisation ───────────────────────────────────────────────────────
+// How each quiz answer reads mid-sentence. Every line below describes something
+// the plan prompt (lib/prompt.ts) really adapts to, so the page promises nothing
+// the generated plan doesn't do.
+
+const PROBLEM_PHRASES: Record<string, string> = {
+  leash_pulling: 'leash pulling',
+  recall: 'poor recall',
+  jumping: 'jumping on people',
+  barking: 'excessive barking',
+  aggression: 'reactivity',
+  separation: 'separation anxiety',
+  destruction: 'chewing and destruction',
+  basic_obedience: 'gaps in basic obedience',
+  potty: 'potty accidents',
+  biting: 'biting and mouthing',
+  stealing: 'food stealing',
+  fearful: 'fear and anxiety',
+}
+
+const AGE_PHRASES: Record<string, string> = {
+  puppy_under6: 'a puppy under 6 months',
+  puppy_6to12: 'a young pup',
+  adolescent: 'an adolescent dog',
+  adult: 'an adult dog',
+  senior: 'a senior dog',
+}
+
+const LIVING_PHRASES: Record<string, string> = {
+  apartment: 'apartment life with no garden',
+  house_no_garden: 'a house with no garden',
+  house_garden: 'a house with a garden',
+  rural: 'life in the countryside',
+}
+
+const EXPERIENCE_FIT: Record<string, { title: string; body: string }> = {
+  first_dog: {
+    title: 'Written for a first-time owner',
+    body: 'Plain language and simple progressions, no trainer jargon.',
+  },
+  some_experience: {
+    title: 'Pitched at your experience',
+    body: 'Clear steps for someone who has had dogs before, without over-explaining the basics.',
+  },
+  experienced: {
+    title: 'Written for an experienced owner',
+    body: 'Less hand-holding on the basics, more depth on technique.',
+  },
+}
+
+const HISTORY_PHRASES: Record<string, string> = {
+  none: 'has had no training yet',
+  some_home: 'has done some basics at home',
+  classes: 'has attended classes',
+  trainer: 'has worked with a trainer',
+}
+
+/** "a", "a and b", "a, b and c" */
+function joinList(items: string[]): string {
+  if (items.length <= 1) return items[0] ?? ''
+  return `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`
+}
+
 interface FormData {
   dogName: string
   dogBreed: string
@@ -152,6 +215,43 @@ export default function OrderPage() {
     }
   }
 
+  // Answers, with safe fallbacks for a row that is missing a field
+  const name = data.dogName.trim() || 'your dog'
+  const breed = data.dogBreed.trim() || 'Breed'
+  const problemPhrases = data.problems.map((p) => PROBLEM_PHRASES[p]).filter(Boolean)
+  const agePhrase = AGE_PHRASES[data.dogAge]
+  const livingPhrase = LIVING_PHRASES[data.living]
+  const historyPhrase = HISTORY_PHRASES[data.trainingHistory]
+  const experienceFit = EXPERIENCE_FIT[data.experience] ?? {
+    title: 'Written at your level',
+    body: 'Wording and difficulty adjusted to your experience.',
+  }
+
+  const insideItems = [
+    {
+      title: `${breed} temperament diagnostic`,
+      body: problemPhrases.length > 0
+        ? `Drive level, trainability and breed instincts, plus the root cause of ${name}'s ${joinList(problemPhrases)}.`
+        : 'Drive level, trainability and breed instincts, explained clearly.',
+    },
+    {
+      title: 'Day-by-day 30-day program',
+      body: `Every day planned across 4 weeks${agePhrase ? `, paced for ${agePhrase}` : ''}, with weekly milestones to tick off before you move on.`,
+    },
+    {
+      title: `Exercises that fit ${data.dailyTime} minutes a day`,
+      body: `Step-by-step instructions with exact durations${livingPhrase ? `, adapted to ${livingPhrase}` : ''}.`,
+    },
+    {
+      title: `${breed} mistakes to avoid`,
+      body: `The most common errors owners make, the ones that silently kill progress with ${breed.includes(' ') || !data.dogBreed.trim() ? 'this breed' : breed + 's'}.`,
+    },
+    {
+      title: experienceFit.title,
+      body: `${experienceFit.body}${historyPhrase ? ` It also takes into account that ${name} ${historyPhrase}.` : ''}`,
+    },
+  ]
+
   return (
     <>
       {/* NAV */}
@@ -192,27 +292,18 @@ export default function OrderPage() {
           {/* HERO CARD */}
           <div className={`${s.heroCard} ${s.secHero}`}>
             <div className={s.heroTag}><span className={s.heroTagDot} />Almost there</div>
-            <h1>Your plan is being <em>built for {data.dogName}.</em></h1>
+            <h1>Your plan is being <em>built for {name}.</em></h1>
           </div>
 
           {/* WHAT'S INSIDE */}
           <div className={`${s.card} ${s.secInside}`}>
             <div className={s.cardHeader}>
               <div className={s.cardHeaderIcon}>📦</div>
-              <div className={s.cardTitle}>What&apos;s inside your plan</div>
+              <div className={s.cardTitle}>What&apos;s inside {name}&apos;s plan</div>
             </div>
             <div className={s.cardBody}>
               <div className={s.insideList}>
-                {[
-                  {
-                    title: `${data.dogBreed} temperament diagnostic`,
-                    body: `Drive levels, trainability, breed-specific instincts, and the root cause of ${data.dogName}'s ${data.problems.slice(0, 2).map((p) => PROBLEM_LABELS[p]).join(' and ')}, explained clearly.`,
-                  },
-                  { title: 'Day-by-day 30-day program', body: 'Every single day planned out across 4 weeks: what to do, for how long, and what success looks like before moving forward.' },
-                  { title: 'Detailed exercises with timing', body: `Step-by-step instructions, exact duration, session frequency, and progression markers written for ${data.dailyTime}-min daily sessions.` },
-                  { title: `${data.dogBreed} mistakes to avoid`, body: `The most common errors owners make, the ones that silently kill progress with ${data.dogBreed.includes(' ') ? 'this breed' : data.dogBreed + 's'}.` },
-                  { title: 'Weekly progress checklist', body: 'Concrete milestones for each week. Tick them off to know when you\'re ready to advance, and when to repeat a phase.' },
-                ].map((item, i) => (
+                {insideItems.map((item, i) => (
                   <div key={i} className={s.insideItem}>
                     <div className={s.insideNum}>{i + 1}</div>
                     <div className={s.insideText}>
@@ -317,7 +408,7 @@ export default function OrderPage() {
                 <path d="M51 46c-13 0-25 12-25 24 0 9 7 13 14 13 5 0 7-2 11-2s6 2 11 2c7 0 14-4 14-13 0-12-12-24-25-24z" />
               </svg>
               <div className={s.orderBoxTitle}>Your order</div>
-              <div className={s.orderPlanName}>Personalized 30-Day Training Plan</div>
+              <div className={s.orderPlanName}>{data.dogName.trim() ? `${name}'s 30-Day Training Plan` : 'Personalized 30-Day Training Plan'}</div>
             </div>
 
             <div className={s.orderBoxBody}>
