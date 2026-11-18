@@ -114,7 +114,7 @@ export default async function BreedProblemsPage({
           <Link href="/start" className="cta-btn">
             Get my dog&apos;s plan →
           </Link>
-          <div className="cta-micro">30-day guarantee · Delivered in 60 sec</div>
+          <div className="cta-micro">Delivered in 60 sec</div>
         </div>
       </div>
     </div>

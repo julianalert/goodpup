@@ -22,7 +22,6 @@ import {
   PiPersonSimpleWalkFill,
   PiQuotesFill,
   PiSealCheckFill,
-  PiShieldCheckFill,
   PiSparkleFill,
   PiSpeakerHighFill,
   PiStarFill,
@@ -79,10 +78,6 @@ const FAQ_ITEMS = [
   {
     question: "I'm a first-time dog owner. Is this too advanced for me?",
     answer: "No. We ask about your experience level in the form and the plan adapts accordingly. First-time owners get more explanation and simpler progressions. The plan is written in plain language with no jargon.",
-  },
-  {
-    question: "What if I'm not happy with the plan?",
-    answer: "We offer a 30-day money-back guarantee, no questions asked. If the plan isn't useful to you, email us and we'll refund you immediately.",
   },
   {
     question: "Is this a subscription?",
@@ -681,14 +676,6 @@ export default function LandingPage() {
                 ))}
                 <div className={s.costNote}>Private trainers typically charge $100–$150/hr.</div>
               </div>
-
-              <div className={s.guarantee}>
-                <PiShieldCheckFill aria-hidden="true" />
-                <div>
-                  <strong>30-day money-back guarantee</strong>
-                  <span>Not useful? Email us and we&apos;ll refund you immediately. No questions asked.</span>
-                </div>
-              </div>
             </div>
 
             <AnimateOnScroll className={s.pricingCardWrap}>
@@ -711,7 +698,6 @@ export default function LandingPage() {
                 <Link href="/start" className={s.btnCtaMain}>Get my dog&apos;s plan <PiArrowRightBold aria-hidden="true" /></Link>
                 <div className={s.pricingMicro}>
                   <span><PiLockSimpleFill aria-hidden="true" /> Secure payment</span>
-                  <span><PiShieldCheckFill aria-hidden="true" /> 30-day guarantee</span>
                   <span><PiEnvelopeSimpleFill aria-hidden="true" /> No account needed</span>
                 </div>
               </div>
@@ -758,7 +744,6 @@ export default function LandingPage() {
             Get my dog&apos;s plan for {PRICE_LABEL} <PiArrowRightBold aria-hidden="true" />
           </Link>
           <div className={s.finalMicro}>
-            <span><PiShieldCheckFill aria-hidden="true" /> 30-day money-back guarantee</span>
             <span><PiLightningFill aria-hidden="true" /> Ready in under 60 seconds</span>
           </div>
         </div>

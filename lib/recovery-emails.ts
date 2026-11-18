@@ -231,7 +231,7 @@ export function recoveryEmail2(d: RecoveryEmailData) {
   return { subject, previewText, html: emailShell(d.dogName, d.sessionId, body) }
 }
 
-// ── Email 3 — 72 hours — Social proof + guarantee ─────────────────────────
+// ── Email 3 — 72 hours — Social proof ─────────────────────────────────────
 
 export function recoveryEmail3(d: RecoveryEmailData) {
   const subject = `"I've spent $400 on classes. This finally explained why."`
@@ -249,9 +249,6 @@ export function recoveryEmail3(d: RecoveryEmailData) {
     ${p(`${d.dogName}'s plan is already built around their ${d.dogBreed} temperament, their specific triggers, and your situation. <strong style="color:#1C1C1A;">It's just waiting for you to unlock it.</strong>`)}
     ${p(`${PRICE_LABEL}. 60 seconds to your inbox.`)}
     ${ctaButton(orderUrl(d.sessionId), `Unlock ${d.dogName}'s plan now →`)}
-    <table cellpadding="0" cellspacing="0" border="0" role="presentation" width="100%" style="margin-top:24px;padding-top:18px;border-top:1px solid rgba(28,28,26,0.08);">
-      <tr><td><p style="font-size:12px;color:#8A8A82;font-style:italic;line-height:1.6;margin:0;"><strong style="color:#4A4A44;font-style:normal;">P.S.</strong> Not happy with the plan? Reply within 30 days for a full refund. No forms, no questions.</p></td></tr>
-    </table>
     ${sig()}
   `
 
@@ -275,7 +272,7 @@ export function recoveryEmail4(d: RecoveryEmailData) {
       `The most common mistakes owners make with ${d.dogBreed}s that silently kill progress`,
       `Weekly checklists so you know exactly when you're ready to advance`,
     ])}
-    ${p(`All of that for ${PRICE_LABEL}. With a 30-day money-back guarantee.`)}
+    ${p(`All of that for ${PRICE_LABEL}.`)}
     ${p(`If you've decided it's not for you — no problem at all. But if something stopped you that I can answer, just hit reply. I'm a real person and I'll respond within a few hours.`)}
     ${p(`Either way, I hope ${d.dogName}'s walks — and days — get easier soon. You clearly care about getting this right.`)}
     <table cellpadding="0" cellspacing="0" border="0" role="presentation" style="margin:24px 0 8px;">

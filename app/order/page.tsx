@@ -118,7 +118,7 @@ export default function OrderPage() {
     return () => observer.disconnect()
   }, [])
 
-  const handleCheckout = async (source: 'order_box' | 'sticky_bar' | 'preview') => {
+  const handleCheckout = async (source: 'order_box' | 'sticky_bar') => {
     if (checkoutState === 'loading') return
     setCheckoutState('loading')
 
@@ -151,15 +151,6 @@ export default function OrderPage() {
       setCheckoutState('error')
     }
   }
-
-  const dogPillText = [
-    '🐾',
-    data.dogName,
-    '·',
-    data.dogBreed,
-    data.dogAge ? `· ${AGE_LABELS[data.dogAge]}` : '',
-    data.problems.length > 0 ? `· ${data.problems.map((p) => PROBLEM_LABELS[p]).join(' + ')}` : '',
-  ].filter(Boolean).join(' ')
 
   return (
     <>
@@ -200,10 +191,73 @@ export default function OrderPage() {
 
           {/* HERO CARD */}
           <div className={`${s.heroCard} ${s.secHero}`}>
-            <div className={s.heroTag}>✦ Almost there</div>
+            <div className={s.heroTag}><span className={s.heroTagDot} />Almost there</div>
             <h1>Your plan is being <em>built for {data.dogName}.</em></h1>
-            <p>One payment and our AI will generate a complete, breed-specific 30-day training program tailored to {data.dogName}&apos;s exact profile and your situation. Delivered to your inbox in a few minutes.</p>
-            <div className={s.dogPill}>{dogPillText}</div>
+          </div>
+
+          {/* WHAT'S INSIDE */}
+          <div className={`${s.card} ${s.secInside}`}>
+            <div className={s.cardHeader}>
+              <div className={s.cardHeaderIcon}>📦</div>
+              <div className={s.cardTitle}>What&apos;s inside your plan</div>
+            </div>
+            <div className={s.cardBody}>
+              <div className={s.insideList}>
+                {[
+                  {
+                    title: `${data.dogBreed} temperament diagnostic`,
+                    body: `Drive levels, trainability, breed-specific instincts, and the root cause of ${data.dogName}'s ${data.problems.slice(0, 2).map((p) => PROBLEM_LABELS[p]).join(' and ')}, explained clearly.`,
+                  },
+                  { title: 'Day-by-day 30-day program', body: 'Every single day planned out across 4 weeks: what to do, for how long, and what success looks like before moving forward.' },
+                  { title: 'Detailed exercises with timing', body: `Step-by-step instructions, exact duration, session frequency, and progression markers written for ${data.dailyTime}-min daily sessions.` },
+                  { title: `${data.dogBreed} mistakes to avoid`, body: `The most common errors owners make, the ones that silently kill progress with ${data.dogBreed.includes(' ') ? 'this breed' : data.dogBreed + 's'}.` },
+                  { title: 'Weekly progress checklist', body: 'Concrete milestones for each week. Tick them off to know when you\'re ready to advance, and when to repeat a phase.' },
+                ].map((item, i) => (
+                  <div key={i} className={s.insideItem}>
+                    <div className={s.insideNum}>{i + 1}</div>
+                    <div className={s.insideText}>
+                      <h4>{item.title}</h4>
+                      <p>{item.body}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* TRUST SIGNALS */}
+          <div className={`${s.card} ${s.secTrust}`}>
+            <div className={s.cardHeader}>
+              <div className={s.cardHeaderIcon}>🛡</div>
+              <div className={s.cardTitle}>Why you can trust this</div>
+            </div>
+            <div className={s.cardBody}>
+              <div className={s.trustList}>
+                {[
+                  { icon: '⚡', text: <><strong>Ready in a few minutes.</strong> The moment payment clears, your plan is generated and sent straight to your inbox.</> },
+                  { icon: '🎯', text: <><strong>Built only for {data.dogName}.</strong> Every section (the diagnostic, the exercises, the mistakes list) is generated from {data.dogName}&apos;s specific profile. Not a template with your dog&apos;s name dropped in.</> },
+                  { icon: '📄', text: <><strong>A real, usable document.</strong> You get a polished PDF you can open on your phone during walks, print, or share with your partner. No app, no login, no faff.</> },
+                  { icon: '🔒', text: <><strong>Safe &amp; secure payment.</strong> Processed by Stripe. We never see or store your card details.</> },
+                ].map((item, i) => (
+                  <div key={i} className={s.trustItem}>
+                    <span className={s.trustIcon}>{item.icon}</span>
+                    <span>{item.text}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className={s.miniTestimonial}>
+                <div className={s.miniStars}>★★★★★</div>
+                <div className={s.miniQuote}>&ldquo;My trainer quoted me $600 for a 6-session package. I tried PawCraft first for {PRICE_LABEL}. Honestly, the plan was more detailed than what he gave me in session one.&rdquo;</div>
+                <div className={s.miniAuthor}>
+                  <div className={s.miniAvatar}>JK</div>
+                  <div>
+                    <div className={s.miniName}>Jamie K.</div>
+                    <div className={s.miniDog}>Bruno · French Bulldog · 3 years</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* PLAN SUMMARY */}
@@ -248,115 +302,6 @@ export default function OrderPage() {
             </div>
           </div>
 
-          {/* WHAT'S INSIDE */}
-          <div className={`${s.card} ${s.secInside}`}>
-            <div className={s.cardHeader}>
-              <div className={s.cardHeaderIcon}>📦</div>
-              <div className={s.cardTitle}>What&apos;s inside your plan</div>
-            </div>
-            <div className={s.cardBody}>
-              <div className={s.insideList}>
-                {[
-                  {
-                    title: `${data.dogBreed} temperament diagnostic`,
-                    body: `Drive levels, trainability, breed-specific instincts, and the root cause of ${data.dogName}'s ${data.problems.slice(0, 2).map((p) => PROBLEM_LABELS[p]).join(' and ')} — explained clearly.`,
-                  },
-                  { title: 'Day-by-day 30-day program', body: 'Every single day planned out across 4 weeks — what to do, for how long, and what success looks like before moving forward.' },
-                  { title: 'Detailed exercises with timing', body: `Step-by-step instructions, exact duration, session frequency, and progression markers written for ${data.dailyTime}-min daily sessions.` },
-                  { title: `${data.dogBreed} mistakes to avoid`, body: `The most common errors owners make — the ones that silently kill progress with ${data.dogBreed.includes(' ') ? 'this breed' : data.dogBreed + 's'}.` },
-                  { title: 'Weekly progress checklist', body: 'Concrete milestones for each week — tick them off to know when you\'re ready to advance, and when to repeat a phase.' },
-                ].map((item, i) => (
-                  <div key={i} className={s.insideItem}>
-                    <div className={s.insideNum}>{i + 1}</div>
-                    <div className={s.insideText}>
-                      <h4>{item.title}</h4>
-                      <p>{item.body}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* SAMPLE PREVIEW */}
-          <div className={`${s.card} ${s.secPreview}`}>
-            <div className={s.cardHeader}>
-              <div className={s.cardHeaderIcon}>👁</div>
-              <div className={s.cardTitle}>Preview — a glimpse of your plan</div>
-            </div>
-            <div className={s.cardBody}>
-              <div className={s.previewStrip}>
-                <div className={s.previewRow}>
-                  <div className={s.previewWeek}>Week 1</div>
-                  <div className={s.previewContent}>
-                    <div className={s.previewDay}>Monday: Name recognition &amp; attention</div>
-                    <div className={s.previewEx}>3 × 5-min sessions indoors. Say {data.dogName}&apos;s name, mark with &quot;yes&quot;, reward. Goal: 10/10 response before moving outside.</div>
-                  </div>
-                </div>
-                <div className={s.previewRow}>
-                  <div className={s.previewWeek}>Week 1</div>
-                  <div className={s.previewContent}>
-                    <div className={s.previewDay}>Tuesday: Eye contact hold</div>
-                    <div className={s.previewEx}>2 × 8-min sessions. Hold treat at eye level, reward 3 seconds of voluntary eye contact. Build to 5 seconds with TV on.</div>
-                  </div>
-                </div>
-                <div className={`${s.previewRow} ${s.previewBlur}`}>
-                  <div className={s.previewWeek}>Week 2</div>
-                  <div className={s.previewContent}>
-                    <div className={s.previewDay}>Monday: First outdoor session</div>
-                    <div className={s.previewEx}>Quiet street, 15 min. Stop every time leash tightens. Wait for slack, reward immediately. Goal: 5 voluntary check-ins.</div>
-                  </div>
-                </div>
-                <div className={`${s.previewRow} ${s.previewBlur}`}>
-                  <div className={s.previewWeek}>Week 2</div>
-                  <div className={s.previewContent}>
-                    <div className={s.previewDay}>Wednesday: Threshold work</div>
-                    <div className={s.previewEx}>Spot a dog at 50m. Ask for sit, reward calm focus. Do not allow closer. This is where reactivity is broken.</div>
-                  </div>
-                </div>
-              </div>
-              <button type="button" className={s.previewUnlock} onClick={() => handleCheckout('preview')} disabled={checkoutState === 'loading'}>
-                🔒 Unlock all 30 days + full exercises →
-              </button>
-            </div>
-          </div>
-
-          {/* TRUST SIGNALS */}
-          <div className={`${s.card} ${s.secTrust}`}>
-            <div className={s.cardHeader}>
-              <div className={s.cardHeaderIcon}>🛡</div>
-              <div className={s.cardTitle}>Why you can trust this</div>
-            </div>
-            <div className={s.cardBody}>
-              <div className={s.trustList}>
-                {[
-                  { icon: '⚡', text: <><strong>Ready in a few minutes.</strong> The moment payment clears, your plan is generated and sent straight to your inbox.</> },
-                  { icon: '🎯', text: <><strong>Built only for {data.dogName}.</strong> Every section — the diagnostic, the exercises, the mistakes list — is generated from {data.dogName}&apos;s specific profile. Not a template with your dog&apos;s name dropped in.</> },
-                  { icon: '📄', text: <><strong>A real, usable document.</strong> You get a polished PDF you can open on your phone during walks, print, or share with your partner. No app, no login, no faff.</> },
-                  { icon: '🔄', text: <><strong>30-day money-back guarantee.</strong> If the plan isn&apos;t useful, email us within 30 days and we&apos;ll refund you in full. No questions, no forms.</> },
-                  { icon: '🔒', text: <><strong>Safe &amp; secure payment.</strong> Processed by Stripe. We never see or store your card details.</> },
-                ].map((item, i) => (
-                  <div key={i} className={s.trustItem}>
-                    <span className={s.trustIcon}>{item.icon}</span>
-                    <span>{item.text}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className={s.miniTestimonial}>
-                <div className={s.miniStars}>★★★★★</div>
-                <div className={s.miniQuote}>&ldquo;My trainer quoted me $600 for a 6-session package. I tried PawCraft first for {PRICE_LABEL}. Honestly, the plan was more detailed than what he gave me in session one.&rdquo;</div>
-                <div className={s.miniAuthor}>
-                  <div className={s.miniAvatar}>JK</div>
-                  <div>
-                    <div className={s.miniName}>Jamie K.</div>
-                    <div className={s.miniDog}>Bruno · French Bulldog · 3 years</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
         </div>
 
         {/* RIGHT — ORDER BOX */}
@@ -364,13 +309,15 @@ export default function OrderPage() {
           <div className={s.orderBox}>
 
             <div className={s.orderBoxHeader}>
+              <svg className={s.orderPaw} viewBox="0 0 100 100" aria-hidden="true">
+                <ellipse cx="22" cy="40" rx="9" ry="12" transform="rotate(-20 22 40)" />
+                <ellipse cx="41" cy="24" rx="9" ry="13" transform="rotate(-8 41 24)" />
+                <ellipse cx="62" cy="24" rx="9" ry="13" transform="rotate(8 62 24)" />
+                <ellipse cx="80" cy="40" rx="9" ry="12" transform="rotate(20 80 40)" />
+                <path d="M51 46c-13 0-25 12-25 24 0 9 7 13 14 13 5 0 7-2 11-2s6 2 11 2c7 0 14-4 14-13 0-12-12-24-25-24z" />
+              </svg>
               <div className={s.orderBoxTitle}>Your order</div>
               <div className={s.orderPlanName}>Personalized 30-Day Training Plan</div>
-              <div className={s.orderPriceRow}>
-                <span className={s.orderPriceOld}>{LIST_PRICE_LABEL}</span>
-                <span className={s.orderPriceNew}>{PRICE_LABEL}</span>
-              </div>
-              <div className={s.orderPriceSub}>Limited launch price · One-time payment</div>
             </div>
 
             <div className={s.orderBoxBody}>
@@ -398,29 +345,20 @@ export default function OrderPage() {
                 disabled={checkoutState === 'loading'}
                 style={checkoutState === 'loading' ? { opacity: 0.75, cursor: 'default' } : {}}
               >
-                {checkoutState === 'loading' ? 'Redirecting to secure payment…' : `Pay ${PRICE_LABEL} — Get my plan`}
-                {checkoutState === 'idle' && <small>Delivered to your inbox in a few minutes</small>}
-                {checkoutState === 'error' && <small style={{ color: '#ffb3ae' }}>Something went wrong — please try again</small>}
+                {checkoutState === 'loading' ? 'Redirecting to secure payment…' : 'Get my plan →'}
+                {checkoutState === 'error' && <small style={{ color: '#ffb3ae' }}>Something went wrong, please try again</small>}
               </button>
 
               <div className={s.orderMicro}>
                 <div className={s.orderMicroItem}><span className={s.microIcon}>🔒</span> Secured by Stripe · SSL encrypted</div>
-                <div className={s.orderMicroItem}><span className={s.microIcon}>↩️</span> 30-day money-back guarantee</div>
                 <div className={s.orderMicroItem}><span className={s.microIcon}>📧</span> Sent straight to your inbox</div>
-                <div className={s.orderMicroItem}><span className={s.microIcon}>🚫</span> No subscription — ever</div>
-              </div>
-
-              <div className={s.guaranteeBox}>
-                <span className={s.guaranteeIcon}>🛡️</span>
-                <div className={s.guaranteeText}>
-                  <strong>30-day money-back guarantee</strong>
-                  If the plan doesn&apos;t help, email us within 30 days for a full refund. No questions asked.
-                </div>
+                <div className={s.orderMicroItem}><span className={s.microIcon}>🐾</span> Your own personal space online</div>
+                <div className={s.orderMicroItem}><span className={s.microIcon}>🚫</span> No subscription, ever</div>
               </div>
 
               <div className={s.urgencyBar}>
                 <span className={s.urgencyDot} />
-                <span>Launch price ends soon — normally {LIST_PRICE_LABEL}</span>
+                <span>Launch price ends soon. Normally {LIST_PRICE_LABEL}.</span>
               </div>
             </div>
 
@@ -442,7 +380,7 @@ export default function OrderPage() {
             <span className={s.stickyNew}>{PRICE_LABEL}</span>
             <span className={s.stickyOld}>{LIST_PRICE_LABEL}</span>
           </div>
-          <div className={s.stickySub}>One-time · 30-day guarantee</div>
+          <div className={s.stickySub}>One-time payment</div>
         </div>
         <button
           type="button"

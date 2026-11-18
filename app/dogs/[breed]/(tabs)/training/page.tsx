@@ -106,7 +106,7 @@ export default async function BreedTrainingPage({
           <Link href="/start" className="cta-btn">
             Get my dog&apos;s plan →
           </Link>
-          <div className="cta-micro">30-day guarantee · Delivered in 60 sec</div>
+          <div className="cta-micro">Delivered in 60 sec</div>
         </div>
         {breedProblems.length > 0 && (
           <div className="sidebar-card">
