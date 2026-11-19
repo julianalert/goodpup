@@ -40,6 +40,22 @@ const PROBLEM_LABELS: Record<string, string> = {
   fearful:          'fear & anxiety',
 }
 
+// Reads after the dog's name: "Why Milo pulls on the leash"
+const PROBLEM_PHRASES: Record<string, string> = {
+  leash_pulling:    'pulls on the leash',
+  recall:           "won't come when called",
+  jumping:          'jumps on people',
+  barking:          'barks so much',
+  aggression:       'reacts the way they do',
+  separation:       "can't cope when left alone",
+  destruction:      'chews and destroys things',
+  basic_obedience:  "doesn't listen",
+  potty:            'still has accidents indoors',
+  biting:           'bites and mouths',
+  stealing:         'steals food',
+  fearful:          'gets so scared',
+}
+
 const AGE_LABELS: Record<string, string> = {
   puppy_under6: 'puppy',
   puppy_6to12:  'young pup',
@@ -176,7 +192,7 @@ function sig(): string {
 
 export function recoveryEmail1(d: RecoveryEmailData) {
   const subject = `${d.dogName}'s plan is waiting for you 🐾`
-  const previewText = `You told us about ${d.dogName}. We built the plan. It just needs one thing…`
+  const previewText = `You told us about ${d.dogName}. Everything's saved. It just needs one thing…`
 
   const livingCtx = d.living ? `, the ${livingText(d.living)} you're working from` : ''
   const timeCtx = d.dailyTime ? `, the ${d.dailyTime} minutes you have each day` : ''
@@ -184,7 +200,7 @@ export function recoveryEmail1(d: RecoveryEmailData) {
   const body = `
     ${p(`You took the time to tell us about ${d.dogName} — their breed, their age, ${problemText(d.problems)}${timeCtx}${livingCtx}.`)}
     ${p(`That's not what someone does when they've given up on their dog.`)}
-    ${p(`So we went ahead and built ${d.dogName}'s plan. It's sitting on our server right now, ready to generate the moment you complete your order. A full 30-day, ${d.dogBreed}-specific programme — day by day, exercise by exercise — built around everything you told us.`)}
+    ${p(`So we saved ${d.dogName}'s profile. The moment you complete your order, we build their full 30-day, ${d.dogBreed}-specific programme from it — day by day, exercise by exercise — around everything you told us.`)}
     ${dogPill(d.dogName, d.dogBreed, d.dogAge, d.problems)}
     ${p(`<strong style="color:#1C1C1A;">All that's left is ${PRICE_LABEL}.</strong> That's it. Less than a coffee-shop afternoon. Less than one hour with a trainer who doesn't know your dog's name.`)}
     ${p(`No subscription. In this inbox a few minutes after you order.`)}
@@ -202,7 +218,10 @@ export function recoveryEmail1(d: RecoveryEmailData) {
 
 export function recoveryEmail2(d: RecoveryEmailData) {
   const problem = primaryProblem(d.problems)
-  const subject = `Why ${d.dogName} ${problem} — and what actually fixes it`
+  const phrase = d.problems.length > 0 ? PROBLEM_PHRASES[d.problems[0]] : undefined
+  const subject = phrase
+    ? `Why ${d.dogName} ${phrase} — and what actually fixes it`
+    : `What's really behind ${d.dogName}'s behaviour — and what actually fixes it`
   const previewText = `Most owners treat the symptom. The plan we built for ${d.dogName} goes after the cause.`
 
   const ageLabel = d.dogAge ? ` ${ageText(d.dogAge)}` : ''
