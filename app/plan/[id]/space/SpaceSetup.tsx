@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { PiBellBold, PiCameraBold, PiDeviceMobileBold } from 'react-icons/pi'
+import { PiBell, PiCamera, PiClock, PiDeviceMobile } from 'react-icons/pi'
 import type { SettingsStore } from './useSettings'
 import s from './space.module.css'
 
@@ -41,8 +41,11 @@ function detectInstall(): { installed: boolean; platform: Platform } {
   return { installed: standalone, platform: /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'ios' : 'other' }
 }
 
-/** Photo, reminder time and home-screen shortcut: what makes the space theirs. */
-export function SpaceSetup({ dogName, store }: { dogName: string; store: SettingsStore }) {
+/**
+ * The top of the profile: the dog's photo and name, then the settings that make
+ * the space theirs (daily reminder, home-screen shortcut).
+ */
+export function SpaceSetup({ dogName, subtitle, store }: { dogName: string; subtitle: string; store: SettingsStore }) {
   const { settings, update } = store
   const fileInput = useRef<HTMLInputElement>(null)
   const [photoError, setPhotoError] = useState('')
@@ -74,25 +77,30 @@ export function SpaceSetup({ dogName, store }: { dogName: string; store: Setting
     }
   }
 
-  return (
-    <section className={s.card}>
-      <h2 className={s.cardTitle}>Your space</h2>
+  const choosePhoto = () => fileInput.current?.click()
 
-      <div className={s.setupRow}>
-        <button type="button" className={s.photoBtn} onClick={() => fileInput.current?.click()} aria-label={`Choose a photo of ${dogName}`}>
-          {settings.photo
-            // eslint-disable-next-line @next/next/no-img-element -- a data URL: nothing for the image optimizer to do
-            ? <img src={settings.photo} alt={dogName} />
-            : <PiCameraBold aria-hidden />}
+  return (
+    <>
+      <header className={s.profileHero}>
+        <button type="button" className={s.profilePhoto} onClick={choosePhoto} aria-label={settings.photo ? `Change ${dogName}'s photo` : `Add a photo of ${dogName}`}>
+          <span className={s.profilePhotoInner}>
+            {settings.photo
+              // eslint-disable-next-line @next/next/no-img-element -- a data URL: nothing for the image optimizer to do
+              ? <img src={settings.photo} alt="" />
+              : dogName.charAt(0).toUpperCase()}
+          </span>
+          <span className={s.photoBadge}><PiCamera aria-hidden /></span>
         </button>
-        <div className={s.setupText}>
-          <strong>{settings.photo ? `${dogName}'s photo` : `Add a photo of ${dogName}`}</strong>
-          <span>It shows at the top of the space.</span>
-          <div className={s.setupActions}>
-            <button type="button" className={s.textBtn} onClick={() => fileInput.current?.click()}>
-              {settings.photo ? 'Change photo' : 'Choose photo'}
+        <div className={s.profileText}>
+          <h1 className={s.title}>{dogName}</h1>
+          {subtitle && <p className={s.body2}>{subtitle}</p>}
+          <div className={s.inlineActions}>
+            <button type="button" className={s.textBtn} onClick={choosePhoto}>
+              {settings.photo ? 'Change photo' : 'Add a photo'}
             </button>
-            {settings.photo && <button type="button" className={s.textBtn} onClick={() => save({ photo: null })}>Remove</button>}
+            {settings.photo && (
+              <button type="button" className={`${s.textBtn} ${s.kickerMuted}`} onClick={() => save({ photo: null })}>Remove</button>
+            )}
           </div>
           {photoError && <span className={s.fieldError}>{photoError}</span>}
         </div>
@@ -103,65 +111,70 @@ export function SpaceSetup({ dogName, store }: { dogName: string; store: Setting
           hidden
           onChange={(e) => { void onPhoto(e.target.files?.[0]); e.target.value = '' }}
         />
-      </div>
+      </header>
 
-      <div className={s.setupRow}>
-        <span className={s.setupIcon}><PiBellBold aria-hidden /></span>
-        <div className={s.setupText}>
-          <strong>Daily reminder</strong>
-          <span>
-            {settings.remindersEnabled
-              ? 'One email a day with that day’s session. None on days you have already trained.'
-              : 'Off. You will not get the daily email.'}
-          </span>
-          <div className={s.setupActions}>
-            <label className={s.switch}>
-              <input
-                type="checkbox"
-                checked={settings.remindersEnabled}
-                onChange={(e) => save({ remindersEnabled: e.target.checked })}
-              />
-              <span>{settings.remindersEnabled ? 'On' : 'Off'}</span>
-            </label>
-            {settings.remindersEnabled && (
-              <select
-                className={s.select}
-                value={settings.reminderHour}
-                onChange={(e) => save({ reminderHour: Number(e.target.value) })}
-                aria-label="Reminder time"
-              >
-                {(HOURS.includes(settings.reminderHour) ? HOURS : [...HOURS, settings.reminderHour].sort((a, b) => a - b))
-                  .map((hour) => <option key={hour} value={hour}>{hourLabel(hour)}</option>)}
-              </select>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {!install.installed && (
-        <div className={s.setupRow}>
-          <span className={s.setupIcon}><PiDeviceMobileBold aria-hidden /></span>
-          <div className={s.setupText}>
-            <strong>Put it on your home screen</strong>
+      <section className={`${s.card} ${s.settings} ${s.rows}`} aria-label="Settings">
+        <div className={s.setting}>
+          <span className={s.rowIcon}><PiBell aria-hidden /></span>
+          <label htmlFor="reminders" className={s.rowText}>
+            <strong>Daily reminder</strong>
             <span>
-              {installPrompt
-                ? `Open ${dogName}'s space like an app, one tap from your home screen.`
-                : install.platform === 'ios'
-                  ? 'In Safari, tap the Share button, then “Add to Home Screen”.'
-                  : 'Open your browser menu and choose “Add to Home screen” or “Install”.'}
+              {settings.remindersEnabled
+                ? 'One email with the day’s session. Skipped on days you have trained.'
+                : 'Off. You will not get the daily email.'}
             </span>
+          </label>
+          <input
+            id="reminders"
+            type="checkbox"
+            role="switch"
+            className={s.switch}
+            checked={settings.remindersEnabled}
+            onChange={(e) => save({ remindersEnabled: e.target.checked })}
+          />
+        </div>
+
+        {settings.remindersEnabled && (
+          <div className={s.setting}>
+            <span className={s.rowIcon}><PiClock aria-hidden /></span>
+            <label htmlFor="reminder-hour" className={s.rowText}>
+              <strong>Reminder time</strong>
+            </label>
+            <select
+              id="reminder-hour"
+              className={s.select}
+              value={settings.reminderHour}
+              onChange={(e) => save({ reminderHour: Number(e.target.value) })}
+            >
+              {(HOURS.includes(settings.reminderHour) ? HOURS : [...HOURS, settings.reminderHour].sort((a, b) => a - b))
+                .map((hour) => <option key={hour} value={hour}>{hourLabel(hour)}</option>)}
+            </select>
+          </div>
+        )}
+
+        {!install.installed && (
+          <div className={s.setting}>
+            <span className={s.rowIcon}><PiDeviceMobile aria-hidden /></span>
+            <div className={s.rowText}>
+              <strong>Add to home screen</strong>
+              <span>
+                {installPrompt
+                  ? `Open ${dogName}'s space like an app, in one tap.`
+                  : install.platform === 'ios'
+                    ? 'In Safari, tap Share, then “Add to Home Screen”.'
+                    : 'In your browser menu, choose “Add to Home screen” or “Install”.'}
+              </span>
+            </div>
             {installPrompt && (
-              <div className={s.setupActions}>
-                <button type="button" className={s.textBtn} onClick={() => { void installPrompt.prompt(); setInstallPrompt(null) }}>
-                  Add to home screen
-                </button>
-              </div>
+              <button type="button" className={s.textBtn} onClick={() => { void installPrompt.prompt(); setInstallPrompt(null) }}>
+                Add
+              </button>
             )}
           </div>
-        </div>
-      )}
+        )}
+      </section>
 
       {saveError && <p className={s.fieldError}>That did not save. Check your connection and try again.</p>}
-    </section>
+    </>
   )
 }

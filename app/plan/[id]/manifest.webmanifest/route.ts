@@ -32,8 +32,8 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
       start_url: `/plan/${id}`,
       scope: `/plan/${id}`,
       display: 'standalone',
-      background_color: '#F9F7F3',
-      theme_color: '#1A6B4A',
+      background_color: '#F6F6F3',
+      theme_color: '#F6F6F3',
       icons: [
         { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
         { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },

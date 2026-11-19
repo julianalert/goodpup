@@ -1,8 +1,10 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import type { IconType } from 'react-icons'
 import {
-  PiChartLineUpBold, PiDogBold, PiFireFill, PiFirstAidKitBold, PiPathBold, PiSunBold, PiWifiSlashBold,
+  PiChartLineUp, PiChartLineUpFill, PiDog, PiDogFill, PiFireFill, PiFirstAidKit, PiFirstAidKitFill,
+  PiPath, PiPathFill, PiSun, PiSunFill, PiWifiSlash,
 } from 'react-icons/pi'
 import { TOTAL_DAYS, type PlanV2, type ProgressMap } from '@/lib/plan-types'
 import { computeJourney } from '@/lib/plan-progress'
@@ -27,15 +29,15 @@ export interface PlanSpaceProps {
   initialSettings: SpaceSettings
 }
 
-const TABS = [
-  { id: 'today', label: 'Today', Icon: PiSunBold },
-  { id: 'journey', label: 'Journey', Icon: PiPathBold },
-  { id: 'progress', label: 'Progress', Icon: PiChartLineUpBold },
-  { id: 'toolkit', label: 'Toolkit', Icon: PiFirstAidKitBold },
-  { id: 'profile', label: 'Profile', Icon: PiDogBold },
-] as const
+const TABS: { id: string; label: string; Icon: IconType; IconOn: IconType }[] = [
+  { id: 'today', label: 'Today', Icon: PiSun, IconOn: PiSunFill },
+  { id: 'journey', label: 'Journey', Icon: PiPath, IconOn: PiPathFill },
+  { id: 'progress', label: 'Progress', Icon: PiChartLineUp, IconOn: PiChartLineUpFill },
+  { id: 'toolkit', label: 'Toolkit', Icon: PiFirstAidKit, IconOn: PiFirstAidKitFill },
+  { id: 'profile', label: 'Profile', Icon: PiDog, IconOn: PiDogFill },
+]
 
-type Tab = (typeof TABS)[number]['id']
+type Tab = 'today' | 'journey' | 'progress' | 'toolkit' | 'profile'
 
 function tabFromHash(): Tab {
   const hash = window.location.hash.replace('#', '')
@@ -65,7 +67,7 @@ export default function PlanSpace({ sessionId, dogName, subtitle, problems, plan
   const show = (next: Tab) => {
     setTab(next)
     window.history.replaceState(null, '', `#${next}`)
-    window.scrollTo({ top: 0 })
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }
 
   const openDayInToday = (day: number) => {
@@ -73,12 +75,34 @@ export default function PlanSpace({ sessionId, dogName, subtitle, problems, plan
     show('today')
   }
 
+  const selectTab = (id: Tab) => {
+    if (id === 'today') setOpenDay(null)
+    show(id)
+  }
+
   const daysDone = journey.doneDays.length
   const status = journey.currentDay === null
     ? 'All 30 days done'
     : daysDone === 0
-      ? `Day 1 of ${TOTAL_DAYS} · ready when you are`
+      ? `Day 1 of ${TOTAL_DAYS}`
       : `${daysDone} of ${TOTAL_DAYS} days done`
+
+  const tabButtons = (className: string, onClassName: string, withIcons: boolean) => TABS.map(({ id, label, Icon, IconOn }) => {
+    const on = tab === id
+    const Glyph = on ? IconOn : Icon
+    return (
+      <button
+        key={id}
+        type="button"
+        className={`${className} ${on ? onClassName : ''}`}
+        aria-current={on ? 'page' : undefined}
+        onClick={() => selectTab(id as Tab)}
+      >
+        {withIcons && <Glyph aria-hidden />}
+        <span>{label}</span>
+      </button>
+    )
+  })
 
   return (
     <div className={s.app}>
@@ -91,11 +115,12 @@ export default function PlanSpace({ sessionId, dogName, subtitle, problems, plan
               : dogName.charAt(0).toUpperCase()}
           </button>
           <div className={s.topText}>
-            <div className={s.topName}>{dogName}&apos;s training space</div>
+            <div className={s.topName}>{dogName}</div>
             <div className={s.topSub}>{status}</div>
           </div>
+          <nav className={s.tabs} aria-label="Sections">{tabButtons(s.tab, s.tabOn, false)}</nav>
           {journey.streak > 0 && (
-            <div className={s.streakPill} title={`${journey.streak} days in a row`}>
+            <div className={s.streak} title={`${journey.streak} ${journey.streak === 1 ? 'day' : 'days'} in a row`}>
               <PiFireFill aria-hidden /> {journey.streak}
             </div>
           )}
@@ -107,7 +132,7 @@ export default function PlanSpace({ sessionId, dogName, subtitle, problems, plan
 
       {store.unsaved > 0 && (
         <div className={s.unsaved} role="status">
-          <PiWifiSlashBold aria-hidden />
+          <PiWifiSlash aria-hidden />
           <span>{store.unsaved === 1 ? 'Your last change is' : `${store.unsaved} changes are`} not saved yet.</span>
           <button type="button" onClick={store.retry}>Try again</button>
         </div>
@@ -136,20 +161,7 @@ export default function PlanSpace({ sessionId, dogName, subtitle, problems, plan
       </main>
 
       <nav className={s.nav} aria-label="Sections">
-        <div className={s.navInner}>
-          {TABS.map(({ id, label, Icon }) => (
-            <button
-              key={id}
-              type="button"
-              className={`${s.navBtn} ${tab === id ? s.navBtnOn : ''}`}
-              aria-current={tab === id ? 'page' : undefined}
-              onClick={() => { if (id === 'today') setOpenDay(null); show(id) }}
-            >
-              <Icon aria-hidden />
-              <span>{label}</span>
-            </button>
-          ))}
-        </div>
+        <div className={s.navInner}>{tabButtons(s.navBtn, s.navBtnOn, true)}</div>
       </nav>
     </div>
   )

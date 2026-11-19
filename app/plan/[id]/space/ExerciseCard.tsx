@@ -2,8 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import {
-  PiArrowCounterClockwiseBold, PiCaretDownBold, PiCheckBold, PiClockBold,
-  PiPauseFill, PiPlayFill, PiQuestionBold, PiTargetBold,
+  PiArrowCounterClockwise, PiCaretDown, PiCheckBold, PiLifebuoy, PiPauseFill, PiPlayFill, PiTarget,
 } from 'react-icons/pi'
 import type { ExerciseProgress, PlanExercise } from '@/lib/plan-types'
 import s from './space.module.css'
@@ -48,19 +47,25 @@ function Timer({ minutes }: { minutes: number }) {
 
   const finished = left === 0
   const started = left !== total
+  const label = finished
+    ? "Time's up. Start the timer again"
+    : running ? 'Pause timer' : started ? 'Resume timer' : `Start a ${minutes}-minute timer`
 
   return (
-    <div className={`${s.timer} ${running ? s.timerRunning : ''} ${finished ? s.timerDone : ''}`}>
-      <button type="button" className={s.timerMain} onClick={toggle}>
+    <div className={s.timer}>
+      <button
+        type="button"
+        className={`${s.timerBtn} ${running ? s.timerRunning : ''} ${finished ? s.timerDone : ''}`}
+        onClick={toggle}
+        aria-label={label}
+        title={label}
+      >
         {running ? <PiPauseFill aria-hidden /> : <PiPlayFill aria-hidden />}
-        <span className={s.timerClock}>{clock(left)}</span>
-        <span className={s.timerLabel}>
-          {finished ? "Time's up. Start again" : running ? 'Pause' : started ? 'Resume' : `Start ${minutes}-minute timer`}
-        </span>
+        <span aria-live={running ? 'off' : 'polite'}>{finished ? "Time's up" : clock(left)}</span>
       </button>
       {started && !running && !finished && (
-        <button type="button" className={s.timerReset} onClick={reset} aria-label="Reset timer">
-          <PiArrowCounterClockwiseBold aria-hidden />
+        <button type="button" className={s.timerReset} onClick={reset} aria-label="Reset timer" title="Reset timer">
+          <PiArrowCounterClockwise aria-hidden />
         </button>
       )}
     </div>
@@ -95,76 +100,81 @@ export function ExerciseCard({ number, exercise, state, open, onToggle, onChange
   }
 
   return (
-    <section className={`${s.exercise} ${state.done ? s.exerciseDone : ''} ${open ? s.exerciseOpen : ''}`}>
-      <button type="button" className={s.exerciseHead} onClick={onToggle} aria-expanded={open}>
-        <span className={s.exerciseNum}>{state.done ? <PiCheckBold aria-hidden /> : number}</span>
-        <span className={s.exerciseTitle}>
-          <span className={s.exerciseName}>{exercise.name}</span>
-          <span className={s.exerciseMeta}>
-            <PiClockBold aria-hidden /> {exercise.minutes} min
-            {!state.done && stepsDone > 0 && <> · {stepsDone} of {exercise.steps.length} steps</>}
-            {state.done && <> · Done</>}
+    <section className={`${s.ex} ${state.done ? s.exDone : ''} ${open ? s.exOpen : ''}`}>
+      <button type="button" className={s.exHead} onClick={onToggle} aria-expanded={open}>
+        <span className={s.exStatus}>{state.done ? <PiCheckBold aria-label="Done" /> : number}</span>
+        <span className={s.exHeadText}>
+          <span className={s.exName}>{exercise.name}</span>
+          <span className={s.exMeta}>
+            {exercise.minutes} min
+            {state.done ? ' · Done' : stepsDone > 0 ? ` · ${stepsDone} of ${exercise.steps.length} steps` : ''}
           </span>
         </span>
-        <PiCaretDownBold className={s.caret} aria-hidden />
+        <PiCaretDown className={s.caret} aria-hidden />
       </button>
 
       {open && (
-        <div className={s.exerciseBody}>
-          {exercise.why && <p className={s.why}>{exercise.why}</p>}
+        <div className={s.exBody}>
+          {exercise.why && <p className={s.exWhy}>{exercise.why}</p>}
 
           {exercise.needs.length > 0 && (
-            <div className={s.needs}>
-              <span className={s.needsLabel}>You need</span>
-              {exercise.needs.map((need) => <span key={need} className={s.chip}>{need}</span>)}
+            <div>
+              <span className={s.subLabel}>You&apos;ll need</span>
+              <ul className={s.chips}>
+                {exercise.needs.map((need) => <li key={need} className={s.chip}>{need}</li>)}
+              </ul>
             </div>
           )}
 
-          <ol className={s.steps}>
-            {exercise.steps.map((step, i) => {
-              const checked = state.steps.includes(i)
-              return (
-                <li key={i}>
-                  <button
-                    type="button"
-                    className={`${s.step} ${checked ? s.stepDone : ''}`}
-                    onClick={() => toggleStep(i)}
-                    aria-pressed={checked}
-                  >
-                    <span className={s.stepBox}>{checked ? <PiCheckBold aria-hidden /> : i + 1}</span>
-                    <span className={s.stepText}>{step}</span>
-                  </button>
-                </li>
-              )
-            })}
-          </ol>
-
-          <Timer minutes={exercise.minutes} />
+          <div>
+            <span className={s.subLabel}>Steps</span>
+            <ol className={s.checklist}>
+              {exercise.steps.map((step, i) => {
+                const checked = state.steps.includes(i)
+                return (
+                  <li key={i}>
+                    <button
+                      type="button"
+                      className={`${s.check} ${checked ? s.checkOn : ''}`}
+                      onClick={() => toggleStep(i)}
+                      aria-pressed={checked}
+                    >
+                      <span className={s.checkBox}>{checked ? <PiCheckBold aria-hidden /> : i + 1}</span>
+                      <span className={s.checkText}>{step}</span>
+                    </button>
+                  </li>
+                )
+              })}
+            </ol>
+          </div>
 
           {exercise.success && (
-            <div className={s.success}>
-              <PiTargetBold aria-hidden />
+            <div className={s.goal}>
+              <PiTarget aria-hidden />
               <div>
-                <span className={s.blockLabel}>You&apos;re done when</span>
-                {exercise.success}
+                <strong>You&apos;re done when</strong>
+                <p>{exercise.success}</p>
               </div>
             </div>
           )}
 
           {exercise.ifStuck && (
-            <div className={s.help}>
+            <div>
               <button type="button" className={s.helpToggle} onClick={() => setHelpOpen((v) => !v)} aria-expanded={helpOpen}>
-                <PiQuestionBold aria-hidden />
+                <PiLifebuoy aria-hidden />
                 <span>If it&apos;s not working</span>
-                <PiCaretDownBold className={`${s.caret} ${helpOpen ? s.caretOpen : ''}`} aria-hidden />
+                <PiCaretDown className={`${s.caret} ${helpOpen ? s.caretOpen : ''}`} aria-hidden />
               </button>
               {helpOpen && <p className={s.helpText}>{exercise.ifStuck}</p>}
             </div>
           )}
 
-          <button type="button" className={state.done ? s.btnGhost : s.btnPrimary} onClick={toggleDone}>
-            {state.done ? 'Mark as not done' : 'Mark exercise done'}
-          </button>
+          <div className={s.exActions}>
+            {!state.done && <Timer minutes={exercise.minutes} />}
+            <button type="button" className={state.done ? s.btnSecondary : s.btnPrimary} onClick={toggleDone}>
+              {state.done ? 'Mark as not done' : 'Mark as done'}
+            </button>
+          </div>
         </div>
       )}
     </section>

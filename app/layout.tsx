@@ -14,9 +14,11 @@ const playfair = Playfair_Display({
   display: 'swap',
 })
 
+// The variable font: every weight is real (600/700 used to be faked from 500),
+// and the optical-size axis tightens large headings automatically.
 const dmSans = DM_Sans({
   subsets: ['latin'],
-  weight: ['300', '400', '500'],
+  axes: ['opsz'],
   variable: '--font-dm-sans',
   display: 'swap',
 })

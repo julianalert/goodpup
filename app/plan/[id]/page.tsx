@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#1A6B4A',
+  themeColor: '#F6F6F3',
 }
 
 interface Props {

@@ -20,16 +20,18 @@ export function RatingCard({ checkpoint, problems, dogName, store, onSkip }: Pro
   const isStart = checkpoint === 0
 
   return (
-    <section className={`${s.card} ${s.rating}`}>
-      <div className={s.eyebrow}>{isStart ? 'Before you start · 20 seconds' : `${CHECKPOINT_LABELS[checkpoint]} check-in`}</div>
-      <h2 className={s.cardTitle}>
-        {isStart ? `Where is ${dogName} today?` : `How is ${dogName} doing now?`}
-      </h2>
-      <p className={s.cardText}>
-        {isStart
-          ? 'Rate each problem as it is right now. You will rate them again every week, and this is how you will see the change.'
-          : 'Rate each problem again as it is this week. Be honest: the point is to see the real trend.'}
-      </p>
+    <section className={s.card}>
+      <div className={s.cardHead}>
+        <div className={s.kicker}>{isStart ? 'Before you start · 20 seconds' : `${CHECKPOINT_LABELS[checkpoint]} check-in`}</div>
+        <h2 className={s.h2}>
+          {isStart ? `Where is ${dogName} today?` : `How is ${dogName} doing now?`}
+        </h2>
+        <p className={s.body2}>
+          {isStart
+            ? 'Rate each problem as it is right now. You will rate them again every week to see the change.'
+            : 'Rate each problem again as it is this week. Be honest: the point is to see the real trend.'}
+        </p>
+      </div>
 
       {problems.map((problem) => {
         const current = getRating(store.progress, problem.id, checkpoint)
@@ -59,7 +61,9 @@ export function RatingCard({ checkpoint, problems, dogName, store, onSkip }: Pro
       </div>
 
       {onSkip && (
-        <button type="button" className={s.linkBtn} onClick={onSkip}>Skip for now</button>
+        <div className={s.ratingFoot}>
+          <button type="button" className={s.quietBtn} onClick={onSkip}>Skip for now</button>
+        </div>
       )}
     </section>
   )

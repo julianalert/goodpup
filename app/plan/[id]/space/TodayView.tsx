@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import type { IconType } from 'react-icons'
 import {
-  PiArrowLeftBold, PiArrowRightBold, PiCameraBold, PiCheckBold, PiClockBold, PiFireFill,
-  PiLockSimpleFill, PiShieldCheckBold, PiTrophyFill, PiXBold,
+  PiArrowLeft, PiCamera, PiCaretRight, PiCheckBold, PiCheckCircleFill, PiClock, PiFireFill, PiFlag,
+  PiListChecks, PiLockSimple, PiPushPinFill, PiShieldCheck, PiSmiley, PiSmileyMeh, PiSmileySad,
+  PiTrophyFill, PiX,
 } from 'react-icons/pi'
 import { dayKey, exerciseKey, weekOfDay, TOTAL_DAYS, type DayFeel, type PlanDay, type PlanV2 } from '@/lib/plan-types'
 import { dueCheckpoint, getDay, getExercise, ratingChange, type Journey } from '@/lib/plan-progress'
@@ -29,10 +31,10 @@ interface Props {
   onShowTab: (tab: 'journey' | 'progress' | 'profile') => void
 }
 
-const FEELS: { id: DayFeel; label: string; reply: string }[] = [
-  { id: 'tough', label: 'Tough', reply: "Tough days are part of it, and they don't undo the good ones. Tomorrow, open \"If it's not working\" on the first exercise before you start, and keep the sessions short." },
-  { id: 'ok', label: 'OK', reply: 'Solid. Showing up every day matters more than any single perfect session.' },
-  { id: 'nailed', label: 'Nailed it', reply: 'That is what it looks like when it clicks. Enjoy it.' },
+const FEELS: { id: DayFeel; label: string; Icon: IconType; reply: string }[] = [
+  { id: 'tough', label: 'Tough', Icon: PiSmileySad, reply: "Tough days are part of it, and they don't undo the good ones. Tomorrow, open \"If it's not working\" on the first exercise before you start, and keep the sessions short." },
+  { id: 'ok', label: 'OK', Icon: PiSmileyMeh, reply: 'Solid. Showing up every day matters more than any single perfect session.' },
+  { id: 'nailed', label: 'Nailed it', Icon: PiSmiley, reply: 'That is what it looks like when it clicks. Enjoy it.' },
 ]
 
 const formatHour = (hour: number) => `${hour % 12 === 0 ? 12 : hour % 12}:00 ${hour < 12 ? 'am' : 'pm'}`
@@ -58,27 +60,26 @@ export function TodayView({ sessionId, dogName, problems, plan, journey, store, 
 
   // ── All 30 days done ───────────────────────────────────────────────────
   if (following && journey.currentDay === null) {
+    const changes = problems
+      .map((p) => ({ ...p, change: ratingChange(store.progress, p.id) }))
+      .filter((p) => p.change !== null)
+
     return (
       <div className={s.stack}>
         <section className={`${s.card} ${s.celebrate}`}>
-          <div className={s.bigIcon}><PiTrophyFill aria-hidden /></div>
-          <h2 className={s.heroTitle}>30 days. Done.</h2>
-          <p className={s.cardText}>
+          <div className={s.celebrateIcon}><PiTrophyFill aria-hidden /></div>
+          <h1 className={s.title}>30 days. Done.</h1>
+          <p className={s.lead}>
             You and {dogName} finished the whole program: {journey.exercisesDone} exercises and {journey.minutesTrained} minutes of training.
             Most people never get past week one.
           </p>
-          <div className={s.changeList}>
-            {problems.map((p) => {
-              const change = ratingChange(store.progress, p.id)
-              if (!change) return null
-              return (
-                <div key={p.id} className={s.changeRow}>
-                  <span>{p.label}</span>
-                  <strong>{change.first} → {change.latest}</strong>
-                </div>
-              )
-            })}
-          </div>
+          {changes.length > 0 && (
+            <ul className={s.changeList}>
+              {changes.map((p) => (
+                <li key={p.id}><span>{p.label}</span><strong>{p.change!.first} → {p.change!.latest}</strong></li>
+              ))}
+            </ul>
+          )}
           <button type="button" className={s.btnPrimary} onClick={() => onShowTab('progress')}>See {dogName}&apos;s progress</button>
         </section>
         {checkpoint !== null && <RatingCard checkpoint={checkpoint} problems={problems} dogName={dogName} store={store} />}
@@ -99,12 +100,12 @@ export function TodayView({ sessionId, dogName, problems, plan, journey, store, 
     return (
       <div className={s.stack}>
         <section className={`${s.card} ${s.celebrate}`}>
-          <div className={s.bigIcon}><PiCheckBold aria-hidden /></div>
-          <h2 className={s.heroTitle}>Day {finished} done</h2>
+          <div className={s.celebrateIcon}><PiCheckBold aria-hidden /></div>
+          <h1 className={s.title}>Day {finished} done</h1>
           {journey.streak > 1 && (
-            <div className={s.streakLine}><PiFireFill aria-hidden /> {journey.streak} days in a row</div>
+            <div className={s.streakChip}><PiFireFill aria-hidden /> {journey.streak} days in a row</div>
           )}
-          {reply && <p className={s.cardText}>{reply}</p>}
+          {reply && <p className={s.lead}>{reply}</p>}
         </section>
 
         {checkpoint !== null && checkpoint > 0 && (
@@ -112,25 +113,27 @@ export function TodayView({ sessionId, dogName, problems, plan, journey, store, 
         )}
 
         {weekJustEnded && (
-          <button type="button" className={`${s.card} ${s.nudge}`} onClick={() => onShowTab('journey')}>
-            <span>
-              <strong>Week {weekOfDay(finished)} is complete.</strong> Tick off the milestones {dogName} has reached.
+          <button type="button" className={s.rowLink} onClick={() => onShowTab('journey')}>
+            <span className={s.rowIcon}><PiFlag aria-hidden /></span>
+            <span className={s.rowText}>
+              <strong>Week {weekOfDay(finished)} is complete</strong>
+              <span>Tick off the milestones {dogName} has reached</span>
             </span>
-            <PiArrowRightBold aria-hidden />
+            <PiCaretRight className={s.chevron} aria-hidden />
           </button>
         )}
 
-        <section className={`${s.card} ${s.tomorrow}`}>
-          <div className={s.eyebrow}><PiLockSimpleFill aria-hidden /> Tomorrow · Day {day.day}</div>
-          <h3 className={s.cardTitle}>{day.title}</h3>
-          <p className={s.cardText}>{day.focus}</p>
+        <section className={s.card}>
+          <div className={s.cardHead}>
+            <div className={`${s.kicker} ${s.kickerMuted}`}><PiLockSimple aria-hidden /> Tomorrow · Day {day.day}</div>
+            <h2 className={s.h2}>{day.title}</h2>
+            <p className={s.body2}>{day.focus}</p>
+          </div>
           <ul className={s.previewList}>
             {day.exercises.map((e, i) => <li key={i}>{e.name} <span>{e.minutes} min</span></li>)}
           </ul>
-          <p className={s.fine}>
-            Dogs learn between sessions, so one day at a time works best. Come back tomorrow.
-          </p>
-          <button type="button" className={s.linkBtn} onClick={() => setStartedEarly(true)}>
+          <p className={s.caption}>Dogs learn between sessions, so one day at a time works best.</p>
+          <button type="button" className={s.textBtn} onClick={() => setStartedEarly(true)}>
             Start Day {day.day} now anyway
           </button>
         </section>
@@ -140,70 +143,78 @@ export function TodayView({ sessionId, dogName, problems, plan, journey, store, 
 
   // ── A day to work through ──────────────────────────────────────────────
   const states = day.exercises.map((_, i) => getExercise(store.progress, day.day, i))
-  const allDone = states.every((state) => state.done)
+  const doneCount = states.filter((state) => state.done).length
+  const allDone = doneCount === states.length
   const savedDay = getDay(store.progress, day.day)
   const week = plan.weeks[weekOfDay(day.day) - 1]
   const showBaseline = following && checkpoint === 0 && !skippedBaseline && journey.doneDays.length === 0
+  const showSafety = Boolean(plan.profile.safety) && day.day <= 3
+  const showSetup = following && !hasPhoto && !setupDismissed && journey.doneDays.length < 3
 
   return (
     <div className={s.stack}>
       {!following && (
-        <button type="button" className={s.backLink} onClick={onCloseDay}>
-          <PiArrowLeftBold aria-hidden /> Back to {journey.currentDay ? `Day ${journey.currentDay}` : 'today'}
+        <button type="button" className={s.back} onClick={onCloseDay}>
+          <PiArrowLeft aria-hidden /> Back to {journey.currentDay ? `Day ${journey.currentDay}` : 'today'}
         </button>
       )}
+
+      <header className={s.hero}>
+        <div className={s.kicker}>
+          Day {day.day} · Week {week.week}
+          {!following && <span className={s.badge}>{savedDay ? 'Completed' : 'Preview'}</span>}
+        </div>
+        <h1 className={s.title}>{day.title}</h1>
+        <p className={s.lead}>{day.focus}</p>
+        <div className={s.heroMeta}>
+          <span><PiClock aria-hidden /> {minutesOf(day)} min</span>
+          <span>
+            <PiListChecks aria-hidden />
+            {doneCount > 0
+              ? `${doneCount} of ${states.length} done`
+              : `${states.length} ${states.length === 1 ? 'exercise' : 'exercises'}`}
+          </span>
+        </div>
+        <div className={s.segments} aria-hidden>
+          {states.map((state, i) => <span key={i} className={`${s.segment} ${state.done ? s.segmentDone : ''}`} />)}
+        </div>
+      </header>
 
       {showBaseline && (
         <RatingCard checkpoint={0} problems={problems} dogName={dogName} store={store} onSkip={() => setSkippedBaseline(true)} />
       )}
 
-      <header className={s.dayHead}>
-        <div className={s.eyebrow}>
-          {following ? 'Today' : savedDay ? 'Completed' : 'Preview'} · Day {day.day} of {TOTAL_DAYS} · Week {week.week}
-        </div>
-        <h1 className={s.dayTitle}>{day.title}</h1>
-        <p className={s.dayFocus}>{day.focus}</p>
-        <div className={s.dayMeta}>
-          <span><PiClockBold aria-hidden /> {minutesOf(day)} min</span>
-          <span>{day.exercises.length} {day.exercises.length === 1 ? 'exercise' : 'exercises'}</span>
-        </div>
-      </header>
-
-      {following && !showBaseline && !hasPhoto && !setupDismissed && journey.doneDays.length < 3 && (
-        <div className={s.setupNudge}>
-          <button type="button" className={s.setupNudgeMain} onClick={() => onShowTab('profile')}>
-            <PiCameraBold aria-hidden />
-            <span>
-              <strong>Make this space {dogName}&apos;s.</strong>{' '}
-              Add a photo{reminderHour !== null ? `, and choose when the daily email arrives (now ${formatHour(reminderHour)})` : ' and turn on a daily reminder'}.
-            </span>
-          </button>
-          <button type="button" className={s.setupNudgeClose} onClick={dismissSetup} aria-label="Dismiss">
-            <PiXBold aria-hidden />
-          </button>
-        </div>
-      )}
-
       {week.rule && (
         <div className={s.rule}>
-          <span className={s.blockLabel}>This week&apos;s rule</span>
-          {week.rule}
+          <PiPushPinFill aria-hidden />
+          <div>
+            <strong>This week&apos;s rule</strong>
+            <p>{week.rule}</p>
+          </div>
         </div>
       )}
 
-      {plan.profile.safety && day.day <= 3 && (
-        <button type="button" className={s.safetyLink} onClick={() => onShowTab('profile')}>
-          <PiShieldCheckBold aria-hidden />
-          <span>Read the safety notes for {dogName} before you start</span>
-          <PiArrowRightBold aria-hidden />
+      {showSafety && (
+        <button type="button" className={s.rowLink} onClick={() => onShowTab('profile')}>
+          <span className={`${s.rowIcon} ${s.rowIconDanger}`}><PiShieldCheck aria-hidden /></span>
+          <span className={s.rowText}>
+            <strong>Safety notes for {dogName}</strong>
+            <span>Read these before you start</span>
+          </span>
+          <PiCaretRight className={s.chevron} aria-hidden />
         </button>
       )}
 
-      <DayExercises key={`exercises-${day.day}`} day={day} states={states} store={store} sessionId={sessionId} />
+      <section className={s.section} aria-labelledby="exercises-title">
+        <div className={s.sectionHead}>
+          <h2 id="exercises-title" className={s.h2}>Exercises</h2>
+        </div>
+        <DayExercises key={`exercises-${day.day}`} day={day} states={states} store={store} sessionId={sessionId} />
+      </section>
 
       {savedDay ? (
-        <section className={`${s.card} ${s.dayDone}`}>
-          <PiCheckBold aria-hidden />
+        <section className={s.dayDone}>
+          <PiCheckCircleFill aria-hidden />
           <div>
             <strong>Day {day.day} is done.</strong>
             {savedDay.note && <p className={s.note}>&ldquo;{savedDay.note}&rdquo;</p>}
@@ -224,7 +235,22 @@ export function TodayView({ sessionId, dogName, problems, plan, journey, store, 
           }}
         />
       ) : (
-        <p className={s.fine}>Finish every exercise to complete Day {day.day}.</p>
+        <p className={`${s.caption} ${s.center}`}>Finish every exercise to complete Day {day.day}.</p>
+      )}
+
+      {showSetup && (
+        <div className={s.rowLink}>
+          <span className={s.rowIcon}><PiCamera aria-hidden /></span>
+          <button type="button" className={s.rowText} onClick={() => onShowTab('profile')}>
+            <strong>Make this space {dogName}&apos;s</strong>
+            <span>
+              Add a photo{reminderHour !== null ? ` and pick when the daily email arrives (now ${formatHour(reminderHour)})` : ' and turn on a daily reminder'}.
+            </span>
+          </button>
+          <button type="button" className={s.dismiss} onClick={dismissSetup} aria-label="Dismiss">
+            <PiX aria-hidden />
+          </button>
+        </div>
       )}
     </div>
   )
@@ -277,22 +303,23 @@ function CheckIn({ dayNumber, dogName, onFinish }: {
 
   return (
     <section className={`${s.card} ${s.checkin}`}>
-      <h2 className={s.cardTitle}>How did today go?</h2>
+      <h2 className={s.h2}>How did today go?</h2>
       <div className={s.feels}>
-        {FEELS.map((f) => (
+        {FEELS.map(({ id, label, Icon }) => (
           <button
-            key={f.id}
+            key={id}
             type="button"
-            className={`${s.feel} ${feel === f.id ? s.feelOn : ''}`}
-            aria-pressed={feel === f.id}
-            onClick={() => setFeel(f.id)}
+            className={`${s.feel} ${feel === id ? s.feelOn : ''}`}
+            aria-pressed={feel === id}
+            onClick={() => setFeel(id)}
           >
-            {f.label}
+            <Icon aria-hidden />
+            {label}
           </button>
         ))}
       </div>
       <textarea
-        className={s.noteInput}
+        className={s.textarea}
         value={note}
         onChange={(e) => setNote(e.target.value)}
         maxLength={600}
