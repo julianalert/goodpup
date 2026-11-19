@@ -45,8 +45,8 @@ const AGE_LABELS: Record<string, string> = {
 
 // ── Personalisation ───────────────────────────────────────────────────────
 // How each quiz answer reads mid-sentence. Every line below describes something
-// the plan prompt (lib/prompt.ts) really adapts to, so the page promises nothing
-// the generated plan doesn't do.
+// the plan generation (lib/plan-v2.ts) really adapts to, or a feature the training
+// space really has, so the page promises nothing the buyer doesn't get.
 
 const PROBLEM_PHRASES: Record<string, string> = {
   leash_pulling: 'leash pulling',
@@ -61,14 +61,6 @@ const PROBLEM_PHRASES: Record<string, string> = {
   biting: 'biting and mouthing',
   stealing: 'food stealing',
   fearful: 'fear and anxiety',
-}
-
-const AGE_PHRASES: Record<string, string> = {
-  puppy_under6: 'a puppy under 6 months',
-  puppy_6to12: 'a young pup',
-  adolescent: 'an adolescent dog',
-  adult: 'an adult dog',
-  senior: 'a senior dog',
 }
 
 const LIVING_PHRASES: Record<string, string> = {
@@ -221,7 +213,6 @@ export default function OrderPage() {
   const name = data.dogName.trim() || 'your dog'
   const breed = data.dogBreed.trim() || 'Breed'
   const problemPhrases = data.problems.map((p) => PROBLEM_PHRASES[p]).filter(Boolean)
-  const agePhrase = AGE_PHRASES[data.dogAge]
   const livingPhrase = LIVING_PHRASES[data.living]
   const historyPhrase = HISTORY_PHRASES[data.trainingHistory]
   const experienceFit = EXPERIENCE_FIT[data.experience] ?? {
@@ -231,22 +222,24 @@ export default function OrderPage() {
 
   const insideItems = [
     {
-      title: `${breed} temperament diagnostic`,
+      title: `${breed} temperament profile`,
       body: problemPhrases.length > 0
         ? `Drive level, trainability and breed instincts, plus the root cause of ${name}'s ${joinList(problemPhrases)}.`
         : 'Drive level, trainability and breed instincts, explained clearly.',
     },
     {
-      title: 'Day-by-day 30-day program',
-      body: `Every day planned across 4 weeks${agePhrase ? `, paced for ${agePhrase}` : ''}, with weekly milestones to tick off before you move on.`,
-    },
-    {
       title: `Exercises that fit ${data.dailyTime} minutes a day`,
-      body: `Step-by-step instructions with exact durations${livingPhrase ? `, adapted to ${livingPhrase}` : ''}.`,
+      body: `Step-by-step instructions with a built-in timer${livingPhrase ? `, adapted to ${livingPhrase}` : ''}, and what to change when it isn't working.`,
     },
     {
-      title: `${breed} mistakes to avoid`,
-      body: `The most common errors owners make, the ones that silently kill progress with ${breed.includes(' ') || !data.dogBreed.trim() ? 'this breed' : breed + 's'}.`,
+      title: 'Progress you can see',
+      body: problemPhrases.length > 0
+        ? `Weekly milestones to tick off, and your own rating of ${name}'s ${joinList(problemPhrases)} from week to week.`
+        : 'Weekly milestones to tick off, and your own ratings from week to week.',
+    },
+    {
+      title: 'A toolkit for the hard moments',
+      body: `"What to do when…" scripts, house rules for everyone at home, and the mistakes that silently kill progress with ${breed.includes(' ') || !data.dogBreed.trim() ? 'this breed' : breed + 's'}.`,
     },
     {
       title: experienceFit.title,
@@ -427,7 +420,8 @@ export default function OrderPage() {
               <div className={s.orderMicro}>
                 <div className={s.orderMicroItem}><span className={s.microIcon}>🔒</span> Secured by Stripe · SSL encrypted</div>
                 <div className={s.orderMicroItem}><span className={s.microIcon}>📧</span> Sent straight to your inbox</div>
-                <div className={s.orderMicroItem}><span className={s.microIcon}>🐾</span> Accessible online from your personal space</div>
+                <div className={s.orderMicroItem}><span className={s.microIcon}>🐾</span> {data.dogName.trim() ? `${name}'s` : 'Your dog\'s'} own training space, on any device</div>
+                <div className={s.orderMicroItem}><span className={s.microIcon}>🔔</span> One short email a day, off whenever you like</div>
                 <div className={s.orderMicroItem}><span className={s.microIcon}>🚫</span> No subscription, ever</div>
               </div>
 

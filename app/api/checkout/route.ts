@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     ? `PawCraft · ${dogName}'s 30-Day Training Plan`
     : 'PawCraft · Personalized 30-Day Training Plan'
 
-  const contents = 'temperament diagnostic, day-by-day program, exercises with timings, mistakes to avoid and weekly checklist'
+  const contents = 'temperament profile, 30 daily sessions with step-by-step exercises, progress tracking and a toolkit for the hard moments'
   const description = dogName
     ? `Built for ${dogName}${dogBreed ? `, your ${dogBreed}` : ''}: ${contents}.`
     : `${contents.charAt(0).toUpperCase()}${contents.slice(1)}.`

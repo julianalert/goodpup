@@ -187,7 +187,7 @@ export function recoveryEmail1(d: RecoveryEmailData) {
     ${p(`So we went ahead and built ${d.dogName}'s plan. It's sitting on our server right now, ready to generate the moment you complete your order. A full 30-day, ${d.dogBreed}-specific programme — day by day, exercise by exercise — built around everything you told us.`)}
     ${dogPill(d.dogName, d.dogBreed, d.dogAge, d.problems)}
     ${p(`<strong style="color:#1C1C1A;">All that's left is ${PRICE_LABEL}.</strong> That's it. Less than a coffee-shop afternoon. Less than one hour with a trainer who doesn't know your dog's name.`)}
-    ${p(`No subscription. Delivered to this inbox in under 60 seconds.`)}
+    ${p(`No subscription. In this inbox a few minutes after you order.`)}
     ${ctaButton(orderUrl(d.sessionId), `Get ${d.dogName}'s plan — ${PRICE_LABEL} →`)}
     <table cellpadding="0" cellspacing="0" border="0" role="presentation" width="100%" style="margin-top:24px;padding-top:18px;border-top:1px solid rgba(28,28,26,0.08);">
       <tr><td><p style="font-size:12px;color:#8A8A82;font-style:italic;line-height:1.6;margin:0;"><strong style="color:#4A4A44;font-style:normal;">P.S.</strong> If something stopped you — a question, a doubt — just reply to this email. I read every reply personally.</p></td></tr>
@@ -247,7 +247,7 @@ export function recoveryEmail3(d: RecoveryEmailData) {
     )}
     ${p(`The difference wasn't effort. Sarah was already trying hard. The difference was having a plan built for <em>her dog's</em> specific drive level, age, and environment — not a recycled guide written for every dog on the planet.`)}
     ${p(`${d.dogName}'s plan is already built around their ${d.dogBreed} temperament, their specific triggers, and your situation. <strong style="color:#1C1C1A;">It's just waiting for you to unlock it.</strong>`)}
-    ${p(`${PRICE_LABEL}. 60 seconds to your inbox.`)}
+    ${p(`${PRICE_LABEL}. In your inbox a few minutes later.`)}
     ${ctaButton(orderUrl(d.sessionId), `Unlock ${d.dogName}'s plan now →`)}
     ${sig()}
   `
@@ -270,7 +270,8 @@ export function recoveryEmail4(d: RecoveryEmailData) {
       `30 days of training, mapped out day by day — no guessing what to do next`,
       d.dailyTime ? `Exercises designed for ${d.dailyTime}-minute sessions${d.living ? ` in ${livingText(d.living)}` : ''}` : `Exercises tailored to your daily schedule and living situation`,
       `The most common mistakes owners make with ${d.dogBreed}s that silently kill progress`,
-      `Weekly checklists so you know exactly when you're ready to advance`,
+      `Weekly milestones to tick off and your own progress ratings, so you can see it working`,
+      `A "what to do when…" toolkit for the moments between sessions`,
     ])}
     ${p(`All of that for ${PRICE_LABEL}.`)}
     ${p(`If you've decided it's not for you — no problem at all. But if something stopped you that I can answer, just hit reply. I'm a real person and I'll respond within a few hours.`)}

@@ -26,6 +26,8 @@ import {
   PiSpeakerHighFill,
   PiStarFill,
   PiBarbellFill,
+  PiBellFill,
+  PiFirstAidKitFill,
   PiHouseLineFill,
   PiTreeFill,
   PiWarningFill,
@@ -64,6 +66,14 @@ export const metadata: Metadata = {
 
 const FAQ_ITEMS = [
   {
+    question: "What exactly do I get?",
+    answer: "A private training space for your dog that opens from a link in your inbox, on your phone or your computer. Inside are 30 daily sessions with step-by-step exercises, a profile explaining why your dog does what they do, weekly milestones, your own progress ratings, and a toolkit for the difficult moments. There is no app to install, though you can add it to your home screen.",
+  },
+  {
+    question: "How much time does it take each day?",
+    answer: "As much as you tell us you have, from 10 to 60 minutes. Each day's session is built to fit inside that time and is split into two or three short exercises, each with its own timer.",
+  },
+  {
     question: "How personalised is this really?",
     answer: "Very. The plan is generated from scratch for your dog based on their breed (including breed-specific temperament and drive levels), age, your top behaviour problems, how much time you can train per day, and whether you live in an apartment, house, or rural setting. Two dogs of different breeds or ages will receive completely different plans.",
   },
@@ -81,7 +91,7 @@ const FAQ_ITEMS = [
   },
   {
     question: "Is this a subscription?",
-    answer: `No. It's a one-time ${PRICE_LABEL} payment. You get the plan, it's yours forever, and you'll never be charged again. No hidden fees.`,
+    answer: `No. It's a one-time ${PRICE_LABEL} payment. You get the plan, it's yours forever, and you'll never be charged again. No hidden fees. The daily reminder email is part of the plan and you can turn it off at any time.`,
   },
 ]
 
@@ -137,7 +147,7 @@ export default function LandingPage() {
           <div className={s.heroCopy}>
             <div className={s.heroEyebrow}><PiSparkleFill aria-hidden="true" /> Built for your dog, not a template</div>
             <h1>A personalized training plan for your dog, <em>built in minutes.</em></h1>
-            <p className={s.heroSub}>Answer a few questions about your dog and get a custom training plan that actually fits them: no generic advice, no guesswork.</p>
+            <p className={s.heroSub}>Answer a few questions about your dog and get a 30-day plan that actually fits them: one short session a day, step by step, in a training space of their own. No generic advice, no guesswork.</p>
             <div className={s.heroCtaRow}>
               <Link href="/start" className={s.btnPrimary}>
                 Get my dog&apos;s plan <PiArrowRightBold aria-hidden="true" />
@@ -181,18 +191,18 @@ export default function LandingPage() {
             <div className={`${s.floatCard} ${s.floatToday}`} aria-hidden="true">
               <div className={s.ftLabel}><PiCalendarCheckFill /> Today · Day 12</div>
               <div className={s.ftTitle}>Loose-leash U-turns</div>
-              <div className={s.ftBadges}><span>2 × 8 min</span><span>Hallway → street</span></div>
+              <div className={s.ftBadges}><span>18 min</span><span>3 exercises</span></div>
             </div>
 
             <div className={`${s.floatCard} ${s.floatPlan}`} aria-hidden="true">
               <div className={s.fpHead}>
                 <span className={s.fpIcon}><PiPawPrintFill /></span>
                 <div>
-                  <div className={s.fpTitle}>Milo&apos;s 30-day plan</div>
+                  <div className={s.fpTitle}>Milo&apos;s training space</div>
                   <div className={s.fpMeta}>Australian Shepherd · 18 mo</div>
                 </div>
               </div>
-              <div className={s.fpProgressLabel}><span>Week 2 of 4</span><span>40%</span></div>
+              <div className={s.fpProgressLabel}><span>12 of 30 days done</span><span>40%</span></div>
               <div className={s.miniBar}><span style={{ width: '40%' }} /></div>
             </div>
           </div>
@@ -206,7 +216,7 @@ export default function LandingPage() {
             { Icon: PiPawPrintFill, n: '2,400+', l: 'plans generated' },
             { Icon: PiStarFill, n: '4.9/5', l: 'average rating' },
             { Icon: PiDogFill, n: '180+', l: 'breeds covered' },
-            { Icon: PiLightningFill, n: '< 60 sec', l: 'to get your plan' },
+            { Icon: PiLightningFill, n: '2–3 min', l: 'to build your plan' },
           ].map(({ Icon, n, l }) => (
             <div key={l} className={s.stat}>
               <span className={s.statIcon} aria-hidden="true"><Icon /></span>
@@ -405,7 +415,7 @@ export default function LandingPage() {
           <div className={s.sectionHeadCenter}>
             <span className={s.sectionLabel}>The solution</span>
             <h2 className={s.h2}>A training plan built <em>around<br />your actual dog.</em></h2>
-            <p className={s.lead}>PawCraft uses AI to do what a $150/hr private trainer would do in an initial consultation: analyse your dog&apos;s specific profile and build a step-by-step program from scratch. In 60 seconds. For {PRICE_LABEL}.</p>
+            <p className={s.lead}>PawCraft uses AI to do what a $150/hr private trainer would do in an initial consultation: analyse your dog&apos;s specific profile and build a step-by-step program from scratch. In a few minutes. For {PRICE_LABEL}.</p>
           </div>
 
           <div className={s.steps}>
@@ -438,7 +448,7 @@ export default function LandingPage() {
               </div>
               <div className={s.stepNum}>2</div>
               <h3>Our AI builds the plan</h3>
-              <p>In under 60 seconds, it analyses your dog&apos;s breed temperament, identifies the root cause of each problem, and generates a day-by-day 30-day program written specifically for your dog&apos;s profile.</p>
+              <p>In two to three minutes, it analyses your dog&apos;s breed temperament, identifies the root cause of each problem, and writes 30 daily sessions sized to the time you have, specifically for your dog&apos;s profile.</p>
             </AnimateOnScroll>
 
             <AnimateOnScroll className={s.stepCard} delay={200}>
@@ -458,8 +468,8 @@ export default function LandingPage() {
                 <div className={s.mailBtn}>Open my plan <PiArrowRightBold /></div>
               </div>
               <div className={s.stepNum}>3</div>
-              <h3>You get a complete, ready-to-use plan</h3>
-              <p>Delivered straight to your inbox. No app to download. No video library to navigate. Just a clear, structured plan you can start today.</p>
+              <h3>You follow it one day at a time</h3>
+              <p>The link lands in your inbox and opens your dog&apos;s own training space. No app to download, no video library to navigate. Today&apos;s session is waiting, you tick it off, and one short email a day tells you what&apos;s next.</p>
             </AnimateOnScroll>
           </div>
 
@@ -479,16 +489,16 @@ export default function LandingPage() {
             <div>
               <span className={`${s.sectionLabel} ${s.sectionLabelLight}`}>What&apos;s inside your plan</span>
               <h2 className={`${s.h2} ${s.h2Light}`}>Everything a private trainer<br />would charge <em>$150 for.</em></h2>
-              <p className={`${s.lead} ${s.leadLight}`}>Your plan is a full 30-day document covering five sections, all written for your dog specifically.</p>
+              <p className={`${s.lead} ${s.leadLight}`}>Your plan is a personal training space: 30 daily sessions, a way to see the progress, and help for the moments in between. All of it written for your dog specifically.</p>
 
               <ul className={s.deliverList}>
                 {[
-                  { Icon: PiBrainFill, title: 'Breed & temperament diagnostic', body: 'Understand why your dog behaves the way they do: drive levels, trainability score, breed-specific instincts, and the root cause of their specific issues.' },
-                  { Icon: PiCalendarCheckFill, title: 'Day-by-day 30-day program', body: 'Every day planned out: what to do, for how long, what success looks like. No guessing what comes next.' },
-                  { Icon: PiBarbellFill, title: 'Detailed exercises with timing', body: 'Each exercise comes with step-by-step instructions, exact duration, frequency, and how to know when your dog has got it.' },
-                  { Icon: PiWarningFill, title: 'Mistakes to avoid for your breed & age', body: 'The most common owner errors that kill progress, specific to your dog\'s breed, age, and problems. Not generic tips. Actual landmines to dodge.' },
-                  { Icon: PiListChecksFill, title: 'Weekly progress checklist', body: 'Concrete milestones for each week so you know exactly when you\'re ready to move forward, and when to repeat a phase.' },
-                  { Icon: PiSealCheckFill, title: 'Root cause explanation', body: 'A plain-English breakdown of why your dog does what they do, so you understand the logic behind every exercise and can adapt when needed.' },
+                  { Icon: PiCalendarCheckFill, title: 'A short session every day, for 30 days', body: 'Open the plan and today\'s session is waiting: two or three exercises sized to the minutes you have. Finish it, and tomorrow\'s unlocks.' },
+                  { Icon: PiBarbellFill, title: 'Step-by-step exercises with a timer', body: 'Every exercise spells out what to do, in order, with a built-in timer, what success looks like today, and what to change if your dog doesn\'t get it.' },
+                  { Icon: PiBrainFill, title: 'Breed & temperament profile', body: 'Why your dog behaves the way they do: drive, trainability, breed instincts, and the root cause of each problem in plain English.' },
+                  { Icon: PiListChecksFill, title: 'Progress you can see', body: 'Tick off each day and each weekly milestone, and rate the problems every week. You watch the numbers move instead of wondering whether it\'s working.' },
+                  { Icon: PiFirstAidKitFill, title: 'A toolkit for the hard moments', body: '"What to do when…" scripts for when your dog does the thing mid-walk, house rules for the whole family, and the mistakes to avoid for your breed and age.' },
+                  { Icon: PiBellFill, title: 'One email a day to keep you going', body: 'A short daily email with that day\'s session, at the time you choose. None on days you\'ve already trained, and you can turn it off whenever you like.' },
                 ].map(({ Icon, title, body }) => (
                   <li key={title} className={s.deliverItem}>
                     <span className={s.deliverIcon} aria-hidden="true"><Icon /></span>
@@ -502,28 +512,52 @@ export default function LandingPage() {
             </div>
 
             <AnimateOnScroll className={s.planMockCol}>
-              <div className={s.planMock} role="img" aria-label="Preview of a personalised PawCraft training plan for Milo, an 18-month-old Australian Shepherd">
+              <div className={s.planMock} role="img" aria-label="Preview of Milo's PawCraft training space: today's session with three exercises, steps to tick off, and weekly progress ratings">
                 <div className={s.pmChrome}>
                   <span /><span /><span />
                   <div className={s.pmUrl}><PiLockSimpleFill /> pawcraftplan.com/plan/milo</div>
                 </div>
                 <div className={s.pmCover}>
-                  <div className={s.pmCoverLabel}>Personalised 30-day training plan</div>
-                  <div className={s.pmCoverTitle}>Milo&apos;s <em>training plan</em></div>
+                  <div className={s.pmCoverLabel}>Milo&apos;s training space</div>
+                  <div className={s.pmCoverTitle}>Today · <em>Day 9 of 30</em></div>
                   <div className={s.pmMeta}>
-                    <div><span>Breed</span>Australian Shepherd</div>
-                    <div><span>Age</span>18 months</div>
-                    <div><span>Focus</span>Leash pulling · Barking</div>
+                    <div><span>Done</span>8 of 30 days</div>
+                    <div><span>Streak</span>5 days</div>
+                    <div><span>Today</span>18 minutes</div>
                   </div>
                 </div>
                 <div className={s.pmBody}>
-                  <div className={s.pmSection}>01 · Temperament diagnostic</div>
+                  <div className={s.pmSection}>Today&apos;s session</div>
+                  <div className={s.pmWeek}>
+                    <div className={s.pmWeekHead}>
+                      <span className={s.pmWeekBadge}>Week 2 · Day 9</span>
+                      <span className={s.pmWeekTitle}>Loose leash in the hallway</span>
+                    </div>
+                    {[
+                      ['1', 'Stop and wait when the leash goes tight', '8 min'],
+                      ['2', 'Name game with the TV on', '5 min'],
+                      ['3', 'Settle on the mat', '5 min'],
+                    ].map(([n, ex, dur]) => (
+                      <div key={n} className={s.pmDay}>
+                        <span className={s.pmDayName}>{n}</span>
+                        <span>{ex}</span>
+                        <span className={s.pmDur}>{dur}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className={s.pmSection}>Exercise 1 · step by step</div>
+                  <div className={s.pmChecks}>
+                    <div className={s.pmCheck}><span className={`${s.pmBox} ${s.pmBoxOn}`}><PiCheckBold /></span> Walk the hallway at a normal pace</div>
+                    <div className={s.pmCheck}><span className={`${s.pmBox} ${s.pmBoxOn}`}><PiCheckBold /></span> Leash goes tight: stop, say nothing, wait</div>
+                    <div className={s.pmCheck}><span className={s.pmBox} /> Leash slackens: say &ldquo;yes&rdquo;, treat at your knee</div>
+                  </div>
+
+                  <div className={s.pmSection}>Is it getting better?</div>
                   <div className={s.pmDiag}>
                     {[
-                      ['Breed drive', 'Very high', 92],
-                      ['Trainability', 'High', 80],
-                      ['Stimulation need', 'Very high', 95],
-                      ['Reactivity', 'Moderate', 55],
+                      ['Leash pulling', '8 → 5', 50],
+                      ['Barking', '7 → 5', 50],
                     ].map(([label, value, pct]) => (
                       <div key={label} className={s.pmDiagCard}>
                         <div className={s.pmDiagLabel}>{label}</div>
@@ -533,35 +567,8 @@ export default function LandingPage() {
                     ))}
                   </div>
                   <div className={s.pmTraits}>
-                    <span className={s.pmTraitPos}>Fast learner</span>
-                    <span className={s.pmTraitPos}>Eager to work</span>
-                    <span className={s.pmTraitWatch}>Motion-sensitive</span>
-                  </div>
-
-                  <div className={s.pmSection}>02 · 30-day program</div>
-                  <div className={s.pmWeek}>
-                    <div className={s.pmWeekHead}>
-                      <span className={s.pmWeekBadge}>Week 2 · Days 8–14</span>
-                      <span className={s.pmWeekTitle}>Focus in motion</span>
-                    </div>
-                    {[
-                      ['Mon', 'Pattern game at the front door', '3 × 5 min'],
-                      ['Tue', 'Loose-leash U-turns in the hallway', '2 × 8 min'],
-                      ['Wed', 'Flirt-pole herding outlet, with rules', '10 min'],
-                    ].map(([d, ex, dur]) => (
-                      <div key={d} className={s.pmDay}>
-                        <span className={s.pmDayName}>{d}</span>
-                        <span>{ex}</span>
-                        <span className={s.pmDur}>{dur}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className={s.pmSection}>04 · Week 2 milestones</div>
-                  <div className={s.pmChecks}>
-                    <div className={s.pmCheck}><span className={`${s.pmBox} ${s.pmBoxOn}`}><PiCheckBold /></span> Holds eye contact for 5 s at the open door</div>
-                    <div className={s.pmCheck}><span className={`${s.pmBox} ${s.pmBoxOn}`}><PiCheckBold /></span> Walks 20 m on a loose leash indoors</div>
-                    <div className={s.pmCheck}><span className={s.pmBox} /> Stays quiet when a cyclist passes</div>
+                    <span className={s.pmTraitPos}>Week 1 milestones 3/3</span>
+                    <span className={s.pmTraitWatch}>Rated every week</span>
                   </div>
                 </div>
               </div>
@@ -592,9 +599,10 @@ export default function LandingPage() {
                 {[
                   ['Built for your breed & age', 'One size fits all', 'Yes, fully personalised'],
                   ['Addresses root causes', 'Treats symptoms only', 'Diagnosis + solution'],
-                  ['Day-by-day structured plan', 'Random tips & videos', '30 days, fully mapped'],
+                  ['Day-by-day structured plan', 'Random tips & videos', '30 days, one session a day'],
                   ['Works for your living situation', 'Assumes you have a garden', 'Apartment, house, rural'],
-                  ['Ready to start today', 'Hours of videos to watch first', 'In your inbox in 60 sec'],
+                  ['Keeps you going', 'You are on your own', 'Daily reminder + progress tracking'],
+                  ['Ready to start today', 'Hours of videos to watch first', 'Ready in 2–3 minutes'],
                 ].map(([feature, them, us]) => (
                   <tr key={feature}>
                     <td>{feature}</td>
@@ -689,9 +697,9 @@ export default function LandingPage() {
                   <span className={s.priceOld}>{LIST_PRICE_LABEL}</span>
                   <span className={s.priceNew}>{PRICE_LABEL}</span>
                 </div>
-                <div className={s.priceSub}>One-time payment · No subscription · Instant delivery</div>
+                <div className={s.priceSub}>One-time payment · No subscription · Ready in minutes</div>
                 <ul className={s.priceFeatures}>
-                  {['Breed & temperament diagnostic', 'Complete 30-day day-by-day program', 'Detailed exercises with duration & frequency', 'Breed-specific mistakes to avoid', 'Weekly progress checklist', 'Delivered as an interactive plan to your inbox', 'Works for any breed, age, or problem'].map((f) => (
+                  {['Breed & temperament profile', '30 daily sessions, sized to your time', 'Step-by-step exercises with a built-in timer', 'Progress tracking and weekly milestones', '“What to do when…” toolkit and mistakes to avoid', 'One reminder email a day (optional)', 'Works for any breed, age, or problem'].map((f) => (
                     <li key={f} className={s.priceFeature}><PiCheckCircleFill aria-hidden="true" /> {f}</li>
                   ))}
                 </ul>
@@ -744,7 +752,7 @@ export default function LandingPage() {
             Get my dog&apos;s plan for {PRICE_LABEL} <PiArrowRightBold aria-hidden="true" />
           </Link>
           <div className={s.finalMicro}>
-            <span><PiLightningFill aria-hidden="true" /> Ready in under 60 seconds</span>
+            <span><PiLightningFill aria-hidden="true" /> Ready in 2–3 minutes</span>
           </div>
         </div>
       </section>
