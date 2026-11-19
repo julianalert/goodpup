@@ -129,7 +129,12 @@
 .week-desc { font-size: 13px; color: var(--ink-light); margin-top: 2px; }
 
 /* ── DAY TABLE ──────────────────────────────────────────────────────────── */
-.day-table { width: 100%; border-collapse: collapse; }
+/* Fixed layout: the exercise text gets the room, whatever the model writes in the
+   narrow columns. (Auto layout let one long duration badge crush the exercise column.) */
+.day-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.day-table th:nth-child(1) { width: 68px; }
+.day-table th:nth-child(3) { width: 27%; }
+.day-table th:nth-child(4) { width: 124px; }
 .day-table th {
   font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light);
   text-align: left; padding: 8px 12px; background: var(--cream-dark); border-bottom: 1px solid var(--border);
@@ -144,9 +149,9 @@
 .day-table tr:hover td { background: rgba(26,107,74,0.03); }
 .day-name { font-weight: 500; color: var(--ink); font-size: 13px; }
 .duration-badge {
-  display: inline-block; font-size: 11px; padding: 2px 8px;
+  display: inline-block; font-size: 11px; line-height: 1.45; padding: 3px 9px;
   background: var(--green-light); color: var(--green);
-  border-radius: 99px; white-space: nowrap;
+  border-radius: 10px;
 }
 
 /* ── MISTAKES ───────────────────────────────────────────────────────────── */
@@ -246,6 +251,46 @@
   .container { padding: 0 20px; }
   .diag-grid { grid-template-columns: 1fr; }
   .plan-footer { padding: 24px 20px; }
+
+  /* Small text is hard to read while holding a leash */
+  .callout-text, .callout > p, .callout > ul,
+  .mistake-content p, .mistake-item > div > p,
+  .check-text, .diag-card-sub, .diag-card > p { font-size: 14px; }
+
+  /* Day table → one card per day. A four-column table cannot fit a phone:
+     it overflowed the page and left the exercise text two words wide. */
+  .day-table, .day-table tbody, .day-table tr, .day-table td { display: block; width: auto; }
+  .day-table thead { display: none; }
+  .day-table tr {
+    background: white; border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px; margin-bottom: 12px;
+  }
+  .day-table td,
+  .day-table tr:last-child td { padding: 0; border: none; font-size: 15px; line-height: 1.65; }
+  .day-table tr:hover td { background: none; }
+  .day-table td + td { margin-top: 12px; }
+
+  /* Day label */
+  .day-table td:nth-child(1), .day-table td:nth-child(1) .day-name {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--green);
+  }
+  .day-table td:nth-child(1) + td { margin-top: 6px; }
+
+  /* Goal */
+  .day-table td:nth-child(3),
+  .day-table tr:hover td:nth-child(3),
+  .day-table tr:last-child td:nth-child(3) {
+    background: var(--green-light); border-radius: 8px;
+    padding: 10px 12px; font-size: 14px; line-height: 1.55;
+  }
+  .day-table td:nth-child(3)::before {
+    content: 'Goal'; display: block; margin-bottom: 2px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--green);
+  }
+
+  .duration-badge { font-size: 12px; background: var(--cream-dark); color: var(--ink-mid); }
 }
 
 @media print {

@@ -20,6 +20,18 @@ const GEN_DELAYS = [0, 4000, 8000, 12000, 17000, 22000]
 
 type GenState = 'generating' | 'ready' | 'failed'
 
+// How many times this page retries a failed generation by itself before showing the
+// error card, and how long it ignores a 'failed' status right after asking again.
+const AUTO_RETRIES = 2
+const RETRY_GRACE_MS = 20_000
+
+// The Stripe checkout ID from the return URL goes along with the request so the server
+// can confirm the payment with Stripe itself if the webhook hasn't arrived yet.
+function generateRequestBody(sessionId: string): string {
+  const stripeSessionId = new URLSearchParams(window.location.search).get('stripe_session_id')
+  return JSON.stringify({ session_id: sessionId, stripe_session_id: stripeSessionId ?? undefined })
+}
+
 export default function SuccessPage() {
   const router = useRouter()
   const [dogName, setDogName] = useState<string | null>(null)
@@ -28,6 +40,8 @@ export default function SuccessPage() {
   const sessionIdRef = useRef<string | null>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([])
+  const autoRetriesRef = useRef(0)
+  const retriedAtRef = useRef(0)
 
   useEffect(() => {
     const transactionId = new URLSearchParams(window.location.search).get('stripe_session_id')
@@ -105,25 +119,26 @@ export default function SuccessPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router])
 
-  function startGeneration(sessionId: string) {
-    sessionIdRef.current = sessionId
-
-    trackEvent('plan_generation_started', { session_id: sessionId })
-
-    // Start cosmetic step animation
-    GEN_DELAYS.forEach((delay, i) => {
-      const t = setTimeout(() => setGenStepIndex(i), delay)
-      timersRef.current.push(t)
-    })
-
-    // Kick off generation
+  // Ask the server to generate (the Stripe webhook asks too; only one of them runs)
+  function requestGeneration(sessionId: string) {
+    retriedAtRef.current = Date.now()
     fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ session_id: sessionId }),
+      body: generateRequestBody(sessionId),
     }).catch(err => console.error('[success] generate trigger failed:', err))
+  }
 
-    // Poll for status every 3 s
+  function startStepAnimation() {
+    timersRef.current.forEach(clearTimeout)
+    timersRef.current = GEN_DELAYS.map((delay, i) => setTimeout(() => setGenStepIndex(i), delay))
+  }
+
+  // Poll for status every 3 s. A failed attempt is retried from here without the
+  // buyer doing anything; the error card only shows once those retries are used up.
+  function pollStatus(sessionId: string) {
+    if (pollRef.current) clearInterval(pollRef.current)
+
     pollRef.current = setInterval(async () => {
       try {
         const res = await fetch(`/api/plan-status?session_id=${sessionId}`)
@@ -138,6 +153,16 @@ export default function SuccessPage() {
             router.push(`/plan/${sessionId}`)
           }, 800)
         } else if (data.plan_status === 'failed') {
+          // A request we just sent may not have flipped the status yet
+          if (Date.now() - retriedAtRef.current < RETRY_GRACE_MS) return
+
+          if (autoRetriesRef.current < AUTO_RETRIES) {
+            autoRetriesRef.current += 1
+            trackEvent('plan_generation_retried', { session_id: sessionId, retry: autoRetriesRef.current, automatic: true })
+            requestGeneration(sessionId)
+            return
+          }
+
           clearInterval(pollRef.current!)
           setGenState('failed')
         }
@@ -145,41 +170,26 @@ export default function SuccessPage() {
     }, 3000)
   }
 
+  function startGeneration(sessionId: string) {
+    sessionIdRef.current = sessionId
+
+    trackEvent('plan_generation_started', { session_id: sessionId })
+
+    startStepAnimation()
+    requestGeneration(sessionId)
+    pollStatus(sessionId)
+  }
+
   const handleRetry = () => {
     const sessionId = sessionIdRef.current
     if (!sessionId) return
     setGenState('generating')
     setGenStepIndex(0)
+    autoRetriesRef.current = 0
 
-    // Reset cosmetic timers
-    timersRef.current.forEach(clearTimeout)
-    timersRef.current = []
-    GEN_DELAYS.forEach((delay, i) => {
-      const t = setTimeout(() => setGenStepIndex(i), delay)
-      timersRef.current.push(t)
-    })
-
-    fetch('/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ session_id: sessionId }),
-    }).catch(err => console.error('[success] retry failed:', err))
-
-    pollRef.current = setInterval(async () => {
-      try {
-        const res = await fetch(`/api/plan-status?session_id=${sessionId}`)
-        if (!res.ok) return
-        const data = await res.json()
-        if (data.plan_status === 'ready') {
-          clearInterval(pollRef.current!)
-          setGenState('ready')
-          setTimeout(() => router.push(`/plan/${sessionId}`), 800)
-        } else if (data.plan_status === 'failed') {
-          clearInterval(pollRef.current!)
-          setGenState('failed')
-        }
-      } catch { /* keep polling */ }
-    }, 3000)
+    startStepAnimation()
+    requestGeneration(sessionId)
+    pollStatus(sessionId)
   }
 
   if (genState === 'failed') {
@@ -194,12 +204,12 @@ export default function SuccessPage() {
         <main className={s.main}>
           <div className={s.genCard}>
             <div className={s.errorIcon}>⚠️</div>
-            <h2 className={s.genTitle}>Something went wrong</h2>
+            <h2 className={s.genTitle}>This is taking longer than it should</h2>
             <p className={s.genSub}>
-              We couldn&apos;t generate {dogName ? `${dogName}'s` : 'your'} plan. Your payment is safe — tap retry and we&apos;ll try again.
+              Your payment is safe. We keep retrying {dogName ? `${dogName}'s` : 'your'} plan automatically and will email it to you as soon as it&apos;s ready, so you can close this page. Or try again now:
             </p>
             <button className={s.btnRetry} onClick={handleRetry}>
-              Retry generation
+              Try again now
             </button>
           </div>
         </main>

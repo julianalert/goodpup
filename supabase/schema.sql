@@ -36,8 +36,19 @@ CREATE TABLE submissions (
 
   -- Plan generation
   plan_html   TEXT,                -- AI-generated HTML (body sections only, no DOCTYPE)
+  plan_json   JSONB,               -- structured plan (interactive training space); new orders use this
   plan_status TEXT NOT NULL DEFAULT 'pending',
   -- plan_status: 'pending' | 'generating' | 'ready' | 'failed'
+  plan_attempts INTEGER NOT NULL DEFAULT 0,  -- generation attempts so far; the retry sweep stops at 10
+
+  -- Training space: reminders and personal touches (see migrations/006)
+  plan_ready_at        TIMESTAMPTZ,
+  reminders_enabled    BOOLEAN  NOT NULL DEFAULT TRUE,
+  reminder_hour        SMALLINT NOT NULL DEFAULT 8,   -- 0–23, customer's own timezone
+  timezone             TEXT,
+  last_reminder_at     TIMESTAMPTZ,
+  reminders_unanswered SMALLINT NOT NULL DEFAULT 0,
+  dog_photo            TEXT,                          -- small data-URL photo
 
   -- Tracking
   -- current_step: 0 = quiz opened, nothing submitted yet; 1–5 = last step submitted.
@@ -73,6 +84,28 @@ CREATE INDEX submissions_email_idx         ON submissions (email)             WH
 CREATE INDEX submissions_status_idx        ON submissions (status);
 CREATE INDEX submissions_created_at_idx    ON submissions (created_at DESC);
 CREATE INDEX submissions_stripe_session_idx ON submissions (stripe_session_id) WHERE stripe_session_id IS NOT NULL;
+
+-- 3b. PLAN PROGRESS (what each customer has done in their training space)
+-- ============================================================
+
+CREATE TABLE plan_progress (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  session_id  UUID NOT NULL REFERENCES submissions(session_id) ON DELETE CASCADE,
+  kind        TEXT NOT NULL,   -- 'exercise' | 'day' | 'milestone' | 'rating'
+  key         TEXT NOT NULL,   -- e.g. 'd3.e1', 'd3', 'w1.m2', 'leash_pulling@0'
+  value       JSONB NOT NULL,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (session_id, kind, key)
+);
+
+CREATE INDEX plan_progress_session_idx ON plan_progress (session_id);
+
+CREATE TRIGGER plan_progress_updated_at
+  BEFORE UPDATE ON plan_progress
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+ALTER TABLE plan_progress ENABLE ROW LEVEL SECURITY;
 
 -- 4. ROW LEVEL SECURITY
 -- ============================================================

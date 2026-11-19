@@ -40,7 +40,17 @@ export interface SubmissionRow {
   status: SubmissionStatus
   // Plan generation
   plan_html?: string | null
+  plan_json?: unknown              // structured plan (migration 005); absent until that migration has run
   plan_status?: PlanStatus | null
+  plan_attempts?: number | null   // generation attempts so far (migration 004)
+  // Training space (migration 006); absent until that migration has run
+  plan_ready_at?: string | null
+  reminders_enabled?: boolean | null
+  reminder_hour?: number | null
+  timezone?: string | null
+  last_reminder_at?: string | null
+  reminders_unanswered?: number | null
+  dog_photo?: string | null
   // Stripe
   stripe_session_id?: string | null
   stripe_payment_intent_id?: string | null
@@ -50,4 +60,5 @@ export interface SubmissionRow {
 
   // Timestamps
   created_at?: string | null
+  updated_at?: string | null   // bumped by the database on every write
 }

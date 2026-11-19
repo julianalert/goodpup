@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { waitUntil } from '@vercel/functions'
 import Stripe from 'stripe'
 import { stripe } from '@/lib/stripe'
 import { PRICE_CENTS } from '@/lib/pricing'
 import { createServerClient } from '@/lib/supabase'
 import { setUserProfile, trackServerEvent } from '@/lib/mixpanel-server'
+import { claimGeneration, runGeneration } from '@/lib/generate-plan'
+
+// Plan generation runs in the background of this request (waitUntil below),
+// so the function must be allowed to outlive the response by a few minutes.
+export const maxDuration = 300
 
 // Next.js App Router streams the body — we read it as raw text so Stripe can
 // verify the signature. No bodyParser config needed (unlike Pages Router).
@@ -74,6 +80,18 @@ export async function POST(req: NextRequest) {
 
     if (session.customer_email) {
       setUserProfile(session_id, { $email: session.customer_email })
+    }
+
+    // Start the plan here, not only from the buyer's browser: someone who closes the
+    // tab right after paying still gets their plan and the email. /success asks for
+    // the same thing; the claim makes sure only one of the two actually generates.
+    // Stripe gets its 200 straight away, generation continues in the background.
+    try {
+      const claimed = await claimGeneration(session_id)
+      if (claimed) waitUntil(runGeneration(claimed))
+    } catch (err) {
+      // The order is recorded as paid; /success (or its retry button) can still start it
+      console.error('[webhook] could not start plan generation:', err)
     }
   }
 

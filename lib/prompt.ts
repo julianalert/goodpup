@@ -43,15 +43,66 @@ const HISTORY_LABELS: Record<string, string> = {
   trainer: 'previously worked with a private trainer',
 }
 
+// ── Safety ─────────────────────────────────────────────────────────────────
+// Extra rules for plans where a mistake can get a person or a dog hurt. Half of
+// buyers pick reactivity/aggression or biting, so this is a main path, not an edge case.
+function buildSafetyRules(row: SubmissionRow, dogName: string): string {
+  const problems = row.problems ?? []
+  const isPuppy = row.dog_age === 'puppy_under6' || row.dog_age === 'puppy_6to12'
+  const isSenior = row.dog_age === 'senior'
+  const aggression = problems.includes('aggression')
+  const biting = problems.includes('biting')
+  const fearful = problems.includes('fearful')
+
+  const rules: string[] = []
+
+  if (aggression || biting || fearful) {
+    rules.push(
+      `Open Section 02, right after the intro paragraph, with one <div class="callout callout-red"> safety callout (icon ⚠️, same inner markup as the other callouts) that covers, briefly and without alarm: (a) management comes first — how to stop ${dogName} rehearsing the behaviour while training is in progress (distance, barriers, leash, avoiding known triggers); (b) a vet check to rule out pain or illness comes before training if the behaviour started suddenly, has recently got worse, or the dog is a senior; (c) when to stop and bring in a certified behaviourist or veterinary behaviourist: any bite that broke skin, aggression directed at a child, behaviour that is escalating, or no improvement after two weeks of consistent work.`,
+      `Never schedule off-leash or unbarriered contact between ${dogName} and something ${dogName} reacts to (other dogs, strangers, children, resident pets) on any of the 30 days. Exposure work happens at a distance where ${dogName} can still take food and look away, on leash or behind a barrier. Reducing that distance gradually is the only progression. Direct greetings and shared free space come after this program, and with a professional if there is any bite history — say so in Week 4.`,
+      `Never tell the owner to reach for, corner, hold down, stare down, or physically correct ${dogName} during a reaction, or to take things from ${dogName}'s mouth by force. No punishment, no "flooding", no prong, choke or shock collars.`,
+      'Every milestone in Section 04 must be reachable inside these rules: no milestone may require unbarriered contact with a trigger.',
+    )
+  }
+
+  if (aggression || (biting && !isPuppy)) {
+    rules.push(
+      `Include basket-muzzle conditioning early in the program as a positive, treat-based exercise, presented as an ordinary safety tool that gives ${dogName} more freedom, not as a punishment or a label.`,
+    )
+  }
+
+  if (biting && isPuppy) {
+    rules.push(
+      `${dogName} is a puppy: explain that mouthing is normal development and teach bite inhibition and redirection. Also list the signs that are NOT normal puppy mouthing and need a professional (stiff body, hard stare, growling over food or objects, bites with no play signals).`,
+    )
+  }
+
+  if (isSenior) {
+    rules.push(
+      `${dogName} is a senior: say in the Section 01 callout that new or worsening behaviour in an older dog is often medical (pain, hearing or sight loss, cognitive decline) and that a vet check comes first. Keep every exercise low-impact.`,
+    )
+  }
+
+  if (rules.length === 0) return ''
+
+  return `
+## Safety rules — these override every other instruction
+${rules.map((r) => `- ${r}`).join('\n')}
+`
+}
+
 export function buildPrompt(row: SubmissionRow): string {
   const problems = (row.problems ?? []).map(p => PROBLEM_LABELS[p] ?? p).join(', ')
   const age = AGE_LABELS[row.dog_age ?? ''] ?? row.dog_age ?? 'unknown age'
   const living = LIVING_LABELS[row.living ?? ''] ?? row.living ?? 'unknown living situation'
   const experience = EXPERIENCE_LABELS[row.experience ?? ''] ?? row.experience ?? 'unknown experience'
   const history = HISTORY_LABELS[row.training_history ?? ''] ?? 'no prior training'
-  const dogName = row.dog_name ?? 'the dog'
-  const dogBreed = row.dog_breed ?? 'mixed breed'
+  const dogName = row.dog_name?.trim() || 'the dog'
+  const breedKnown = Boolean(row.dog_breed?.trim())
+  // Unknown breed: the template's "specific to <breed>" slots point at the dog instead
+  const dogBreed = row.dog_breed?.trim() || dogName
   const dailyTime = row.daily_time ?? 20
+  const safetyRules = buildSafetyRules(row, dogName)
 
   return `
 You are an expert dog trainer and behaviourist with 20+ years of experience.
@@ -60,7 +111,7 @@ well-structured HTML document.
 
 ## Dog profile
 - Name: ${dogName}
-- Breed: ${dogBreed}
+- Breed: ${breedKnown ? dogBreed : 'unknown (not provided)'}
 - Age: ${age}
 - Main problems to address: ${problems}
 - Additional context from owner: ${row.problem_context || 'None provided'}
@@ -74,19 +125,24 @@ well-structured HTML document.
 Generate a complete HTML document for a personalised 30-day training plan.
 Use the following EXACT structure and HTML skeleton.
 Fill every section with content that is genuinely specific to ${dogName}'s
-breed (${dogBreed}), age (${age}), and problems (${problems}).
+${breedKnown ? `breed (${dogBreed}), ` : ''}age (${age}), and problems (${problems}).
 
 CRITICAL RULES:
 - Never use generic advice that could apply to any dog
-- Every insight must reference the specific breed characteristics of a ${dogBreed}
+${breedKnown
+    ? `- Ground the plan in the breed characteristics of a ${dogBreed} wherever they genuinely change the advice`
+    : `- The breed is unknown: never guess one. Build the plan from ${dogName}'s age, the behaviour described and the owner's context`}
 - Adapt all exercise durations to fit within ${dailyTime} minutes per day
 - Adapt all outdoor/indoor exercise recommendations to a ${living}
 - If the owner is ${experience}, adjust the complexity and jargon level accordingly
-- Week 1 must always focus on foundation and attention — never jump to outdoor work
+- Week 1 builds foundation and attention in low-distraction settings before harder environments (the exception is potty training, which happens outdoors from Day 1)
 - Always identify and explain the ROOT CAUSE of each problem, not just the symptoms
-- The mistakes section must contain ${dogBreed}-specific mistakes, not generic ones
+- The mistakes section must contain mistakes specific to this dog's ${breedKnown ? 'breed, ' : ''}age and problems, not generic ones
+- The program has EXACTLY 30 day rows, labelled "Day 1" to "Day 30" with no gaps and no repeats: Week 1 = Days 1–7, Week 2 = Days 8–14, Week 3 = Days 15–21, Week 4 = Days 22–30 (nine rows). Never use weekday names.
+- Depth: each Exercise cell is a complete mini-lesson the owner can follow with the page open in one hand. Start with the exercise name in <strong>, then say exactly what to do: the set-up, the cue, what to mark and reward, how many repetitions, and what to do if ${dogName} struggles. Aim for 70–120 words per day; a one-line exercise is not enough.
+- In each day row, the Duration cell is the time only, in a few words (e.g. "3 × 5 min"). Anything longer belongs in the Exercise cell.
 - Tone: warm, expert, encouraging — like a brilliant friend who happens to be a dog trainer
-
+${safetyRules}
 ## HTML structure to follow
 
 Output ONLY the content inside <body> tags (no DOCTYPE, no <html>, no <head>).
@@ -142,16 +198,16 @@ Use this exact section structure:
       <thead><tr><th>Day</th><th>Exercise</th><th>Goal</th><th>Duration</th></tr></thead>
       <tbody>
         <tr>
-          <td><span class="day-name">Mon</span></td>
-          <td><!-- exercise description --></td>
+          <td><span class="day-name">Day 1</span></td>
+          <td><strong><!-- exercise name --></strong> <!-- full step-by-step instructions, 70–120 words --></td>
           <td><!-- measurable goal --></td>
-          <td><span class="duration-badge"><!-- e.g. 3 × 5 min --></span></td>
+          <td><span class="duration-badge"><!-- time only, e.g. 3 × 5 min --></span></td>
         </tr>
-        <!-- 7 rows total, Mon–Sun -->
+        <!-- 7 rows total: Day 1 to Day 7 -->
       </tbody>
     </table>
   </div>
-  <!-- Repeat .week-block for weeks 2, 3, 4 -->
+  <!-- Repeat .week-block for Week 2 (Days 8–14), Week 3 (Days 15–21) and Week 4 (Days 22–30, nine rows) -->
 </section>
 
 <!-- SECTION 3: MISTAKES TO AVOID -->

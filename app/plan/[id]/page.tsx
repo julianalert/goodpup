@@ -1,15 +1,47 @@
-import type { Metadata } from 'next'
+import { cache } from 'react'
+import type { Metadata, Viewport } from 'next'
 import { notFound } from 'next/navigation'
+import { connection } from 'next/server'
 import { createServerClient } from '@/lib/supabase'
+import { isPlanV2, progressId, properName, type ProgressKind, type ProgressMap } from '@/lib/plan-types'
 import { PlanContent } from './PlanContent'
+import { DEFAULT_REMINDER_HOUR } from '@/lib/plan-reminders'
+import { PlanSpaceLoader } from './PlanSpaceLoader'
 import './plan.css'
 
-export const metadata: Metadata = {
-  robots: { index: false, follow: false },
+// One query per request, shared by the metadata and the page itself
+const getSubmission = cache(async (id: string) => {
+  const { data, error } = await createServerClient()
+    .from('submissions')
+    .select('*')
+    .eq('session_id', id)
+    .maybeSingle()
+  return error ? null : data
+})
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params
+  const row = await getSubmission(id)
+  const private_ = { robots: { index: false, follow: false } }
+
+  if (!row || row.status !== 'paid') return { title: 'Your 30-day training plan · PawCraft', ...private_ }
+
+  const dogName = properName(row.dog_name, 'Your dog')
+  if (!isPlanV2(row.plan_json)) return { title: `${dogName}'s 30-day training plan · PawCraft`, ...private_ }
+
+  // The training space can be added to the phone's home screen and opens like an app
+  return {
+    title: `${dogName}'s training space · PawCraft`,
+    manifest: `/plan/${id}/manifest.webmanifest`,
+    appleWebApp: { capable: true, title: dogName, statusBarStyle: 'default' },
+    icons: { icon: '/favicon.ico', apple: '/icon-180.png' },
+    ...private_,
+  }
 }
 
-// Re-generate at most once per 60 s (plan content never changes after it's ready)
-export const revalidate = 60
+export const viewport: Viewport = {
+  themeColor: '#1A6B4A',
+}
 
 interface Props {
   params: Promise<{ id: string }>
@@ -49,17 +81,20 @@ function formatDate(iso: string | null | undefined): string {
 export default async function PlanPage({ params }: Props) {
   const { id } = await params
 
-  const supabase = createServerClient()
-  const { data: row, error } = await supabase
-    .from('submissions')
-    .select('*')
-    .eq('session_id', id)
-    .single()
+  // Always rendered for the request at hand: the page shows the customer's own,
+  // changing progress, so a cached copy would be out of date.
+  await connection()
 
-  if (error || !row) notFound()
+  const supabase = createServerClient()
+  const row = await getSubmission(id)
+
+  // The plan is the paid product: an unpaid submission has no plan page at all
+  if (!row || row.status !== 'paid') notFound()
 
   // Plan not ready yet — show a holding page
-  if (row.plan_status !== 'ready' || !row.plan_html) {
+  const structuredPlan = isPlanV2(row.plan_json) ? row.plan_json : null
+
+  if (row.plan_status !== 'ready' || (!row.plan_html && !structuredPlan)) {
     return (
       <div className="plan-body" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px' }}>
         <h2 style={{ fontFamily: 'var(--font-playfair, serif)', fontSize: '26px', marginBottom: '12px', color: 'var(--ink)' }}>
@@ -72,6 +107,41 @@ export default async function PlanPage({ params }: Props) {
     )
   }
 
+  // ── The interactive training space (plans generated as structured data) ──
+  if (structuredPlan) {
+    const { data: progressRows, error: progressError } = await supabase
+      .from('plan_progress')
+      .select('kind, key, value')
+      .eq('session_id', id)
+    if (progressError) console.error('[plan] could not load progress:', progressError.message)
+
+    const initialProgress: ProgressMap = {}
+    for (const entry of progressRows ?? []) {
+      initialProgress[progressId(entry.kind as ProgressKind, entry.key)] = entry.value
+    }
+
+    const breed = properName(row.dog_breed, '')
+    const age = AGE_LABELS[row.dog_age ?? ''] ?? ''
+
+    return (
+      <PlanSpaceLoader
+        sessionId={id}
+        dogName={properName(row.dog_name, 'Your dog')}
+        subtitle={[breed, age].filter(Boolean).join(' · ')}
+        problems={((row.problems as string[] | null) ?? []).map((p) => ({ id: p, label: PROBLEM_LABELS[p] ?? p }))}
+        plan={structuredPlan}
+        initialProgress={initialProgress}
+        initialSettings={{
+          remindersEnabled: row.reminders_enabled !== false,
+          reminderHour: row.reminder_hour ?? DEFAULT_REMINDER_HOUR,
+          timezone: row.timezone ?? null,
+          photo: row.dog_photo ?? null,
+        }}
+      />
+    )
+  }
+
+  // ── Plans delivered as HTML (every order before the training space) ──────
   // Strip markdown code fence that Claude sometimes adds, and any outer <body> tags
   const planHtml = (row.plan_html ?? '')
     .replace(/^```(?:html)?\s*\n?/i, '')
