@@ -50,6 +50,15 @@ CREATE TABLE submissions (
   reminders_unanswered SMALLINT NOT NULL DEFAULT 0,
   dog_photo            TEXT,                          -- small data-URL photo
 
+  -- Traffic source, set once when the row is created (see migrations/007)
+  utm_source   TEXT,
+  utm_medium   TEXT,
+  utm_campaign TEXT,
+  utm_content  TEXT,
+  utm_term     TEXT,
+  referrer     TEXT,   -- hostname of the referring site
+  landing_page TEXT,   -- first page the visitor landed on
+
   -- Tracking
   -- current_step: 0 = quiz opened, nothing submitted yet; 1–5 = last step submitted.
   -- The API route always sets it explicitly (0 when /start loads).
@@ -84,6 +93,7 @@ CREATE INDEX submissions_email_idx         ON submissions (email)             WH
 CREATE INDEX submissions_status_idx        ON submissions (status);
 CREATE INDEX submissions_created_at_idx    ON submissions (created_at DESC);
 CREATE INDEX submissions_stripe_session_idx ON submissions (stripe_session_id) WHERE stripe_session_id IS NOT NULL;
+CREATE INDEX submissions_utm_source_idx     ON submissions (utm_source)        WHERE utm_source IS NOT NULL;
 
 -- 3b. PLAN PROGRESS (what each customer has done in their training space)
 -- ============================================================

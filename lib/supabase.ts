@@ -58,6 +58,15 @@ export interface SubmissionRow {
   recovery_emails_sent?: number | null   // 0–4 — how many abandoned-cart emails sent
   recovery_suppressed?: boolean | null   // true = stop sending (paid or unsubscribed)
 
+  // Traffic source (migration 007); set once when the row is created
+  utm_source?: string | null
+  utm_medium?: string | null
+  utm_campaign?: string | null
+  utm_content?: string | null
+  utm_term?: string | null
+  referrer?: string | null       // hostname of the referring site
+  landing_page?: string | null   // first page the visitor landed on
+
   // Timestamps
   created_at?: string | null
   updated_at?: string | null   // bumped by the database on every write

@@ -18,6 +18,60 @@ const ALLOWED_FIELDS: (keyof SubmissionRow)[] = [
   'status',
 ]
 
+// Traffic source sent by the browser (lib/attribution.ts). Only ever written when
+// the row is created, so a later visit can't rewrite where a lead came from.
+const ATTRIBUTION_FIELDS = [
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'utm_content',
+  'utm_term',
+  'referrer',
+  'landing_page',
+] as const
+
+type AttributionColumns = Partial<Record<(typeof ATTRIBUTION_FIELDS)[number], string>>
+
+function readAttribution(value: unknown): AttributionColumns {
+  const out: AttributionColumns = {}
+  if (!value || typeof value !== 'object') return out
+
+  for (const key of ATTRIBUTION_FIELDS) {
+    const raw = (value as Record<string, unknown>)[key]
+    if (typeof raw !== 'string') continue
+    let text = raw.trim().slice(0, 200)
+    // "Facebook" and "facebook" are the same source in the report
+    if (key === 'utm_source' || key === 'utm_medium') text = text.toLowerCase()
+    if (text) out[key] = text
+  }
+  return out
+}
+
+// Create the row unless one already exists for this session_id (then nothing
+// changes). Returns whether a row was created.
+async function insertIfMissing(
+  supabase: ReturnType<typeof createServerClient>,
+  row: Partial<SubmissionRow>,
+  attribution: AttributionColumns,
+): Promise<{ created: boolean; error: string | null }> {
+  const attempt = (values: Partial<SubmissionRow>) =>
+    supabase
+      .from('submissions')
+      .upsert(values as SubmissionRow, { onConflict: 'session_id', ignoreDuplicates: true })
+      .select('session_id')
+
+  let { data, error } = await attempt({ ...row, ...attribution })
+
+  // Before migration 007 the traffic-source columns don't exist. Losing the source
+  // is fine; losing the row is not — so save it without them.
+  if (error && Object.keys(attribution).length > 0) {
+    console.warn('[api/submission] saving without traffic source (run migration 007?):', error.message)
+    ;({ data, error } = await attempt(row))
+  }
+
+  return { created: Boolean(data && data.length > 0), error: error?.message ?? null }
+}
+
 export async function POST(req: NextRequest) {
   let body: Record<string, unknown>
 
@@ -39,27 +93,29 @@ export async function POST(req: NextRequest) {
   }
 
   const sessionId = body.session_id
+  const attribution = readAttribution(body.attribution)
 
   // ── Quiz opened ──────────────────────────────────────────────────────────
   // Sent once when /start loads. Creates the row at current_step 0 so the admin
-  // funnel can count opens. A returning visitor reuses their session_id, so the
+  // funnel can count opens, stamped with the traffic source. A returning visitor reuses their session_id, so the
   // insert is skipped (never a second row, never a reset of their progress) and
   // we report the existing row's status instead.
   if (body.event === 'open') {
     try {
       const supabase = createServerClient()
 
-      const { data: inserted, error } = await supabase
-        .from('submissions')
-        .upsert({ session_id: sessionId, current_step: 0 }, { onConflict: 'session_id', ignoreDuplicates: true })
-        .select('session_id')
+      const { created, error } = await insertIfMissing(
+        supabase,
+        { session_id: sessionId, current_step: 0 },
+        attribution,
+      )
 
       if (error) {
-        console.error('[api/submission] Supabase error (open):', error.message)
+        console.error('[api/submission] Supabase error (open):', error)
         return NextResponse.json({ error: 'Database error' }, { status: 500 })
       }
 
-      if (inserted && inserted.length > 0) {
+      if (created) {
         return NextResponse.json({ ok: true, created: true, status: 'partial' })
       }
 
@@ -111,12 +167,10 @@ export async function POST(req: NextRequest) {
     // Nothing updated: either the row doesn't exist yet (the open ping was lost)
     // or it is paid. Insert-if-missing covers the first and leaves the second alone.
     if (!updated || updated.length === 0) {
-      const { error: insertError } = await supabase
-        .from('submissions')
-        .upsert(payload as SubmissionRow, { onConflict: 'session_id', ignoreDuplicates: true })
+      const { error: insertError } = await insertIfMissing(supabase, payload, attribution)
 
       if (insertError) {
-        console.error('[api/submission] Supabase error:', insertError.message)
+        console.error('[api/submission] Supabase error:', insertError)
         return NextResponse.json({ error: 'Database error' }, { status: 500 })
       }
     }

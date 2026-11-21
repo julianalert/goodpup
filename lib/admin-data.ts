@@ -47,6 +47,12 @@ interface Row {
   recovery_emails_sent: number | null
   recovery_suppressed: boolean | null
   created_at: string
+  // Traffic source (migration 007) — undefined until that migration has run
+  utm_source?: string | null
+  utm_medium?: string | null
+  utm_campaign?: string | null
+  referrer?: string | null
+  landing_page?: string | null
 }
 
 const ROW_COLUMNS =
@@ -54,23 +60,35 @@ const ROW_COLUMNS =
   'email, current_step, status, plan_status, stripe_session_id, stripe_payment_intent_id, ' +
   'recovery_emails_sent, recovery_suppressed, created_at'
 
+const TRAFFIC_COLUMNS = 'utm_source, utm_medium, utm_campaign, referrer, landing_page'
+
 const PAGE_SIZE = 1000
 const MAX_ROWS = 20000
 
-async function fetchRows(since: Date | null): Promise<Row[]> {
+async function fetchRows(since: Date | null): Promise<{ rows: Row[]; hasTraffic: boolean }> {
   const supabase = createServerClient()
   const rows: Row[] = []
+  let hasTraffic = true
 
   for (let from = 0; from < MAX_ROWS; from += PAGE_SIZE) {
-    let query = supabase
-      .from('submissions')
-      .select(ROW_COLUMNS)
-      .order('created_at', { ascending: false })
-      .range(from, from + PAGE_SIZE - 1)
+    const fetchPage = (columns: string) => {
+      let query = supabase
+        .from('submissions')
+        .select(columns)
+        .order('created_at', { ascending: false })
+        .range(from, from + PAGE_SIZE - 1)
 
-    if (since) query = query.gte('created_at', since.toISOString())
+      if (since) query = query.gte('created_at', since.toISOString())
+      return query
+    }
 
-    const { data, error } = await query
+    let { data, error } = await fetchPage(hasTraffic ? `${ROW_COLUMNS}, ${TRAFFIC_COLUMNS}` : ROW_COLUMNS)
+
+    // Before migration 007 the traffic columns don't exist: load the report without them
+    if (error && hasTraffic && from === 0) {
+      hasTraffic = false
+      ;({ data, error } = await fetchPage(ROW_COLUMNS))
+    }
     if (error) throw new Error(`Supabase: ${error.message}`)
 
     const page = (data ?? []) as unknown as Row[]
@@ -78,7 +96,7 @@ async function fetchRows(since: Date | null): Promise<Row[]> {
     if (page.length < PAGE_SIZE) break
   }
 
-  return rows
+  return { rows, hasTraffic }
 }
 
 // ── Stripe revenue ─────────────────────────────────────────────────────────
@@ -240,6 +258,28 @@ export interface AbandonedRow {
   unsubscribed: boolean
 }
 
+export interface TrafficRow {
+  label: string
+  /** Quiz opens (every row) */
+  opens: number
+  /** Step 1 submitted */
+  starts: number
+  emails: number
+  paid: number
+  /** Not a real source: rows with no source recorded, or the folded tail */
+  muted?: boolean
+}
+
+export interface TrafficStats {
+  /** False until migration 007 has added the columns */
+  available: boolean
+  /** Rows in range that carry a recorded source */
+  tracked: number
+  sources: TrafficRow[]
+  campaigns: TrafficRow[]
+  landingPages: TrafficRow[]
+}
+
 export interface AdminStats {
   range: RangeKey
   generatedAt: string
@@ -257,6 +297,7 @@ export interface AdminStats {
   revenue: RevenueStats
   funnel: FunnelStage[]
   series: { bucket: 'day' | 'week'; points: SeriesPoint[] }
+  traffic: TrafficStats
   breakdowns: Breakdown[]
   planHealth: { ready: number; generating: number; pending: number; failed: number }
   recovery: {
@@ -397,6 +438,83 @@ function breakdown(
   return { title, rows: list }
 }
 
+// ── Traffic sources ────────────────────────────────────────────────────────
+
+const NOT_TRACKED = 'Not recorded'
+
+const SEARCH_ENGINES = /(^|\.)(google|bing|duckduckgo|yahoo|ecosia|yandex|baidu|brave|startpage|qwant)\./
+
+// A row is tracked once the browser reported where it landed (every row created
+// after the tracking went live does). Older rows have nothing to go on.
+function isTracked(row: Row): boolean {
+  return Boolean(row.landing_page || row.utm_source || row.referrer)
+}
+
+// "source / medium", the way analytics tools name a channel
+function sourceLabel(row: Row): string {
+  if (row.utm_source) return `${row.utm_source} / ${row.utm_medium || '(no medium)'}`
+  if (row.referrer) {
+    const engine = row.referrer.match(SEARCH_ENGINES)?.[2]
+    return engine ? `${engine} / organic` : `${row.referrer} / referral`
+  }
+  return isTracked(row) ? 'Direct / none' : NOT_TRACKED
+}
+
+function trafficTable(rows: Row[], pick: (r: Row) => string | null | undefined, limit: number): TrafficRow[] {
+  const map = new Map<string, TrafficRow>()
+
+  for (const row of rows) {
+    const label = pick(row)?.trim()
+    if (!label) continue
+    const entry = map.get(label) ?? { label, opens: 0, starts: 0, emails: 0, paid: 0 }
+    entry.opens += 1
+    if (reachedStep(row, 1)) entry.starts += 1
+    if (hasEmail(row)) entry.emails += 1
+    if (row.status === 'paid') entry.paid += 1
+    map.set(label, entry)
+  }
+
+  // Real sources by volume; the "not recorded" bucket always goes last
+  const list = Array.from(map.values()).sort(
+    (a, b) =>
+      Number(a.label === NOT_TRACKED) - Number(b.label === NOT_TRACKED) ||
+      b.opens - a.opens ||
+      b.paid - a.paid ||
+      a.label.localeCompare(b.label),
+  )
+
+  const untracked = list.find((r) => r.label === NOT_TRACKED)
+  if (untracked) untracked.muted = true
+  const named = list.filter((r) => r.label !== NOT_TRACKED)
+
+  if (named.length > limit) {
+    const tail = named.slice(limit)
+    named.length = limit
+    named.push({
+      label: `Other (${tail.length} more)`,
+      opens: tail.reduce((n, r) => n + r.opens, 0),
+      starts: tail.reduce((n, r) => n + r.starts, 0),
+      emails: tail.reduce((n, r) => n + r.emails, 0),
+      paid: tail.reduce((n, r) => n + r.paid, 0),
+      muted: true,
+    })
+  }
+
+  return untracked ? [...named, untracked] : named
+}
+
+function buildTraffic(rows: Row[], available: boolean): TrafficStats {
+  if (!available) return { available, tracked: 0, sources: [], campaigns: [], landingPages: [] }
+
+  return {
+    available,
+    tracked: rows.filter(isTracked).length,
+    sources: trafficTable(rows, sourceLabel, 12),
+    campaigns: trafficTable(rows, (r) => r.utm_campaign, 10),
+    landingPages: trafficTable(rows, (r) => r.landing_page, 10),
+  }
+}
+
 function normaliseBreed(value: string | null): string | null {
   if (!value) return null
   const trimmed = value.trim().toLowerCase()
@@ -452,7 +570,7 @@ function buildSeries(rows: Row[], since: Date | null): AdminStats['series'] {
 export async function getAdminStats(range: RangeKey): Promise<AdminStats> {
   const since = rangeStart(range)
 
-  const [rows, chargeFetch] = await Promise.all([fetchRows(since), fetchCharges(since)])
+  const [{ rows, hasTraffic }, chargeFetch] = await Promise.all([fetchRows(since), fetchCharges(since)])
 
   const paidRows = rows.filter((r) => r.status === 'paid')
   const startedRows = rows.filter((r) => reachedStep(r, 1))
@@ -531,6 +649,7 @@ export async function getAdminStats(range: RangeKey): Promise<AdminStats> {
     revenue,
     funnel,
     series: buildSeries(rows, since),
+    traffic: buildTraffic(rows, hasTraffic),
     breakdowns,
     planHealth,
     recovery,

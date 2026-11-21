@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { requireAdmin } from '@/lib/admin-auth'
-import { getAdminStats, isRangeKey, MAX_CHARGES, RANGES, type AdminStats, type RangeKey } from '@/lib/admin-data'
+import { getAdminStats, isRangeKey, MAX_CHARGES, RANGES, type AdminStats, type RangeKey, type TrafficRow } from '@/lib/admin-data'
 import { PRICE_CENTS } from '@/lib/pricing'
 import { logout } from './actions'
 import { BreakdownCard, FunnelChart, TrendChart, fmtDateTime, fmtInt, fmtMoney, fmtPct } from './_components/Charts'
@@ -69,7 +69,7 @@ export default async function AdminPage({
 }
 
 function Dashboard({ stats }: { stats: AdminStats }) {
-  const { totals, revenue, funnel, series, breakdowns, planHealth, recovery, recentOrders, recentAbandoned } = stats
+  const { totals, revenue, funnel, series, traffic, breakdowns, planHealth, recovery, recentOrders, recentAbandoned } = stats
   const rangeLabel = RANGES[stats.range].label.toLowerCase()
 
   const estimatedRevenue = totals.paid * PRICE_CENTS
@@ -134,6 +134,45 @@ function Dashboard({ stats }: { stats: AdminStats }) {
         </div>
         <TrendChart points={series.points} bucket={series.bucket} />
       </section>
+
+      {/* ── Traffic sources ──────────────────────────────────────── */}
+      <section className={s.card}>
+        <div className={s.cardHead}>
+          <h2 className={s.cardTitle}>Traffic sources</h2>
+          <p className={s.cardHint}>
+            Where each quiz visitor came from: the UTM tags on the link that brought them to the site (any page, not
+            only /start), otherwise the site that referred them. Recorded once, when the quiz first opens. Tracked
+            from 21 Nov 2026 — earlier visitors show as &ldquo;Not recorded&rdquo;.
+          </p>
+        </div>
+        {!traffic.available ? (
+          <p className={s.empty}>
+            Not recording yet — run <code>supabase/migrations/007_traffic_source.sql</code> in the Supabase SQL Editor
+            to start.
+          </p>
+        ) : (
+          <TrafficTable heading="Source / medium" rows={traffic.sources} empty="No quiz opens in this range." />
+        )}
+      </section>
+
+      {traffic.available && (
+        <section className={s.grid2}>
+          <div className={s.card}>
+            <div className={s.cardHead}>
+              <h2 className={s.cardTitle}>Campaigns</h2>
+              <p className={s.cardHint}>Grouped by utm_campaign.</p>
+            </div>
+            <TrafficTable heading="Campaign" rows={traffic.campaigns} empty="No visitor has arrived on a link with utm_campaign yet." />
+          </div>
+          <div className={s.card}>
+            <div className={s.cardHead}>
+              <h2 className={s.cardTitle}>Landing pages</h2>
+              <p className={s.cardHint}>The first page those visitors saw.</p>
+            </div>
+            <TrafficTable heading="Page" rows={traffic.landingPages} empty="No landing pages recorded yet." />
+          </div>
+        </section>
+      )}
 
       {/* ── Operations ───────────────────────────────────────────── */}
       <section className={s.grid2}>
@@ -277,6 +316,39 @@ function Dashboard({ stats }: { stats: AdminStats }) {
         )}
       </section>
     </>
+  )
+}
+
+function TrafficTable({ heading, rows, empty }: { heading: string; rows: TrafficRow[]; empty: string }) {
+  if (rows.length === 0) return <p className={s.empty}>{empty}</p>
+
+  return (
+    <div className={s.tableWrap}>
+      <table className={s.dataTable}>
+        <thead>
+          <tr>
+            <th scope="col">{heading}</th>
+            <th scope="col" className={s.num}>Opens</th>
+            <th scope="col" className={s.num}>Starts</th>
+            <th scope="col" className={s.num}>Emails</th>
+            <th scope="col" className={s.num}>Paid</th>
+            <th scope="col" className={s.num}>Open → paid</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.label}>
+              <td className={r.muted ? s.muted : undefined}>{r.muted ? r.label : <strong>{r.label}</strong>}</td>
+              <td className={s.num}>{fmtInt(r.opens)}</td>
+              <td className={s.num}>{fmtInt(r.starts)}</td>
+              <td className={s.num}>{fmtInt(r.emails)}</td>
+              <td className={`${s.num} ${r.paid > 0 ? '' : s.muted}`}>{fmtInt(r.paid)}</td>
+              <td className={s.num}>{r.opens > 0 ? fmtPct(r.paid / r.opens) : '—'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }
 

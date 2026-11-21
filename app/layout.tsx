@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Playfair_Display, DM_Sans } from 'next/font/google'
+import { AttributionCapture } from './AttributionCapture'
 import { GoogleTag } from './GoogleTag'
 import { MixpanelProvider } from './MixpanelProvider'
 import { SITE_URL, SITE_EMAIL } from '@/lib/site'
@@ -89,6 +90,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
         <GoogleTag />
+        <AttributionCapture />
         <MixpanelProvider>{children}</MixpanelProvider>
       </body>
     </html>

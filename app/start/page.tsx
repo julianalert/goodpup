@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { captureAttribution } from '@/lib/attribution'
 import { identifyUser, trackEvent } from '@/lib/mixpanel-client'
 import s from './page.module.css'
 // Save step data via the server-side API route (never writes to Supabase directly from the browser)
@@ -10,7 +11,8 @@ async function saveStepToApi(data: Record<string, unknown>): Promise<void> {
     await fetch('/api/submission', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      // The traffic source rides along in case the row doesn't exist yet (open ping lost)
+      body: JSON.stringify({ ...data, attribution: captureAttribution() }),
     })
   } catch (err) {
     // Log but don't block the user — data loss is better than a broken form
@@ -18,14 +20,15 @@ async function saveStepToApi(data: Record<string, unknown>): Promise<void> {
   }
 }
 
-// Tell the server the quiz was opened. Creates the row once per session_id; for a
-// returning visitor it changes nothing and returns the status of their existing row.
+// Tell the server the quiz was opened. Creates the row once per session_id, stamped
+// with where the visitor came from; for a returning visitor it changes nothing and
+// returns the status of their existing row.
 async function registerOpen(sessionId: string): Promise<string | null> {
   try {
     const res = await fetch('/api/submission', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ session_id: sessionId, event: 'open' }),
+      body: JSON.stringify({ session_id: sessionId, event: 'open', attribution: captureAttribution() }),
     })
     if (!res.ok) return null
     const json = await res.json()
