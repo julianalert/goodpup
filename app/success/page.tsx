@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { trackEvent } from '@/lib/mixpanel-client'
+import { measureOrderCreated } from '@/lib/oaiq'
 import s from './page.module.css'
 
 const GEN_STEPS = [
@@ -41,6 +42,39 @@ export default function SuccessPage() {
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const autoRetriesRef = useRef(0)
   const retriedAtRef = useRef(0)
+
+  // ChatGPT ads conversion: once per order. Stripe sends the buyer here with the
+  // checkout ID in the URL, which is what makes a reload or a reopened link not count twice.
+  useEffect(() => {
+    const checkoutId = new URLSearchParams(window.location.search).get('stripe_session_id')
+    if (!checkoutId) return
+
+    const dedupeKey = `pawcraft_oai_order_${checkoutId}`
+    try {
+      if (localStorage.getItem(dedupeKey)) return
+    } catch { /* storage blocked: report anyway */ }
+
+    const fire = () => {
+      if (!measureOrderCreated()) return false
+      try {
+        localStorage.setItem(dedupeKey, '1')
+      } catch { /* ignore */ }
+      return true
+    }
+
+    if (fire()) return
+
+    // The pixel is injected after hydration; give it a few seconds to appear
+    const interval = setInterval(() => {
+      if (fire()) clearInterval(interval)
+    }, 100)
+    const timeout = setTimeout(() => clearInterval(interval), 5000)
+
+    return () => {
+      clearInterval(interval)
+      clearTimeout(timeout)
+    }
+  }, [])
 
   useEffect(() => {
     let sessionId: string | null = null

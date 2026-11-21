@@ -3,6 +3,7 @@ import { Playfair_Display, DM_Sans } from 'next/font/google'
 import { AttributionCapture } from './AttributionCapture'
 import { GoogleTag } from './GoogleTag'
 import { MixpanelProvider } from './MixpanelProvider'
+import { OpenAIPixel } from './OpenAIPixel'
 import { SITE_URL, SITE_EMAIL } from '@/lib/site'
 import './globals.css'
 
@@ -90,6 +91,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
         <GoogleTag />
+        <OpenAIPixel />
         <AttributionCapture />
         <MixpanelProvider>{children}</MixpanelProvider>
       </body>
