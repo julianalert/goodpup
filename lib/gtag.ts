@@ -1,1 +1,0 @@
-export const GA_MEASUREMENT_ID = 'G-8KTHC9MQSK'
