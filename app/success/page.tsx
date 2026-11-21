@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { trackEvent } from '@/lib/mixpanel-client'
-import { trackPurchaseConversion } from '@/lib/gtag'
 import s from './page.module.css'
 
 const GEN_STEPS = [
@@ -42,33 +41,6 @@ export default function SuccessPage() {
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const autoRetriesRef = useRef(0)
   const retriedAtRef = useRef(0)
-
-  useEffect(() => {
-    const transactionId = new URLSearchParams(window.location.search).get('stripe_session_id')
-    if (!transactionId) return
-
-    const dedupeKey = `pawcraft_gads_purchase_${transactionId}`
-    if (sessionStorage.getItem(dedupeKey)) return
-
-    const fire = () => {
-      if (typeof window.gtag !== 'function') return false
-      trackPurchaseConversion(transactionId)
-      sessionStorage.setItem(dedupeKey, '1')
-      return true
-    }
-
-    if (fire()) return
-
-    const interval = setInterval(() => {
-      if (fire()) clearInterval(interval)
-    }, 100)
-    const timeout = setTimeout(() => clearInterval(interval), 5000)
-
-    return () => {
-      clearInterval(interval)
-      clearTimeout(timeout)
-    }
-  }, [])
 
   useEffect(() => {
     let sessionId: string | null = null
