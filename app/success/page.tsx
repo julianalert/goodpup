@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { trackEvent } from '@/lib/mixpanel-client'
 import { measureOrderCreated } from '@/lib/oaiq'
+import { trackPurchaseConversion } from '@/lib/gtag'
 import s from './page.module.css'
 
 const GEN_STEPS = [
@@ -32,6 +33,35 @@ function generateRequestBody(sessionId: string): string {
   return JSON.stringify({ session_id: sessionId, stripe_session_id: stripeSessionId ?? undefined })
 }
 
+// Send a conversion to an ads pixel once per order: `send` returns false until its
+// pixel is on the page (they are injected after hydration), so it is retried for a
+// few seconds. Returns a function that stops the retrying.
+function reportOnce(dedupeKey: string, send: () => boolean): () => void {
+  try {
+    if (localStorage.getItem(dedupeKey)) return () => {}
+  } catch { /* storage blocked: report anyway */ }
+
+  const fire = () => {
+    if (!send()) return false
+    try {
+      localStorage.setItem(dedupeKey, '1')
+    } catch { /* ignore */ }
+    return true
+  }
+
+  if (fire()) return () => {}
+
+  const interval = setInterval(() => {
+    if (fire()) clearInterval(interval)
+  }, 100)
+  const timeout = setTimeout(() => clearInterval(interval), 5000)
+
+  return () => {
+    clearInterval(interval)
+    clearTimeout(timeout)
+  }
+}
+
 export default function SuccessPage() {
   const router = useRouter()
   const [dogName, setDogName] = useState<string | null>(null)
@@ -43,37 +73,18 @@ export default function SuccessPage() {
   const autoRetriesRef = useRef(0)
   const retriedAtRef = useRef(0)
 
-  // ChatGPT ads conversion: once per order. Stripe sends the buyer here with the
-  // checkout ID in the URL, which is what makes a reload or a reopened link not count twice.
+  // Ads conversions (ChatGPT ads, Google Ads): once per order. Stripe sends the buyer
+  // here with the checkout ID in the URL, which is what makes a reload or a reopened
+  // link not count twice.
   useEffect(() => {
     const checkoutId = new URLSearchParams(window.location.search).get('stripe_session_id')
     if (!checkoutId) return
 
-    const dedupeKey = `pawcraft_oai_order_${checkoutId}`
-    try {
-      if (localStorage.getItem(dedupeKey)) return
-    } catch { /* storage blocked: report anyway */ }
-
-    const fire = () => {
-      if (!measureOrderCreated()) return false
-      try {
-        localStorage.setItem(dedupeKey, '1')
-      } catch { /* ignore */ }
-      return true
-    }
-
-    if (fire()) return
-
-    // The pixel is injected after hydration; give it a few seconds to appear
-    const interval = setInterval(() => {
-      if (fire()) clearInterval(interval)
-    }, 100)
-    const timeout = setTimeout(() => clearInterval(interval), 5000)
-
-    return () => {
-      clearInterval(interval)
-      clearTimeout(timeout)
-    }
+    const stops = [
+      reportOnce(`pawcraft_oai_order_${checkoutId}`, measureOrderCreated),
+      reportOnce(`pawcraft_gads_purchase_${checkoutId}`, () => trackPurchaseConversion(checkoutId)),
+    ]
+    return () => stops.forEach(stop => stop())
   }, [])
 
   useEffect(() => {
