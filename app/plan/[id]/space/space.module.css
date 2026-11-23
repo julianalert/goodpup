@@ -611,6 +611,107 @@ li:first-child > .check { border-top: none; padding-top: 2px; }
 .chipWatch { background: var(--warm-soft); color: #6B4604; }
 .traits + .traits { margin-top: 20px; }
 
+/* ── Add-ons (end of the Profile tab) ────────────────────────────────────── */
+/* Clears the sticky header when scrolled to */
+.addons { scroll-margin-top: 80px; margin-top: 8px; }
+.lockedList { display: flex; flex-direction: column; margin-bottom: 6px; }
+.lockedMore { margin-bottom: 12px; }
+.lockedList li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 0; font-size: 15px; line-height: 1.45; color: var(--text-2);
+}
+.lockedList li + li { border-top: 1px solid var(--line); }
+.lockedList svg { color: var(--text-3); font-size: 16px; margin-top: 3px; }
+.addonFoot { margin-top: 12px; }
+.addonWait { display: flex; align-items: center; gap: 14px; }
+.addonWaitTitle { font-size: 15.5px; font-weight: 600; margin-bottom: 2px; }
+.addonNote {
+  display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px;
+  background: var(--warm-soft); border-radius: var(--r-md); padding: 13px 14px;
+}
+.addonNote > svg { color: var(--warm); font-size: 19px; margin-top: 1px; }
+.addonNote p { font-size: 15px; line-height: 1.5; color: #4D3A16; }
+.spinner {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  border: 3px solid var(--fill-strong); border-top-color: var(--accent);
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* The nutrition plan's portion calculator */
+.calcFields { display: flex; flex-direction: column; gap: 18px; }
+.calcField .subLabel { margin-bottom: 6px; }
+.calcField .caption { margin-top: 6px; }
+.calcRow { display: flex; gap: 8px; align-items: stretch; }
+.calcInput {
+  flex: 1; min-width: 0; height: 46px; padding: 0 14px;
+  border: none; border-radius: var(--r-md); background: var(--fill);
+  font: inherit; font-size: 17px; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums;
+}
+.calcInput::placeholder { font-weight: 400; color: var(--text-3); }
+.calcInput:focus { outline: 2px solid var(--accent); outline-offset: 0; background: var(--surface); }
+.segments2 { display: flex; gap: 3px; padding: 3px; border-radius: var(--r-md); background: var(--fill); }
+.calcField > .segments2 { display: grid; grid-template-columns: repeat(3, 1fr); }
+.segment2 {
+  min-height: 40px; padding: 0 12px; border-radius: 9px; white-space: nowrap;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14.5px; font-weight: 600; color: var(--text-2);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.segment2On { background: var(--surface); color: var(--text); box-shadow: var(--shadow-sm), inset 0 0 0 1px var(--line); }
+.calcResult { margin-top: 20px; padding: 16px 18px; border-radius: var(--r-lg); background: var(--accent-soft); }
+.calcTotal { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.calcTotal span { font-size: 15px; font-weight: 600; color: var(--accent); }
+.calcTotal strong { font-size: 30px; font-weight: 700; letter-spacing: -0.025em; font-variant-numeric: tabular-nums; }
+.calcLines { margin: 8px 0 12px; }
+.calcLines li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 9px 0; font-size: 15px; }
+.calcLines li + li { border-top: 1px solid rgba(26, 107, 74, 0.14); }
+.calcLines span { color: var(--text-2); }
+.calcLines strong { font-weight: 650; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.calcEmpty { margin-top: 18px; padding: 14px 16px; border-radius: var(--r-md); background: var(--fill); }
+
+/* An add-on's questions (the nutrition plan's intake) */
+.questions { display: flex; flex-direction: column; gap: 22px; }
+.question { display: flex; flex-direction: column; gap: 8px; scroll-margin-top: 90px; }
+.question[data-missing='true'] .questionLabel { color: var(--danger); }
+.questionLabel { font-size: 15.5px; font-weight: 600; line-height: 1.35; }
+.question > .caption { margin-top: -4px; }
+.question > .segments2 { display: grid; }
+.options { display: flex; flex-direction: column; gap: 6px; }
+.option {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  min-height: 48px; padding: 9px 14px; border-radius: var(--r-md); text-align: left;
+  background: var(--fill); transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+.option:hover { background: var(--fill-strong); }
+.optionOn, .optionOn:hover { background: var(--accent-soft); box-shadow: inset 0 0 0 1.5px var(--accent); }
+.optionMark {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: inset 0 0 0 1.5px var(--line-strong); color: var(--accent); font-size: 22px;
+}
+.optionOn .optionMark { box-shadow: none; }
+.optionText { display: flex; flex-direction: column; line-height: 1.35; }
+.optionText strong { font-size: 15px; font-weight: 600; }
+.optionText span { font-size: 13.5px; color: var(--text-3); }
+.questions .btnPrimary { margin-top: 4px; }
+
+/* The handbook reader */
+.bookCard { background: var(--accent-soft); box-shadow: none; }
+.bookCard .btnSecondary { background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); text-decoration: none; }
+.bookCard .btnSecondary:hover { background: var(--surface); box-shadow: inset 0 0 0 1px var(--line-strong); }
+.accordionHead > .chapterNum {
+  flex: 0 0 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--fill); color: var(--text-2);
+  font-size: 12.5px; font-weight: 650; font-variant-numeric: tabular-nums;
+}
+.accordionHead > .chapterNum:empty { display: none; }
+.chapterBody { padding: 4px 0 22px; }
+/* Clears the sticky header when a chapter is scrolled back into view */
+.chapterRow { scroll-margin-top: 68px; }
+.notices { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+
 /* ── Wider screens: tabs move into the header ────────────────────────────── */
 @media (min-width: 760px) {
   .topInner { height: 64px; }
@@ -630,4 +731,5 @@ li:first-child > .check { border-top: none; padding-top: 2px; }
 @media (prefers-reduced-motion: reduce) {
   .celebrateIcon { animation: none; }
   .progressFill, .bar, .caret, .switch::after { transition: none; }
+  .spinner { animation-duration: 2.4s; }
 }

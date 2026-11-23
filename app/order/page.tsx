@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { trackEvent } from '@/lib/mixpanel-client'
-import { DISCOUNT_LABEL, LIST_PRICE_LABEL, PRICE_LABEL } from '@/lib/pricing'
+import { DISCOUNT_LABEL, LIST_PRICE_LABEL, PRICE_CENTS, PRICE_LABEL } from '@/lib/pricing'
+import { ADDONS, addonDog, cleanAddonIds, formatPrice, type AddonId } from '@/lib/addons'
 import s from './page.module.css'
 
 const PROBLEM_LABELS: Record<string, string> = {
@@ -163,6 +164,36 @@ export default function OrderPage() {
       .catch(() => { /* keep DEFAULT_DATA */ })
   }, [])
 
+  // Add-ons the server says this order can include (none until it answers, so
+  // nothing is offered that could not be delivered), and the ones ticked.
+  const [offers, setOffers] = useState<AddonId[]>([])
+  const [selected, setSelected] = useState<AddonId[]>([])
+  const [addonDetails, setAddonDetails] = useState<AddonId | null>(null)
+
+  useEffect(() => {
+    if (!sessionId) return
+    let cancelled = false
+    fetch(`/api/addons?session_id=${encodeURIComponent(sessionId)}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (!cancelled && json) setOffers(cleanAddonIds(json.offers))
+      })
+      .catch(() => { /* no add-ons offered */ })
+    return () => { cancelled = true }
+  }, [sessionId])
+
+  const toggleAddon = (id: AddonId) => {
+    const on = !selected.includes(id)
+    setSelected(on ? [...selected, id] : selected.filter((x) => x !== id))
+    trackEvent('addon_toggled', { addon: id, selected: on, session_id: sessionId ?? undefined })
+  }
+
+  // Add-ons: only the offered ones that still make sense for the answers on screen
+  const dog = addonDog(data.dogName, data.dogBreed)
+  const shownAddons = offers.filter((id) => ADDONS[id].available(dog))
+  const chosen = shownAddons.filter((id) => selected.includes(id))
+  const totalLabel = formatPrice(PRICE_CENTS + chosen.reduce((sum, id) => sum + ADDONS[id].priceCents, 0))
+
   // Phones get a fixed pay bar; it steps aside while the main pay button is on screen
   const mainCtaRef = useRef<HTMLButtonElement>(null)
   const [mainCtaVisible, setMainCtaVisible] = useState(false)
@@ -184,13 +215,14 @@ export default function OrderPage() {
       session_id: sessionId ?? undefined,
       dog_breed: data.dogBreed,
       problem_count: data.problems.length,
+      addons: chosen.join(','),
     })
 
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ session_id: sessionId }),
+        body: JSON.stringify({ session_id: sessionId, addons: chosen }),
       })
 
       const json = await res.json()
@@ -222,10 +254,10 @@ export default function OrderPage() {
 
   const insideItems = [
     {
-      title: `${breed} temperament profile`,
+      title: problemPhrases.length > 0 ? `Why ${name} does it` : `${breed} temperament snapshot`,
       body: problemPhrases.length > 0
-        ? `Drive level, trainability and breed instincts, plus the root cause of ${name}'s ${joinList(problemPhrases)}.`
-        : 'Drive level, trainability and breed instincts, explained clearly.',
+        ? `The root cause of ${name}'s ${joinList(problemPhrases)}, plus a temperament snapshot: drive, trainability, need for mental work and reactivity.`
+        : 'Drive, trainability, need for mental work and reactivity, explained clearly.',
     },
     {
       title: `Exercises that fit ${data.dailyTime} minutes a day`,
@@ -398,11 +430,40 @@ export default function OrderPage() {
                 <span className={`${s.orderLineValue} ${s.orderLineValueGreen}`}>{DISCOUNT_LABEL}</span>
               </div>
 
+              {/* ADD-ONS — optional extras, unticked by default */}
+              {shownAddons.map((id) => {
+                const addon = ADDONS[id]
+                const on = chosen.includes(id)
+                const open = addonDetails === id
+                return (
+                  <div key={id} className={`${s.addon} ${on ? s.addonOn : ''}`}>
+                    <label className={s.addonMain}>
+                      <input type="checkbox" className={s.addonCheck} checked={on} onChange={() => toggleAddon(id)} />
+                      <span className={s.addonText}>
+                        <span className={s.addonKicker}>Optional add-on</span>
+                        <span className={s.addonTitle}>{addon.title(dog)}</span>
+                        <span className={s.addonPitch}>{addon.pitch(dog)}</span>
+                        {on && addon.intake && <span className={s.addonNote}>{addon.intake.note(dog)}</span>}
+                      </span>
+                      <span className={s.addonPrice}>+{formatPrice(addon.priceCents)}</span>
+                    </label>
+                    <button type="button" className={s.addonMore} onClick={() => setAddonDetails(open ? null : id)} aria-expanded={open}>
+                      {open ? 'Hide what\'s inside' : 'See what\'s inside'}
+                    </button>
+                    {open && (
+                      <ul className={s.addonList}>
+                        {addon.contents(dog).map((line, i) => <li key={i}>{line}</li>)}
+                      </ul>
+                    )}
+                  </div>
+                )
+              })}
+
               <hr className={s.orderDivider} />
 
               <div className={s.orderTotal}>
                 <span className={s.orderTotalLabel}>Total today</span>
-                <span className={s.orderTotalValue}>{PRICE_LABEL}</span>
+                <span className={s.orderTotalValue}>{totalLabel}</span>
               </div>
 
               <button
@@ -446,7 +507,7 @@ export default function OrderPage() {
       <div className={`${s.stickyCta} ${mainCtaVisible ? s.stickyCtaHidden : ''}`} aria-hidden={mainCtaVisible}>
         <div className={s.stickyPrice}>
           <div className={s.stickyPriceRow}>
-            <span className={s.stickyNew}>{PRICE_LABEL}</span>
+            <span className={s.stickyNew}>{totalLabel}</span>
             <span className={s.stickyOld}>{LIST_PRICE_LABEL}</span>
           </div>
           <div className={s.stickySub}>One-time payment</div>

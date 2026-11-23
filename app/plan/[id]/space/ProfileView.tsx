@@ -2,7 +2,10 @@
 
 import { PiShieldCheck } from 'react-icons/pi'
 import type { PlanProfile } from '@/lib/plan-types'
+import type { AddonDog } from '@/lib/addons'
+import { AddonsSection } from './AddonsSection'
 import { SpaceSetup } from './SpaceSetup'
+import type { AddonsStore } from './useAddons'
 import type { SettingsStore } from './useSettings'
 import s from './space.module.css'
 
@@ -11,9 +14,17 @@ interface Props {
   dogName: string
   subtitle: string
   settingsStore: SettingsStore
+  sessionId: string
+  /** The dog as the add-ons word it (name and breed) */
+  addonDog: AddonDog
+  addonsStore: AddonsStore
+  /** The add-on element to scroll to once shown; null = stay put */
+  focusAddons: string | null
+  onAddonsFocused: () => void
+  adminView: boolean
 }
 
-export function ProfileView({ profile, dogName, subtitle, settingsStore }: Props) {
+export function ProfileView({ profile, dogName, subtitle, settingsStore, sessionId, addonDog, addonsStore, focusAddons, onAddonsFocused, adminView }: Props) {
   return (
     <div className={s.stack}>
       {/* Photo and settings first, so the "make it yours" link from Today lands on them */}
@@ -96,6 +107,16 @@ export function ProfileView({ profile, dogName, subtitle, settingsStore }: Props
           )}
         </section>
       )}
+
+      {/* Paid extras: locked with what's inside, being written, or ready to read */}
+      <AddonsSection
+        sessionId={sessionId}
+        dog={addonDog}
+        store={addonsStore}
+        focus={focusAddons}
+        onFocused={onAddonsFocused}
+        readOnly={adminView}
+      />
     </div>
   )
 }

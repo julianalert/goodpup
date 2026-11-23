@@ -68,7 +68,7 @@ const HISTORY_LABELS: Record<string, string> = {
 
 // ── Prompts ────────────────────────────────────────────────────────────────
 
-interface Dog {
+export interface Dog {
   name: string
   breed: string | null
   age: string
@@ -77,7 +77,7 @@ interface Dog {
   profileText: string
 }
 
-function describeDog(row: SubmissionRow): Dog {
+export function describeDog(row: SubmissionRow): Dog {
   const name = properName(row.dog_name, 'the dog')
   const breed = row.dog_breed?.trim() || null
   const age = AGE_LABELS[row.dog_age ?? ''] ?? 'age unknown'
@@ -100,7 +100,7 @@ function describeDog(row: SubmissionRow): Dog {
 }
 
 /** Extra rules for plans where a mistake can get a person or a dog hurt. */
-function safetyRules(row: SubmissionRow, name: string): { rules: string[]; safetyBlockRequired: boolean } {
+export function safetyRules(row: SubmissionRow, name: string): { rules: string[]; safetyBlockRequired: boolean } {
   const problems = row.problems ?? []
   const isPuppy = row.dog_age === 'puppy_under6' || row.dog_age === 'puppy_6to12'
   const isSenior = row.dog_age === 'senior'
@@ -281,7 +281,7 @@ interface WeekDetail {
 
 // ── Model call ─────────────────────────────────────────────────────────────
 
-async function callJson<T>(opts: {
+export async function callJson<T>(opts: {
   label: string
   system: string
   prompt: string
@@ -330,8 +330,8 @@ async function callJson<T>(opts: {
 // ── Checks ─────────────────────────────────────────────────────────────────
 // The schema guarantees the shape; these guarantee the plan is usable.
 
-const clean = (value: unknown): string => (typeof value === 'string' ? value.trim() : '')
-const cleanList = (value: unknown): string[] => (Array.isArray(value) ? value.map(clean).filter(Boolean) : [])
+export const clean = (value: unknown): string => (typeof value === 'string' ? value.trim() : '')
+export const cleanList = (value: unknown): string[] => (Array.isArray(value) ? value.map(clean).filter(Boolean) : [])
 
 /** Fit a day's exercises inside the owner's daily minutes, keeping their proportions. */
 export function fitMinutes(minutes: number[], budget: number): number[] {

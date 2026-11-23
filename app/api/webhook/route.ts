@@ -3,9 +3,11 @@ import { waitUntil } from '@vercel/functions'
 import Stripe from 'stripe'
 import { stripe } from '@/lib/stripe'
 import { PRICE_CENTS } from '@/lib/pricing'
-import { createServerClient } from '@/lib/supabase'
+import { createServerClient, type SubmissionRow } from '@/lib/supabase'
 import { setUserProfile, trackServerEvent } from '@/lib/mixpanel-server'
 import { claimGeneration, runGeneration } from '@/lib/generate-plan'
+import { grantAddonsFromCheckout, notifyAddonIntake } from '@/lib/addons-store'
+import { startDueAddons } from '@/lib/addons-generate'
 
 // Plan generation runs in the background of this request (waitUntil below),
 // so the function must be allowed to outlive the response by a few minutes.
@@ -54,6 +56,43 @@ export async function POST(req: NextRequest) {
     }
 
     const supabase = createServerClient()
+
+    // ── An add-on unlocked from the training space ─────────────────────────
+    // Not a plan order: the plan is already paid for and delivered, so nothing
+    // about it is touched. Record the add-on as paid and start writing it.
+    if (session.metadata?.kind === 'addon') {
+      try {
+        const granted = await grantAddonsFromCheckout(session)
+        trackServerEvent(session_id, 'addon_purchased', {
+          stripe_session_id: session.id,
+          addons: granted.join(','),
+          amount: (session.amount_total ?? 0) / 100,
+          currency: session.currency ?? 'usd',
+          source: 'training_space',
+        })
+      } catch (err) {
+        console.error('[webhook] could not record add-on purchase:', err)
+        // Return 500 so Stripe retries the webhook
+        return NextResponse.json({ error: 'Database update failed' }, { status: 500 })
+      }
+
+      try {
+        const { data: submission } = await supabase
+          .from('submissions')
+          .select('*')
+          .eq('session_id', session_id)
+          .maybeSingle<SubmissionRow>()
+        // The training space asks for the same thing when the buyer lands back
+        // on it; the claim makes sure only one of the two generates.
+        if (submission) for (const generation of await startDueAddons(submission)) waitUntil(generation)
+        // One that needs answers first is not started: the buyer is emailed to give them
+        waitUntil(notifyAddonIntake(session_id))
+      } catch (err) {
+        console.error('[webhook] could not start add-on generation:', err)
+      }
+      return NextResponse.json({ received: true })
+    }
+
     const { error } = await supabase
       .from('submissions')
       .update({
@@ -76,6 +115,7 @@ export async function POST(req: NextRequest) {
       stripe_session_id: session.id,
       amount: amountTotal / 100,
       currency: session.currency ?? 'usd',
+      addons: session.metadata?.addons ?? '',
     })
 
     if (session.customer_email) {
@@ -92,6 +132,25 @@ export async function POST(req: NextRequest) {
     } catch (err) {
       // The order is recorded as paid; /success (or its retry button) can still start it
       console.error('[webhook] could not start plan generation:', err)
+    }
+
+    // Add-ons bought with the plan: record them as paid. This comes after the plan
+    // has been started, so nothing here can delay or fail it. They are written
+    // once the plan is ready (runGeneration asks for them when it finishes).
+    try {
+      const granted = await grantAddonsFromCheckout(session)
+      if (granted.length > 0) {
+        trackServerEvent(session_id, 'addon_purchased', {
+          stripe_session_id: session.id,
+          addons: granted.join(','),
+          source: 'order_page',
+        })
+      }
+    } catch (err) {
+      console.error('[webhook] could not record add-ons:', err)
+      // The buyer paid for them: return 500 so Stripe retries the webhook. The
+      // retry is harmless for the plan, which is already claimed.
+      return NextResponse.json({ error: 'Database update failed' }, { status: 500 })
     }
   }
 

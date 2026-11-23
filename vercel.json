@@ -9,6 +9,10 @@
       "schedule": "*/5 * * * *"
     },
     {
+      "path": "/api/cron/retry-addons",
+      "schedule": "*/5 * * * *"
+    },
+    {
       "path": "/api/cron/plan-reminders",
       "schedule": "0 * * * *"
     }

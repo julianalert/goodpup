@@ -4,6 +4,7 @@ import { buildPrompt } from './prompt'
 import { sendPlanEmail, sendPlanFailureAlert } from './email'
 import { stripe } from './stripe'
 import { generatePlanV2 } from './plan-v2'
+import { grantAddonsFromCheckout, kickAddonGeneration, notifyAddonIntake } from './addons-store'
 
 // Server-side only. Everything that turns a paid submission into a plan lives here,
 // so the Stripe webhook and /api/generate start generation the exact same way.
@@ -91,6 +92,14 @@ export async function confirmPaid(
         })
         .eq('session_id', submission.session_id)
       if (error) throw new Error(error.message)
+
+      // Add-ons bought in the same checkout: the webhook records them too, this
+      // covers the buyer who gets here first. Never a reason to refuse the plan.
+      try {
+        await grantAddonsFromCheckout(session)
+      } catch (err) {
+        console.error('[generate-plan] could not record add-ons for', id, err)
+      }
       return true
     } catch (err) {
       console.error('[generate-plan] payment check failed for', id, err)
@@ -290,4 +299,11 @@ export async function runGeneration(submission: SubmissionRow): Promise<void> {
       console.error('[generate-plan] plan email failed:', sessionId, err)
     }
   }
+
+  // The plan is saved and announced. Paid add-ons are written now, in a function
+  // run of their own: this one has spent its time budget on the plan. One that
+  // needs the buyer's answers first gets its email instead, now that the training
+  // space it sends them to is open. Neither call ever throws.
+  await kickAddonGeneration(sessionId)
+  await notifyAddonIntake(sessionId)
 }

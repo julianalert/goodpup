@@ -1,13 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe, PRICE_CENTS } from '@/lib/stripe'
 import { createServerClient } from '@/lib/supabase'
+import { ADDONS, addonDog, cleanAddonIds, type AddonId } from '@/lib/addons'
+import { addonOffers, listAddonRows } from '@/lib/addons-store'
 
 export async function POST(req: NextRequest) {
   let session_id: string
+  let requestedAddons: AddonId[] = []
 
   try {
     const body = await req.json()
     session_id = body.session_id
+    // Add-ons ticked on the order page, e.g. ['breed_handbook']
+    requestedAddons = cleanAddonIds(body.addons)
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
@@ -47,6 +52,20 @@ export async function POST(req: NextRequest) {
     ? `Built for ${dogName}${dogBreed ? `, your ${dogBreed}` : ''}: ${contents}.`
     : `${contents.charAt(0).toUpperCase()}${contents.slice(1)}.`
 
+  // Add-ons bought with the plan. Only what can really be delivered is charged:
+  // the add-on must exist for this dog, and the database must be able to record it
+  // (listAddonRows is null until migration 008 has run). A lookup problem here
+  // drops the add-on, never the order.
+  let addons: AddonId[] = []
+  if (requestedAddons.length > 0 && submission) {
+    const owned = await listAddonRows(session_id)
+    if (owned) {
+      const offers = addonOffers(submission, owned)
+      addons = requestedAddons.filter((id) => offers.includes(id))
+    }
+  }
+  const dog = addonDog(dogName, dogBreed)
+
   try {
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -62,6 +81,14 @@ export async function POST(req: NextRequest) {
           },
           quantity: 1,
         },
+        ...addons.map((id) => ({
+          price_data: {
+            currency: 'usd',
+            product_data: { name: `PawCraft · ${ADDONS[id].title(dog)}`, description: ADDONS[id].pitch(dog) },
+            unit_amount: ADDONS[id].priceCents,
+          },
+          quantity: 1,
+        })),
       ],
       // Shows Stripe's "Add promotion code" field. It accepts the customer-facing
       // promotion codes attached to a coupon in the Stripe dashboard.
@@ -74,8 +101,9 @@ export async function POST(req: NextRequest) {
       },
       // Pre-fill customer email if we have it
       ...(email ? { customer_email: email } : {}),
-      // Link back to our submission row via metadata
-      metadata: { session_id },
+      // Link back to our submission row via metadata. `addons` is what the webhook
+      // records as paid once the checkout completes.
+      metadata: { session_id, ...(addons.length > 0 ? { addons: addons.join(',') } : {}) },
       // Stripe replaces {CHECKOUT_SESSION_ID} with the real ID at redirect time
       success_url: `${appUrl}/success?stripe_session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  `${appUrl}/order`,

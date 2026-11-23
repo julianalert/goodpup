@@ -117,6 +117,35 @@ CREATE TRIGGER plan_progress_updated_at
 
 ALTER TABLE plan_progress ENABLE ROW LEVEL SECURITY;
 
+-- 3c. PAID ADD-ONS (one row per add-on a customer has paid for; see migrations/008)
+-- ============================================================
+
+CREATE TABLE submission_addons (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  session_id  UUID NOT NULL REFERENCES submissions(session_id) ON DELETE CASCADE,
+  addon_id    TEXT NOT NULL,                     -- e.g. 'breed_handbook' (see lib/addons.ts)
+  status      TEXT NOT NULL DEFAULT 'pending',   -- 'awaiting_input' | 'pending' | 'generating' | 'ready' | 'failed'
+  attempts    INTEGER NOT NULL DEFAULT 0,
+  content     JSONB,
+  settings    JSONB,                             -- what the customer tells us inside it (the nutrition plan's questions)
+  intake_email_at TIMESTAMPTZ,                   -- when we emailed them to answer its questions
+  stripe_session_id TEXT,
+  amount_cents      INTEGER,
+  ready_at    TIMESTAMPTZ,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (session_id, addon_id)
+);
+
+CREATE INDEX submission_addons_session_idx ON submission_addons (session_id);
+CREATE INDEX submission_addons_status_idx  ON submission_addons (status) WHERE status <> 'ready';
+
+CREATE TRIGGER submission_addons_updated_at
+  BEFORE UPDATE ON submission_addons
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+ALTER TABLE submission_addons ENABLE ROW LEVEL SECURITY;
+
 -- 4. ROW LEVEL SECURITY
 -- ============================================================
 -- The table is only written to by the Next.js API route, which uses

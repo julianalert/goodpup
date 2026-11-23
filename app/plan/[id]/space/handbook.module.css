@@ -1,0 +1,206 @@
+/* The breed handbook's content: paragraphs, lists, tables and callouts.
+   Used twice: inside the training space (which defines the colour tokens on .app)
+   and in the print layout (.book below defines the same tokens). */
+
+.blocks { display: flex; flex-direction: column; gap: 12px; }
+.p { font-size: 15.5px; line-height: 1.6; color: var(--text); text-wrap: pretty; }
+.blockTitle { font-size: 14px; font-weight: 650; color: var(--text); margin-bottom: 6px; }
+
+.list, .steps { display: flex; flex-direction: column; gap: 7px; list-style: none; padding: 0; margin: 0; }
+.list li, .steps li { position: relative; padding-left: 20px; font-size: 15px; line-height: 1.55; color: var(--text); }
+.list li::before {
+  content: ''; position: absolute; left: 4px; top: 9px;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--accent-mid);
+}
+.steps { counter-reset: step; }
+.steps li { counter-increment: step; padding-left: 32px; }
+.steps li::before {
+  content: counter(step); position: absolute; left: 0; top: 1px;
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--fill); color: var(--text-2); font-size: 12px; font-weight: 650;
+}
+
+.facts { margin: 0; border-radius: var(--r-md); background: var(--fill); padding: 4px 14px; }
+.factRow { display: flex; gap: 14px; padding: 9px 0; font-size: 14.5px; line-height: 1.45; }
+.factRow + .factRow { border-top: 1px solid var(--line); }
+.factRow dt { flex: 0 0 36%; font-weight: 600; color: var(--text); }
+.factRow dd { flex: 1; min-width: 0; margin: 0; color: var(--text-2); }
+
+.callout { display: flex; gap: 12px; align-items: flex-start; border-radius: var(--r-md); padding: 13px 14px; }
+.callout > svg { font-size: 19px; margin-top: 1px; flex-shrink: 0; }
+.callout strong { display: block; font-size: 14px; font-weight: 650; margin-bottom: 2px; }
+.callout p { font-size: 15px; line-height: 1.5; color: var(--text); }
+.tip { background: var(--accent-soft); }
+.tip > svg, .tip strong { color: var(--accent); }
+.watch { background: var(--warm-soft); }
+.watch > svg, .watch strong { color: var(--warm); }
+.vet { background: var(--danger-soft); }
+.vet > svg, .vet strong { color: var(--danger); }
+
+.sectionHeading { font-size: 16.5px; font-weight: 650; line-height: 1.3; letter-spacing: -0.01em; color: var(--text); margin-bottom: 10px; }
+.sections { display: flex; flex-direction: column; gap: 24px; }
+.intro { font-size: 16px; line-height: 1.6; color: var(--text-2); text-wrap: pretty; }
+
+/* Trait bars */
+.traits { display: flex; flex-direction: column; gap: 14px; }
+.traitHead { display: flex; justify-content: space-between; gap: 12px; font-size: 14.5px; font-weight: 600; }
+.traitHead span:last-child { color: var(--accent); font-variant-numeric: tabular-nums; }
+.traitTrack { height: 6px; border-radius: 99px; background: var(--fill); margin: 6px 0; overflow: hidden; }
+.traitFill { height: 100%; border-radius: 99px; background: var(--accent); }
+.traitNote { font-size: 14px; line-height: 1.5; color: var(--text-2); }
+
+/* Calories by weight and activity */
+.table { width: 100%; border-collapse: collapse; font-size: 14.5px; font-variant-numeric: tabular-nums; }
+.table th, .table td { padding: 9px 8px; text-align: right; border-bottom: 1px solid var(--line); }
+.table th:first-child { text-align: left; padding-left: 10px; }
+.table thead th { font-size: 12.5px; font-weight: 650; color: var(--text-3); border-bottom: 1.5px solid var(--line-strong); }
+.table tbody th { font-weight: 600; color: var(--text); white-space: nowrap; }
+.table tbody th span { font-weight: 400; color: var(--text-3); margin-left: 4px; }
+.table td { color: var(--text-2); }
+.tableNear th, .tableNear td { background: var(--accent-soft); color: var(--text); font-weight: 600; }
+.tableNote { font-size: 14px; line-height: 1.5; color: var(--text-2); margin-top: 10px; }
+
+/* Cheat sheets */
+.sheetNote { font-size: 14.5px; color: var(--text-2); }
+.sheetGroups { display: flex; flex-direction: column; gap: 16px; }
+.sheetLabel { font-size: 13px; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.sheetItems { display: flex; flex-direction: column; gap: 7px; list-style: none; padding: 0; margin: 0; }
+.sheetItems li { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; line-height: 1.5; color: var(--text); }
+.sheetItems li::before {
+  content: ''; flex-shrink: 0; width: 14px; height: 14px; margin-top: 4px;
+  border-radius: 4px; box-shadow: inset 0 0 0 1.5px var(--line-strong);
+}
+
+/* ── The print layout (/plan/[id]/print/breed_handbook) ──────────────────── */
+.book {
+  --text: #161614;
+  --text-2: #55554F;
+  --text-3: #6F6F68;
+  --fill: #F0EFEB;
+  --line: rgba(17, 17, 15, 0.1);
+  --line-strong: rgba(17, 17, 15, 0.3);
+  --accent: #1A6B4A;
+  --accent-mid: #5E9E7D;
+  --accent-soft: #EAF4EE;
+  --warm: #8F5D06;
+  --warm-soft: #FBF3E3;
+  --danger: #B13F2E;
+  --danger-soft: #FCEEEB;
+  --r-md: 10px;
+
+  min-height: 100vh; background: #E9E8E3; color: var(--text);
+  font-family: var(--font-dm-sans), 'DM Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 60px;
+}
+.book ol, .book ul { list-style: none; }
+
+.bar {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding: 12px 20px; background: rgba(255, 255, 255, 0.94);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  box-shadow: 0 1px 0 var(--line);
+}
+.barBack { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; color: var(--accent); text-decoration: none; }
+.barRight { display: flex; align-items: center; gap: 14px; }
+.barHint { font-size: 13.5px; color: var(--text-3); }
+.barBtn {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 44px; padding: 0 20px; border: none; border-radius: 99px; cursor: pointer;
+  background: var(--accent); color: #fff; font: inherit; font-size: 15.5px; font-weight: 600;
+}
+.barBtn:hover { background: #145A3D; }
+
+.sheet {
+  max-width: 800px; margin: 24px auto 0; background: #fff;
+  padding: 56px 64px; box-shadow: 0 1px 3px rgba(17, 17, 15, 0.08), 0 12px 32px -12px rgba(17, 17, 15, 0.18);
+}
+
+.cover {
+  display: flex; flex-direction: column; justify-content: space-between;
+  min-height: 880px; padding: 64px; color: #fff;
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(94, 158, 125, 0.55) 0%, rgba(94, 158, 125, 0) 60%),
+    linear-gradient(160deg, #1A6B4A 0%, #124F36 100%);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.coverBrand { font-family: var(--font-playfair), Georgia, serif; font-size: 20px; font-weight: 600; }
+.coverBrand span { font-weight: 400; opacity: 0.7; }
+.coverPhoto { width: 132px; height: 132px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.25); margin-bottom: 32px; }
+.coverKicker { font-size: 12px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.65; margin-bottom: 16px; }
+.coverTitle { font-family: var(--font-playfair), Georgia, serif; font-size: 50px; font-weight: 600; line-height: 1.1; letter-spacing: -0.01em; text-wrap: balance; }
+.coverSub { font-size: 18px; line-height: 1.55; opacity: 0.8; margin-top: 20px; max-width: 520px; text-wrap: pretty; }
+.coverMeta { font-size: 13.5px; opacity: 0.65; }
+
+.bookH1 { font-family: var(--font-playfair), Georgia, serif; font-size: 34px; font-weight: 600; line-height: 1.15; letter-spacing: -0.01em; text-wrap: balance; }
+.bookKicker { font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.chapterHead { padding-bottom: 20px; margin-bottom: 26px; border-bottom: 2px solid var(--accent); }
+.chapterHead .intro { margin-top: 14px; font-size: 16.5px; }
+
+.toc { display: flex; flex-direction: column; margin-top: 8px; }
+.toc li { display: flex; align-items: baseline; gap: 14px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 16px; }
+.tocNum { flex: 0 0 26px; font-weight: 650; color: var(--accent); font-variant-numeric: tabular-nums; }
+.tocSub { margin-top: 28px; font-size: 13px; font-weight: 650; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); }
+
+.keyPoints { display: flex; flex-direction: column; gap: 10px; counter-reset: key; }
+.keyPoints li { counter-increment: key; position: relative; padding-left: 36px; font-size: 15.5px; line-height: 1.55; }
+.keyPoints li::before {
+  content: counter(key); position: absolute; left: 0; top: 0;
+  width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--accent); color: #fff; font-size: 13px; font-weight: 650;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.bookBlock { margin-top: 26px; }
+.bookBlock > .sectionHeading { margin-bottom: 12px; }
+.traitGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 32px; }
+
+.disclaimer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12.5px; line-height: 1.55; color: var(--text-3); }
+
+@media (max-width: 700px) {
+  .sheet { margin-top: 12px; padding: 32px 22px; }
+  .cover { min-height: 560px; padding: 36px 26px; }
+  .coverTitle { font-size: 36px; }
+  .bookH1 { font-size: 28px; }
+  .traitGrid { grid-template-columns: 1fr; }
+  .barHint { display: none; }
+}
+
+@page { margin: 16mm 15mm; }
+
+@media print {
+  /* The site's cream page colour must not print behind the book */
+  :global(body):has(.book) { background: #fff; }
+  .book { background: #fff; padding: 0; min-height: 0; }
+  .bar { display: none; }
+  .sheet { max-width: none; margin: 0; padding: 0; box-shadow: none; break-before: page; }
+  .sheet:first-of-type { break-before: auto; }
+  /* The cover fills one page. 240mm fits inside the margins of both Letter and A4. */
+  .cover { min-height: 0; height: 240mm; padding: 20mm 18mm; break-after: page; }
+  .traitGrid { grid-template-columns: 1fr 1fr; }
+
+  /* Paper is read closer than a phone: slightly smaller type, tighter spacing */
+  .p, .list li, .steps li, .callout p, .sheetItems li, .keyPoints li { font-size: 10.5pt; line-height: 1.5; }
+  .intro, .chapterHead .intro { font-size: 11.5pt; line-height: 1.5; }
+  .factRow, .traitNote, .sheetNote { font-size: 10pt; }
+  .sectionHeading { font-size: 12.5pt; margin-bottom: 7px; }
+  .blockTitle, .callout strong, .traitHead { font-size: 10pt; }
+  .sections { gap: 18px; }
+  .blocks { gap: 9px; }
+  .bookH1 { font-size: 24pt; }
+  .chapterHead { padding-bottom: 14px; margin-bottom: 18px; }
+  .toc li { font-size: 11.5pt; padding: 8px 0; }
+
+  .sectionHeading, .blockTitle, .sheetLabel, .chapterHead { break-after: avoid; }
+  .callout, .factRow, .list li, .steps li, .sheetItems li, .traitItem, .keyPoints li, .toc li, .table tr { break-inside: avoid; }
+  .table { font-size: 10pt; }
+  .table th, .table td { padding: 5px 8px; }
+  .tableNote { font-size: 10pt; }
+  .tableNear th, .tableNear td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .tip, .watch, .vet, .facts, .traitTrack, .traitFill, .steps li::before, .list li::before {
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .p, .list li, .steps li { orphans: 3; widows: 3; }
+}

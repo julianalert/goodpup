@@ -6,6 +6,7 @@ import { createServerClient } from '@/lib/supabase'
 import { isPlanV2, progressId, properName, type ProgressKind, type ProgressMap } from '@/lib/plan-types'
 import { PlanContent } from './PlanContent'
 import { DEFAULT_REMINDER_HOUR } from '@/lib/plan-reminders'
+import { addonStates, listAddonRows } from '@/lib/addons-store'
 import { PlanSpaceLoader } from './PlanSpaceLoader'
 import './plan.css'
 
@@ -126,11 +127,17 @@ export default async function PlanPage({ params, searchParams }: Props) {
     const breed = properName(row.dog_breed, '')
     const age = AGE_LABELS[row.dog_age ?? ''] ?? ''
 
+    // Paid extras, with the content of the ready ones. Until migration 008 has run
+    // there is no table: the space then shows no add-ons at all, not even locked.
+    const addonRows = await listAddonRows(id, true)
+
     return (
       <PlanSpaceLoader
         sessionId={id}
         dogName={properName(row.dog_name, 'Your dog')}
         subtitle={[breed, age].filter(Boolean).join(' · ')}
+        dogBreed={breed}
+        initialAddons={addonRows ? addonStates(row, addonRows) : []}
         problems={((row.problems as string[] | null) ?? []).map((p) => ({ id: p, label: PROBLEM_LABELS[p] ?? p }))}
         plan={structuredPlan}
         initialProgress={initialProgress}

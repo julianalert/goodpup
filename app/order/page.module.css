@@ -230,6 +230,51 @@
 .orderLineValue { color: var(--ink); font-weight: 500; }
 .orderLineValueGreen { color: var(--green); }
 
+/* ADD-ON — an optional extra the buyer can tick, between the price lines and the total */
+.addon {
+  margin: 10px 0 12px;
+  border: 1.5px solid var(--border-med); border-radius: 12px;
+  background: white;
+  transition: border-color 0.15s, background 0.15s;
+}
+.addonOn { border-color: var(--green); background: var(--green-pale); }
+.addonMain {
+  display: flex; align-items: flex-start; gap: 11px;
+  padding: 13px 14px 6px; cursor: pointer;
+}
+.addonCheck {
+  width: 20px; height: 20px; margin-top: 2px; flex-shrink: 0;
+  accent-color: var(--green); cursor: pointer;
+}
+.addonText { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.addonKicker {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--amber);
+}
+.addonTitle { font-size: 15px; font-weight: 500; color: var(--ink); line-height: 1.35; }
+.addonPitch { font-size: 13px; color: var(--ink-mid); line-height: 1.5; }
+.addonNote { font-size: 13px; color: var(--green); line-height: 1.5; margin-top: 4px; }
+.addonPrice { font-size: 15px; font-weight: 500; color: var(--ink); white-space: nowrap; }
+.addonMore {
+  display: block; margin: 0 14px 10px 45px; padding: 2px 0;
+  background: none; border: none; cursor: pointer;
+  font-family: inherit; font-size: 13px; font-weight: 500; color: var(--green);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.addonList {
+  list-style: none; margin: 0 14px 12px 45px; padding: 10px 0 0;
+  border-top: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.addonList li {
+  position: relative; padding-left: 14px;
+  font-size: 13px; color: var(--ink-mid); line-height: 1.45;
+}
+.addonList li::before {
+  content: ''; position: absolute; left: 0; top: 8px;
+  width: 5px; height: 5px; border-radius: 50%; background: var(--green-mid);
+}
+
 /* Same 9px above and below as the rule between the two price lines */
 .orderDivider { border: none; border-top: 1px solid var(--border); margin: 0; }
 
@@ -349,6 +394,8 @@
   .orderBoxHeader { padding: 18px 18px 20px; }
   .orderBoxBody { padding: 14px 18px 18px; }
   .orderLine { font-size: 15px; }
+  .addonTitle { font-size: 16px; }
+  .addonPitch, .addonNote, .addonMore, .addonList li { font-size: 14px; }
   .btnCheckout { padding: 18px 20px; font-size: 17px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
   .btnCheckout small { font-size: 13px; margin-top: 5px; }
   .urgencyBar { font-size: 14px; }

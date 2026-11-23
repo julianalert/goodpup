@@ -1,23 +1,13 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { dailyKcal as dailyKcalFor, KG_PER_LB, LIFE_STAGE_FACTOR, type Activity } from '@/lib/feeding'
 import s from '../page.module.css'
 
 type Unit = 'kg' | 'lbs'
-type LifeStage = 'puppy' | 'adult' | 'senior'
-type Activity = 'low' | 'moderate' | 'high'
+type LifeStage = keyof typeof LIFE_STAGE_FACTOR
 type FoodType = 'dry' | 'wet' | 'raw'
 
-const LIFE_STAGE_FACTOR: Record<LifeStage, number> = {
-  puppy: 2.5,
-  adult: 1.6,
-  senior: 1.2,
-}
-const ACTIVITY_FACTOR: Record<Activity, number> = {
-  low: 1.0,
-  moderate: 1.2,
-  high: 1.4,
-}
 // kcal per 100 g of food
 const FOOD_KCAL: Record<FoodType, number> = {
   dry: 350,
@@ -26,14 +16,14 @@ const FOOD_KCAL: Record<FoodType, number> = {
 }
 
 function toKg(weight: number, unit: Unit): number {
-  return unit === 'kg' ? weight : weight * 0.453592
+  return unit === 'kg' ? weight : weight * KG_PER_LB
 }
 
 function calcResult(weight: number, unit: Unit, stage: LifeStage, activity: Activity, food: FoodType) {
   const kg = toKg(weight, unit)
   if (kg <= 0) return null
-  const rer = 70 * Math.pow(kg, 0.75)
-  const dailyKcal = rer * LIFE_STAGE_FACTOR[stage] * ACTIVITY_FACTOR[activity]
+  // The formula lives in lib/feeding.ts, shared with the nutrition plan add-on
+  const dailyKcal = dailyKcalFor(kg, LIFE_STAGE_FACTOR[stage], activity)
   const gramsPerDay = (dailyKcal / FOOD_KCAL[food]) * 100
   const cupsPerDay = gramsPerDay / 100        // rough: 1 cup ≈ 100 g dry kibble
   const ozPerDay = gramsPerDay / 28.35

@@ -149,3 +149,46 @@ export async function getBreedContext(
     return null
   }
 }
+
+// ── The whole breed, for the handbook add-on ───────────────────────────────
+
+export interface BreedProfile {
+  match: BreedMatch
+  /** The breeds row, every column */
+  breed: Record<string, unknown>
+  /** Every behavior problem we have data on for this breed */
+  problems: {
+    problem_slug: string
+    frequency: string | null
+    difficulty: number | null
+    why_this_breed: string | null
+    age_risk_note: string | null
+  }[]
+}
+
+/**
+ * Everything our database knows about the owner's breed, or null when we have
+ * nothing reliable. Never throws: a book written without it beats no book.
+ */
+export async function getBreedProfile(breedInput: string | null | undefined): Promise<BreedProfile | null> {
+  try {
+    const supabase = createServerClient()
+
+    const { data: breeds } = await supabase.from('breeds').select('slug, name')
+    const match = matchBreed(breedInput, breeds ?? [])
+    if (!match) return null
+
+    const { data: breed } = await supabase.from('breeds').select('*').eq('slug', match.slug).maybeSingle()
+    if (!breed) return null
+
+    const { data: problems } = await supabase
+      .from('breed_problem_paths')
+      .select('problem_slug, frequency, difficulty, why_this_breed, age_risk_note')
+      .eq('breed_slug', match.slug)
+
+    return { match, breed, problems: problems ?? [] }
+  } catch (err) {
+    console.error('[breed-context] profile lookup failed, continuing without breed data:', err)
+    return null
+  }
+}
