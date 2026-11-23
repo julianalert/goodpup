@@ -286,12 +286,14 @@ export function recoveryEmail4(d: RecoveryEmailData) {
     ${p(`We hold the profile data from completed surveys for 5 days. After today, ${d.dogName}'s profile is cleared from our system and you'd need to fill out the form again to get a plan.`)}
     ${p(`I just want to make sure you're not leaving without knowing exactly what you'd be getting:`)}
     ${bulletList([
-      `A ${d.dogBreed}-specific temperament diagnostic: why ${d.dogName} behaves the way they do, explained clearly`,
-      `30 days of training, mapped out day by day, so there's no guessing what to do next`,
-      d.dailyTime ? `Exercises designed for ${d.dailyTime}-minute sessions${d.living ? ` in ${livingText(d.living)}` : ''}` : `Exercises tailored to your daily schedule and living situation`,
-      `The most common mistakes owners make with ${d.dogBreed}s that silently kill progress`,
-      `Weekly milestones to tick off and your own progress ratings, so you can see it working`,
-      `A "what to do when…" toolkit for the moments between sessions`,
+      // Each line matches a feature of the training space (app/plan/[id]/space) and the homepage copy
+      `${d.dogName}'s own training space, on your phone or computer. Open it and today's session is waiting.`,
+      d.dailyTime ? `30 daily sessions, each one sized to the ${d.dailyTime} minutes you have` : `30 daily sessions, each one sized to the time you have`,
+      `Step-by-step exercises with a built-in timer, what success looks like today, and what to change if ${d.dogName} doesn't get it`,
+      `A ${d.dogBreed} temperament profile: why ${d.dogName} behaves the way they do, and the root cause of each problem`,
+      `Progress you can see: tick off each day and each weekly milestone, and rate how ${d.dogName} is doing every week`,
+      `A toolkit for the hard moments: "what to do when…" scripts, house rules for everyone at home, and the mistakes to avoid`,
+      `One short email a day with that day's session, at the time you choose, and none on days you've already trained`,
     ])}
     ${p(`All of that for ${PRICE_LABEL}.`)}
     ${p(`If you've decided it's not for you, no problem at all. But if something stopped you that I can answer, just hit reply. I'm a real person and I'll respond within a few hours.`)}
