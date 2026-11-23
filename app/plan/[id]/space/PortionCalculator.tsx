@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { Activity } from '@/lib/feeding'
+import { withArticle, type Activity } from '@/lib/feeding'
 import {
   ACTIVITY_CHOICES,
   cleanNutritionProfile,
@@ -186,7 +186,7 @@ export function PortionCalculator({ sessionId, plan, saved, onWeight, readOnly }
             )}
           </ul>
           <p className={s.caption}>
-            A starting point for a {plan.stageLabel}. {plan.growing
+            A starting point for {withArticle(plan.stageLabel)}. {plan.growing
               ? `${plan.dogName} is growing: weigh again every two weeks and update the weight here.`
               : `Check ${plan.dogName}'s body condition after two weeks and adjust, as chapter 2 explains.`}
           </p>

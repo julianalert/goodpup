@@ -1,4 +1,4 @@
-import { ACTIVITY_LABELS } from '@/lib/feeding'
+import { ACTIVITY_LABELS, withArticle } from '@/lib/feeding'
 import {
   PROFILE_TITLE,
   cleanNutritionProfile,
@@ -49,7 +49,7 @@ export function NutritionBook({ plan, settings, photo }: { plan: NutritionPlan; 
       <section>
         <h3 className={h.sectionHeading}>Calories a day, by weight</h3>
         <PortionTable rows={plan.portions} nearLb={weightLb} growing={plan.growing} />
-        <p className={h.tableNote}>For a {plan.stageLabel}, treats included. {plan.portionsNote}</p>
+        <p className={h.tableNote}>For {withArticle(plan.stageLabel)}, treats included. {plan.portionsNote}</p>
       </section>
     </>
   )

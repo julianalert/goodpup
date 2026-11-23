@@ -70,7 +70,7 @@ export function BookReader({ sessionId, addon, kicker, Icon, title, subtitle, fi
     // and out of view: bring its title back to the top once the page has settled.
     requestAnimationFrame(() => {
       const head = document.getElementById(anchor(next))
-      if (head && head.getBoundingClientRect().top < 0) head.scrollIntoView({ block: 'start' })
+      if (head && head.getBoundingClientRect().top < 0) head.scrollIntoView({ block: 'start', behavior: 'instant' })
     })
   }
 

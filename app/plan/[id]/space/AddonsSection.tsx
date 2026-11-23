@@ -36,7 +36,8 @@ export function AddonsSection({ sessionId, dog, store, focus, onFocused, readOnl
   useEffect(() => {
     if (!focus) return
     const target = document.getElementById(focus) ?? ref.current
-    target?.scrollIntoView({ block: 'start' })
+    // The page sets smooth scrolling globally; landing on an add-on is a jump, not a tour of the tab
+    target?.scrollIntoView({ block: 'start', behavior: 'instant' })
     onFocused()
   }, [focus, onFocused])
 
@@ -78,7 +79,7 @@ function intakeView(id: AddonId, sessionId: string, dog: AddonDog, title: string
           onSubmit={async (answers) => {
             const sent = await store.submitIntake(id, answers)
             // The long form gives way to a short "being written" card: keep it in view
-            if (sent) requestAnimationFrame(() => document.getElementById(`addon-${id}`)?.scrollIntoView({ block: 'start' }))
+            if (sent) requestAnimationFrame(() => document.getElementById(`addon-${id}`)?.scrollIntoView({ block: 'start', behavior: 'instant' }))
             return sent
           }}
           readOnly={readOnly}

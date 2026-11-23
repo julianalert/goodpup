@@ -59,6 +59,9 @@ const FEEDING_STAGES: Record<string, FeedingStage> = {
   senior: { factor: LIFE_STAGE_FACTOR.senior, label: 'senior', growing: false },
 }
 
+/** "adult" → "an adult", "senior" → "a senior": the stage labels are written to follow an article */
+export const withArticle = (phrase: string) => `${/^[aeiou]/i.test(phrase) ? 'an' : 'a'} ${phrase}`
+
 /** From the quiz's age answer. An unknown age is fed as an adult. */
 export function feedingStage(dogAge: string | null | undefined): FeedingStage {
   return FEEDING_STAGES[dogAge ?? ''] ?? FEEDING_STAGES.adult

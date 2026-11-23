@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { PiBowlFood } from 'react-icons/pi'
+import { withArticle } from '@/lib/feeding'
 import { PROFILE_TITLE, type NutritionPlan } from '@/lib/nutrition-types'
 import { BookReader } from './BookReader'
 import { FactSheet, NUTRITION_DISCLAIMER, PortionTable } from './HandbookBlocks'
@@ -27,7 +28,7 @@ export function NutritionView({ sessionId, plan, settings, readOnly }: Props) {
       <h3 className={h.sectionHeading}>Calories a day, by weight</h3>
       <PortionTable rows={plan.portions} nearLb={weightLb} growing={plan.growing} />
       <p className={h.tableNote}>
-        For a {plan.stageLabel}, treats included. {plan.portionsNote} The row nearest {plan.dogName}&apos;s weight is marked.
+        For {withArticle(plan.stageLabel)}, treats included. {plan.portionsNote} The row nearest {plan.dogName}&apos;s weight is marked.
       </p>
     </section>
   )

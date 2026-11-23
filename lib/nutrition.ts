@@ -5,7 +5,7 @@ import { properName } from './plan-types'
 import { listAddonRows } from './addons-store'
 import { breedReference, checkBlock, programSummary } from './handbook'
 import { HANDBOOK_BLOCK_KINDS, isHandbook, type Handbook, type HandbookBlock, type HandbookSection } from './handbook-types'
-import { ACTIVITY_LABELS, energyAdjustment, feedingStage, parseWeightRange, portionRow, portionWeights, type FeedingStage } from './feeding'
+import { ACTIVITY_LABELS, energyAdjustment, feedingStage, parseWeightRange, portionRow, portionWeights, withArticle, type FeedingStage } from './feeding'
 import {
   CONCERN_CHOICES,
   CONDITION_CHOICES,
@@ -130,7 +130,7 @@ function numbersText(dog: Dog, n: Numbers): string {
   const r = n.result
   const adjust = energyAdjustment(n.stage, n.profile.condition, n.profile.neutered)
   const basis = [
-    `fed as a ${n.stage.label}`,
+    `fed as ${withArticle(n.stage.label)}`,
     n.stage.growing ? 'for growth, so activity does not change the amount' : `${ACTIVITY_LABELS[n.profile.activity].toLowerCase()}`,
     !n.stage.growing && n.profile.neutered === 'no' && adjust !== 1 ? 'not neutered, which raises the need a little' : '',
     !n.stage.growing && n.profile.condition === 'thin' ? 'set about a tenth above maintenance, because the owner finds the dog too thin' : '',
