@@ -185,7 +185,7 @@ function p(text: string, styles = ''): string {
 }
 
 function sig(): string {
-  return `<p style="font-size:14px;color:#4A4A44;line-height:1.75;margin:20px 0 0;">Julian<br><span style="font-size:12px;color:#8A8A82;">Julian @ PawCraft</span></p>`
+  return `<p style="font-size:14px;color:#4A4A44;line-height:1.75;margin:20px 0 0;">Julian<br><span style="font-size:12px;color:#8A8A82;">PawCraft</span></p>`
 }
 
 // ── Email 1 — 30 minutes — Warm personal ──────────────────────────────────
@@ -253,15 +253,16 @@ export function recoveryEmail2(d: RecoveryEmailData) {
 // ── Email 3 — 72 hours — Social proof ─────────────────────────────────────
 
 export function recoveryEmail3(d: RecoveryEmailData) {
-  const subject = `"I've spent $400 on classes. This finally explained why."`
-  const previewText = `A real story from someone with the same problem as ${d.dogName}. Here's what happened.`
-  const problem = primaryProblem(d.problems)
+  // Sarah's words are quoted exactly as on the homepage (app/page.tsx). Keep them
+  // identical for every reader: never splice the reader's own problem into them.
+  const subject = `"I've spent $400 on group classes and nothing clicked."`
+  const previewText = `A real story from a Husky owner who'd tried everything. Here's what changed.`
 
   const body = `
-    ${p(`Sarah had a 2-year-old Husky named Koda. ${problem.charAt(0).toUpperCase() + problem.slice(1)}, reactive: a similar profile to ${d.dogName}.`)}
+    ${p(`Sarah has a 2-year-old Husky named Koda, who pulled on the leash. A different dog from ${d.dogName}, but the same reason the usual advice wasn't working.`)}
     ${p(`She'd spent $400 on group classes. Tried every YouTube technique. Still ended every walk exhausted and embarrassed.`)}
     ${blockquote(
-      `I've spent $400 on group classes and nothing clicked. This plan finally explained WHY Koda does what he does. Within 2 weeks the ${problem} dropped by about 80%. The breed diagnostic section alone was worth the ${PRICE_LABEL}.`,
+      `I've spent $400 on group classes and nothing clicked. This plan finally explained WHY Koda does what he does, and within 2 weeks the leash pulling has dropped by like 80%.`,
       `Sarah L. · Koda · Husky · 2 years`
     )}
     ${p(`The difference wasn't effort. Sarah was already trying hard. The difference was having a plan built for <em>her dog's</em> specific drive level, age, and environment, not a recycled guide written for every dog on the planet.`)}
