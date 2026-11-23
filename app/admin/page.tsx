@@ -245,7 +245,7 @@ function Dashboard({ stats }: { stats: AdminStats }) {
                       <PlanBadge status={o.plan_status} />
                     </td>
                     <td className={s.nowrap}>
-                      <a href={`/plan/${o.session_id}`} target="_blank" rel="noreferrer" className={s.link}>Plan</a>
+                      <a href={`/plan/${o.session_id}?view=admin`} target="_blank" rel="noreferrer" className={s.link}>Plan</a>
                       {o.stripe_payment_intent_id && (
                         <>
                           {' · '}

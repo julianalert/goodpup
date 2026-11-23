@@ -45,6 +45,7 @@ export const viewport: Viewport = {
 
 interface Props {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 // Label helpers (mirrors lib/prompt.ts — kept local to avoid server/client leakage)
@@ -78,8 +79,10 @@ function formatDate(iso: string | null | undefined): string {
   })
 }
 
-export default async function PlanPage({ params }: Props) {
+export default async function PlanPage({ params, searchParams }: Props) {
   const { id } = await params
+  // The admin report links here with ?view=admin
+  const adminView = (await searchParams).view === 'admin'
 
   // Always rendered for the request at hand: the page shows the customer's own,
   // changing progress, so a cached copy would be out of date.
@@ -137,6 +140,7 @@ export default async function PlanPage({ params }: Props) {
           timezone: row.timezone ?? null,
           photo: row.dog_photo ?? null,
         }}
+        adminView={adminView}
       />
     )
   }

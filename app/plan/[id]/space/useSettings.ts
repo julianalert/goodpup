@@ -31,18 +31,20 @@ async function post(sessionId: string, body: Record<string, unknown>): Promise<b
   }
 }
 
-export function useSettings(sessionId: string, initial: SpaceSettings): SettingsStore {
+export function useSettings(sessionId: string, initial: SpaceSettings, adminView = false): SettingsStore {
   const [settings, setSettings] = useState(initial)
 
   // The reminder hour means "on your clock", so the server needs to know which clock.
   // Sent once, silently, and again only if the customer's timezone changes.
+  // Never from the admin's own look at the space: that clock is not the customer's.
   useEffect(() => {
+    if (adminView) return
     let timezone: string | undefined
     try {
       timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
     } catch { /* very old browser: the server falls back to a default */ }
     if (timezone && timezone !== initial.timezone) void post(sessionId, { timezone })
-  }, [sessionId, initial.timezone])
+  }, [sessionId, initial.timezone, adminView])
 
   const update = useCallback<SettingsStore['update']>(async (changes) => {
     const previous = settings

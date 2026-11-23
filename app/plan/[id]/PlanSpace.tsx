@@ -27,6 +27,8 @@ export interface PlanSpaceProps {
   plan: PlanV2
   initialProgress: ProgressMap
   initialSettings: SpaceSettings
+  /** Opened from the admin report: the viewer's timezone must not be saved as the customer's */
+  adminView?: boolean
 }
 
 const TABS: { id: string; label: string; Icon: IconType; IconOn: IconType }[] = [
@@ -44,9 +46,9 @@ function tabFromHash(): Tab {
   return TABS.some((t) => t.id === hash) ? (hash as Tab) : 'today'
 }
 
-export default function PlanSpace({ sessionId, dogName, subtitle, problems, plan, initialProgress, initialSettings }: PlanSpaceProps) {
+export default function PlanSpace({ sessionId, dogName, subtitle, problems, plan, initialProgress, initialSettings, adminView = false }: PlanSpaceProps) {
   const store = useProgress(sessionId, initialProgress)
-  const settingsStore = useSettings(sessionId, initialSettings)
+  const settingsStore = useSettings(sessionId, initialSettings, adminView)
   const [tab, setTab] = useState<Tab>(tabFromHash)
   const [openDay, setOpenDay] = useState<number | null>(null)
   // "Now" decides whether the next day has opened and how long the streak is.
