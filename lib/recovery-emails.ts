@@ -95,8 +95,20 @@ function getAppUrl(): string {
   return process.env.NEXT_PUBLIC_APP_URL ?? SITE_URL
 }
 
-function orderUrl(sessionId: string): string {
-  return `${getAppUrl()}/order?session_id=${encodeURIComponent(sessionId)}`
+/**
+ * Link back to the order page, tagged so a sale this sequence wins back is credited
+ * to it in analytics instead of showing up as direct traffic. utm_content says which
+ * of the four emails was clicked.
+ */
+function orderUrl(sessionId: string, emailNumber: number): string {
+  const params = new URLSearchParams({
+    session_id: sessionId,
+    utm_source: 'email',
+    utm_medium: 'abandoned_checkout',
+    utm_campaign: 'recovery',
+    utm_content: `email_${emailNumber}`,
+  })
+  return `${getAppUrl()}/order?${params}`
 }
 
 function unsubscribeUrl(sessionId: string): string {
@@ -204,7 +216,7 @@ export function recoveryEmail1(d: RecoveryEmailData) {
     ${dogPill(d.dogName, d.dogBreed, d.dogAge, d.problems)}
     ${p(`<strong style="color:#1C1C1A;">All that's left is ${PRICE_LABEL}.</strong> That's it. Less than a coffee-shop afternoon. Less than one hour with a trainer who doesn't know your dog's name.`)}
     ${p(`No subscription. In this inbox a few minutes after you order.`)}
-    ${ctaButton(orderUrl(d.sessionId), `Get ${d.dogName}'s plan for ${PRICE_LABEL} →`)}
+    ${ctaButton(orderUrl(d.sessionId, 1), `Get ${d.dogName}'s plan for ${PRICE_LABEL} →`)}
     <table cellpadding="0" cellspacing="0" border="0" role="presentation" width="100%" style="margin-top:24px;padding-top:18px;border-top:1px solid rgba(28,28,26,0.08);">
       <tr><td><p style="font-size:12px;color:#8A8A82;font-style:italic;line-height:1.6;margin:0;"><strong style="color:#4A4A44;font-style:normal;">P.S.</strong> If something stopped you, like a question or a doubt, just reply to this email. I read every reply personally.</p></td></tr>
     </table>
@@ -237,7 +249,7 @@ export function recoveryEmail2(d: RecoveryEmailData) {
       `Why your current approach may be accidentally reinforcing the behaviour you want to stop`,
     ])}
     ${p(`All of that is in ${d.dogName}'s plan. Breed-specific. Built for your situation. <strong style="color:#1C1C1A;">${PRICE_LABEL}.</strong>`)}
-    ${ctaButton(orderUrl(d.sessionId), `Get ${d.dogName}'s 30-day plan →`)}
+    ${ctaButton(orderUrl(d.sessionId, 2), `Get ${d.dogName}'s 30-day plan →`)}
     <table cellpadding="0" cellspacing="0" border="0" role="presentation" width="100%" style="margin-top:24px;padding-top:18px;border-top:1px solid rgba(28,28,26,0.08);">
       <tr><td>
         <p style="font-size:12px;color:#8A8A82;font-style:italic;line-height:1.6;margin:0 0 8px;"><strong style="color:#4A4A44;font-style:normal;">P.S.</strong> Still not sure? Here's what Jamie said after getting a plan for her French Bulldog Bruno:</p>
@@ -268,7 +280,7 @@ export function recoveryEmail3(d: RecoveryEmailData) {
     ${p(`The difference wasn't effort. Sarah was already trying hard. The difference was having a plan built for <em>her dog's</em> specific drive level, age, and environment, not a recycled guide written for every dog on the planet.`)}
     ${p(`${d.dogName}'s plan is already built around their ${d.dogBreed} temperament, their specific triggers, and your situation. <strong style="color:#1C1C1A;">It's just waiting for you to unlock it.</strong>`)}
     ${p(`${PRICE_LABEL}. In your inbox a few minutes later.`)}
-    ${ctaButton(orderUrl(d.sessionId), `Unlock ${d.dogName}'s plan now →`)}
+    ${ctaButton(orderUrl(d.sessionId, 3), `Unlock ${d.dogName}'s plan now →`)}
     ${sig()}
   `
 
@@ -301,7 +313,7 @@ export function recoveryEmail4(d: RecoveryEmailData) {
     <table cellpadding="0" cellspacing="0" border="0" role="presentation" style="margin:24px 0 8px;">
       <tr>
         <td style="border-radius:99px;background:#1A6B4A;margin-right:10px;">
-          <a href="${orderUrl(d.sessionId)}" style="display:inline-block;padding:14px 28px;color:white;font-size:14px;font-weight:500;text-decoration:none;border-radius:99px;font-family:'DM Sans',Arial,sans-serif;">Get ${d.dogName}'s plan for ${PRICE_LABEL}</a>
+          <a href="${orderUrl(d.sessionId, 4)}" style="display:inline-block;padding:14px 28px;color:white;font-size:14px;font-weight:500;text-decoration:none;border-radius:99px;font-family:'DM Sans',Arial,sans-serif;">Get ${d.dogName}'s plan for ${PRICE_LABEL}</a>
         </td>
         <td style="padding-left:10px;">
           <a href="mailto:${SITE_EMAIL}" style="display:inline-block;padding:13px 22px;color:#1A6B4A;font-size:14px;font-weight:500;text-decoration:none;border-radius:99px;border:1.5px solid #1A6B4A;font-family:'DM Sans',Arial,sans-serif;">I have a question →</a>
