@@ -13,11 +13,15 @@ declare global {
 
 /**
  * Report a purchase. The transaction ID lets Google count an order once even if
- * it is reported again. Returns false when the tag isn't on the page yet (its
- * script is injected after hydration), so the caller can try again.
+ * it is reported again. The buyer's email, when known, goes along for enhanced
+ * conversions (the tag hashes it before sending). Returns false when the tag
+ * isn't on the page yet (its script is injected after hydration), so the caller
+ * can try again.
  */
-export function trackPurchaseConversion(transactionId: string): boolean {
+export function trackPurchaseConversion(transactionId: string, email?: string): boolean {
   if (typeof window === 'undefined' || typeof window.gtag !== 'function') return false
+  const normalizedEmail = email?.trim().toLowerCase()
+  if (normalizedEmail) window.gtag('set', 'user_data', { email: normalizedEmail })
   window.gtag('event', 'conversion', {
     send_to: PURCHASE_SEND_TO,
     value: PRICE_CENTS / 100,

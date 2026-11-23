@@ -62,6 +62,19 @@ function reportOnce(dedupeKey: string, send: () => boolean): () => void {
   }
 }
 
+// The buyer's email as typed in the quiz (the one checkout is pre-filled with), when
+// this browser still has the quiz answers. Missing when the buyer lands here in
+// another browser or tab.
+function storedEmail(): string | undefined {
+  try {
+    const stored = sessionStorage.getItem('pawcraft_form')
+    const email: unknown = stored ? JSON.parse(stored).email : undefined
+    return typeof email === 'string' && email.includes('@') ? email : undefined
+  } catch {
+    return undefined
+  }
+}
+
 export default function SuccessPage() {
   const router = useRouter()
   const [dogName, setDogName] = useState<string | null>(null)
@@ -80,9 +93,10 @@ export default function SuccessPage() {
     const checkoutId = new URLSearchParams(window.location.search).get('stripe_session_id')
     if (!checkoutId) return
 
+    const email = storedEmail()
     const stops = [
       reportOnce(`pawcraft_oai_order_${checkoutId}`, measureOrderCreated),
-      reportOnce(`pawcraft_gads_purchase_${checkoutId}`, () => trackPurchaseConversion(checkoutId)),
+      reportOnce(`pawcraft_gads_purchase_${checkoutId}`, () => trackPurchaseConversion(checkoutId, email)),
     ]
     return () => stops.forEach(stop => stop())
   }, [])
