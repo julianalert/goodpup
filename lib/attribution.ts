@@ -73,6 +73,15 @@ function readStored(): Attribution | null {
 }
 
 /**
+ * The campaign this visitor counts for (this page's own tags, else the remembered
+ * ones), without recording anything.
+ */
+export function peekAttribution(): Attribution | null {
+  if (typeof window === 'undefined') return null
+  return readCampaign(new URLSearchParams(window.location.search)) ?? readStored()
+}
+
+/**
  * Record this visit's source if it has one worth keeping, and return what is
  * remembered for this visitor. Safe to call any number of times per page.
  */

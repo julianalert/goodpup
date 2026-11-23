@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { use, useState, useCallback, useRef, useEffect, useSyncExternalStore } from 'react'
 import { useRouter } from 'next/navigation'
-import { captureAttribution } from '@/lib/attribution'
+import { captureAttribution, peekAttribution } from '@/lib/attribution'
+import { QUIZ_HEADLINES, quizHeadlineKey } from '@/lib/quiz-headline'
 import { identifyUser, trackEvent } from '@/lib/mixpanel-client'
 import s from './page.module.css'
 // Save step data via the server-side API route (never writes to Supabase directly from the browser)
@@ -161,8 +162,32 @@ const GEN_STEPS = [
 
 const GEN_DELAYS = [0, 900, 1900, 2900, 4000, 5200]
 
-export default function FormPage() {
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
+
+// A URL parameter can be repeated; the first value is the one that counts
+const firstValue = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value)
+
+// The remembered campaign never changes while the page is open
+const subscribeToNothing = () => () => {}
+
+export default function FormPage({ searchParams }: { searchParams: SearchParams }) {
   const router = useRouter()
+
+  // The headline follows the ad the visitor clicked (lib/quiz-headline.ts). The server
+  // picks it from the link's UTM tags, so an ad click sees the right one straight away;
+  // the browser also knows the campaign remembered from an earlier page or visit.
+  const params = use(searchParams)
+  const headlineFromUrl = quizHeadlineKey({
+    utm_content: firstValue(params.utm_content),
+    utm_term: firstValue(params.utm_term),
+    utm_campaign: firstValue(params.utm_campaign),
+  })
+  const headline = QUIZ_HEADLINES[useSyncExternalStore(
+    subscribeToNothing,
+    () => quizHeadlineKey(peekAttribution()),
+    () => headlineFromUrl,
+  )]
+
   const [step, setStep] = useState(1)
   const [saving, setSaving] = useState(false)
   const [generating, setGenerating] = useState(false)
@@ -418,8 +443,8 @@ export default function FormPage() {
 
   const heroTitle = (
     <>
-      <h1>Tell us about your dog.<br />We&apos;ll build <em>their 30-day personalised training plan.</em></h1>
-      <p className={s.heroSub}>Answer 5 quick questions so our AI can generate a program that actually fits your dog, not a generic guide.</p>
+      <h1>{headline.lead}<br />We&apos;ll build <em>{headline.emphasis}</em></h1>
+      <p className={s.heroSub}>{headline.sub}</p>
     </>
   )
 
