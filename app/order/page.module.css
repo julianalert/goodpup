@@ -230,9 +230,14 @@
 .orderLineValue { color: var(--ink); font-weight: 500; }
 .orderLineValueGreen { color: var(--green); }
 
-/* ADD-ON — an optional extra the buyer can tick, between the price lines and the total */
+/* ADD-ONS — a card of its own under the price card */
+.colRightTall { position: static; }
+.addonsCard { margin-top: 16px; }
+.addonsCard .cardBody { display: flex; flex-direction: column; gap: 10px; }
+.addonsFoot { font-size: 13px; color: var(--ink-light); line-height: 1.5; margin: 2px 2px 0; }
+
+/* One optional extra the buyer can tick */
 .addon {
-  margin: 10px 0 12px;
   border: 1.5px solid var(--border-med); border-radius: 12px;
   background: white;
   transition: border-color 0.15s, background 0.15s;
@@ -247,10 +252,6 @@
   accent-color: var(--green); cursor: pointer;
 }
 .addonText { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.addonKicker {
-  font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--amber);
-}
 .addonTitle { font-size: 15px; font-weight: 500; color: var(--ink); line-height: 1.35; }
 .addonPitch { font-size: 13px; color: var(--ink-mid); line-height: 1.5; }
 .addonNote { font-size: 13px; color: var(--green); line-height: 1.5; margin-top: 4px; }
@@ -395,7 +396,8 @@
   .orderBoxBody { padding: 14px 18px 18px; }
   .orderLine { font-size: 15px; }
   .addonTitle { font-size: 16px; }
-  .addonPitch, .addonNote, .addonMore, .addonList li { font-size: 14px; }
+  .addonPitch, .addonNote, .addonMore, .addonList li, .addonsFoot { font-size: 14px; }
+  .addonsCard { margin-top: 14px; }
   .btnCheckout { padding: 18px 20px; font-size: 17px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
   .btnCheckout small { font-size: 13px; margin-top: 5px; }
   .urgencyBar { font-size: 14px; }

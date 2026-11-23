@@ -405,7 +405,9 @@ export default function OrderPage() {
         </div>
 
         {/* RIGHT — ORDER BOX */}
-        <div className={s.colRight}>
+        {/* With add-ons the column is taller than most screens: it then scrolls with
+            the page instead of sticking, so its lower card can always be reached */}
+        <div className={`${s.colRight} ${shownAddons.length > 0 ? s.colRightTall : ''}`}>
           <div className={s.orderBox}>
 
             <div className={s.orderBoxHeader}>
@@ -430,34 +432,12 @@ export default function OrderPage() {
                 <span className={`${s.orderLineValue} ${s.orderLineValueGreen}`}>{DISCOUNT_LABEL}</span>
               </div>
 
-              {/* ADD-ONS — optional extras, unticked by default */}
-              {shownAddons.map((id) => {
-                const addon = ADDONS[id]
-                const on = chosen.includes(id)
-                const open = addonDetails === id
-                return (
-                  <div key={id} className={`${s.addon} ${on ? s.addonOn : ''}`}>
-                    <label className={s.addonMain}>
-                      <input type="checkbox" className={s.addonCheck} checked={on} onChange={() => toggleAddon(id)} />
-                      <span className={s.addonText}>
-                        <span className={s.addonKicker}>Optional add-on</span>
-                        <span className={s.addonTitle}>{addon.title(dog)}</span>
-                        <span className={s.addonPitch}>{addon.pitch(dog)}</span>
-                        {on && addon.intake && <span className={s.addonNote}>{addon.intake.note(dog)}</span>}
-                      </span>
-                      <span className={s.addonPrice}>+{formatPrice(addon.priceCents)}</span>
-                    </label>
-                    <button type="button" className={s.addonMore} onClick={() => setAddonDetails(open ? null : id)} aria-expanded={open}>
-                      {open ? 'Hide what\'s inside' : 'See what\'s inside'}
-                    </button>
-                    {open && (
-                      <ul className={s.addonList}>
-                        {addon.contents(dog).map((line, i) => <li key={i}>{line}</li>)}
-                      </ul>
-                    )}
-                  </div>
-                )
-              })}
+              {chosen.map((id) => (
+                <div key={id} className={s.orderLine}>
+                  <span className={s.orderLineLabel}>{ADDONS[id].label}</span>
+                  <span className={s.orderLineValue}>${(ADDONS[id].priceCents / 100).toFixed(2)}</span>
+                </div>
+              ))}
 
               <hr className={s.orderDivider} />
 
@@ -499,6 +479,46 @@ export default function OrderPage() {
             </div>
 
           </div>
+
+          {/* ADD-ONS — a card of its own under the price card. Optional extras,
+              unticked by default; ticking one adds its line and its price above. */}
+          {shownAddons.length > 0 && (
+            <div className={`${s.card} ${s.addonsCard}`}>
+              <div className={s.cardHeader}>
+                <div className={s.cardHeaderIcon}>➕</div>
+                <h2 className={s.cardTitle}>Optional add-ons</h2>
+              </div>
+              <div className={s.cardBody}>
+                {shownAddons.map((id) => {
+                  const addon = ADDONS[id]
+                  const on = chosen.includes(id)
+                  const open = addonDetails === id
+                  return (
+                    <div key={id} className={`${s.addon} ${on ? s.addonOn : ''}`}>
+                      <label className={s.addonMain}>
+                        <input type="checkbox" className={s.addonCheck} checked={on} onChange={() => toggleAddon(id)} />
+                        <span className={s.addonText}>
+                          <span className={s.addonTitle}>{addon.title(dog)}</span>
+                          <span className={s.addonPitch}>{addon.pitch(dog)}</span>
+                          {on && addon.intake && <span className={s.addonNote}>{addon.intake.note(dog)}</span>}
+                        </span>
+                        <span className={s.addonPrice}>+{formatPrice(addon.priceCents)}</span>
+                      </label>
+                      <button type="button" className={s.addonMore} onClick={() => setAddonDetails(open ? null : id)} aria-expanded={open}>
+                        {open ? 'Hide what\'s inside' : 'See what\'s inside'}
+                      </button>
+                      {open && (
+                        <ul className={s.addonList}>
+                          {addon.contents(dog).map((line, i) => <li key={i}>{line}</li>)}
+                        </ul>
+                      )}
+                    </div>
+                  )
+                })}
+                <p className={s.addonsFoot}>Ticked add-ons are added to the total above and paid in the same checkout.</p>
+              </div>
+            </div>
+          )}
         </div>
 
       </div>
