@@ -132,7 +132,7 @@ function emailShell(dogName: string, sessionId: string, bodyHtml: string): strin
       <tr><td style="background:#F9F7F3;padding:18px 32px 20px;border:1px solid rgba(28,28,26,0.09);border-top:none;border-radius:0 0 12px 12px;">
         <p style="font-size:11px;color:#8A8A82;margin:0;line-height:1.6;">
           You're receiving this because you started building a plan for ${dogName} on PawCraft and left before completing your order.<br>
-          Questions? Just reply — I read every one.<br>
+          Questions? Just reply. I read every one.<br>
           <a href="${unsubscribeUrl(sessionId)}" style="color:#8A8A82;text-decoration:underline;">Unsubscribe</a>
         </p>
       </td></tr>
@@ -185,7 +185,7 @@ function p(text: string, styles = ''): string {
 }
 
 function sig(): string {
-  return `<p style="font-size:14px;color:#4A4A44;line-height:1.75;margin:20px 0 0;">— Julian<br><span style="font-size:12px;color:#8A8A82;">Julian @ PawCraft</span></p>`
+  return `<p style="font-size:14px;color:#4A4A44;line-height:1.75;margin:20px 0 0;">Julian<br><span style="font-size:12px;color:#8A8A82;">Julian @ PawCraft</span></p>`
 }
 
 // ── Email 1 — 30 minutes — Warm personal ──────────────────────────────────
@@ -198,15 +198,15 @@ export function recoveryEmail1(d: RecoveryEmailData) {
   const timeCtx = d.dailyTime ? `, the ${d.dailyTime} minutes you have each day` : ''
 
   const body = `
-    ${p(`You took the time to tell us about ${d.dogName} — their breed, their age, ${problemText(d.problems)}${timeCtx}${livingCtx}.`)}
+    ${p(`You took the time to tell us about ${d.dogName}: their breed, their age, ${problemText(d.problems)}${timeCtx}${livingCtx}.`)}
     ${p(`That's not what someone does when they've given up on their dog.`)}
-    ${p(`So we saved ${d.dogName}'s profile. The moment you complete your order, we build their full 30-day, ${d.dogBreed}-specific programme from it — day by day, exercise by exercise — around everything you told us.`)}
+    ${p(`So we saved ${d.dogName}'s profile. The moment you complete your order, we build their full 30-day, ${d.dogBreed}-specific programme from it, day by day and exercise by exercise, around everything you told us.`)}
     ${dogPill(d.dogName, d.dogBreed, d.dogAge, d.problems)}
     ${p(`<strong style="color:#1C1C1A;">All that's left is ${PRICE_LABEL}.</strong> That's it. Less than a coffee-shop afternoon. Less than one hour with a trainer who doesn't know your dog's name.`)}
     ${p(`No subscription. In this inbox a few minutes after you order.`)}
-    ${ctaButton(orderUrl(d.sessionId), `Get ${d.dogName}'s plan — ${PRICE_LABEL} →`)}
+    ${ctaButton(orderUrl(d.sessionId), `Get ${d.dogName}'s plan for ${PRICE_LABEL} →`)}
     <table cellpadding="0" cellspacing="0" border="0" role="presentation" width="100%" style="margin-top:24px;padding-top:18px;border-top:1px solid rgba(28,28,26,0.08);">
-      <tr><td><p style="font-size:12px;color:#8A8A82;font-style:italic;line-height:1.6;margin:0;"><strong style="color:#4A4A44;font-style:normal;">P.S.</strong> If something stopped you — a question, a doubt — just reply to this email. I read every reply personally.</p></td></tr>
+      <tr><td><p style="font-size:12px;color:#8A8A82;font-style:italic;line-height:1.6;margin:0;"><strong style="color:#4A4A44;font-style:normal;">P.S.</strong> If something stopped you, like a question or a doubt, just reply to this email. I read every reply personally.</p></td></tr>
     </table>
     ${sig()}
   `
@@ -220,8 +220,8 @@ export function recoveryEmail2(d: RecoveryEmailData) {
   const problem = primaryProblem(d.problems)
   const phrase = d.problems.length > 0 ? PROBLEM_PHRASES[d.problems[0]] : undefined
   const subject = phrase
-    ? `Why ${d.dogName} ${phrase} — and what actually fixes it`
-    : `What's really behind ${d.dogName}'s behaviour — and what actually fixes it`
+    ? `Why ${d.dogName} ${phrase}, and what actually fixes it`
+    : `What's really behind ${d.dogName}'s behaviour, and what actually fixes it`
   const previewText = `Most owners treat the symptom. The plan we built for ${d.dogName} goes after the cause.`
 
   const ageLabel = d.dogAge ? ` ${ageText(d.dogAge)}` : ''
@@ -229,8 +229,8 @@ export function recoveryEmail2(d: RecoveryEmailData) {
   const body = `
     ${p(`Here's something most dog training guides will never tell you:`)}
     ${p(`<strong style="color:#1C1C1A;">${problem.charAt(0).toUpperCase() + problem.slice(1)} in a${ageLabel} ${d.dogBreed} isn't just a training problem. It's a needs problem.</strong>`)}
-    ${p(`Most guides give you techniques — "stop and wait for slack", "say leave it firmly", "redirect with a toy". These work for some dogs. But without understanding <em>why</em> ${d.dogName} specifically does what they do — their breed drive, their age, their environment — the techniques don't stick.`)}
-    ${p(`${d.dogName}'s plan starts differently. Before any technique, it explains what's driving the behaviour. Once you understand that, the training makes sense. Things start working — and staying worked.`)}
+    ${p(`Most guides give you techniques: "stop and wait for slack", "say leave it firmly", "redirect with a toy". These work for some dogs. But without understanding <em>why</em> ${d.dogName} specifically does what they do (their breed drive, their age, their environment), the techniques don't stick.`)}
+    ${p(`${d.dogName}'s plan starts differently. Before any technique, it explains what's driving the behaviour. Once you understand that, the training makes sense. Things start working, and keep working.`)}
     ${bulletList([
       `Why generic advice often makes ${problem} <em>worse</em> for ${d.dogBreed}s`,
       `The one routine change that drops reactivity faster than most outdoor sessions`,
@@ -241,7 +241,7 @@ export function recoveryEmail2(d: RecoveryEmailData) {
     <table cellpadding="0" cellspacing="0" border="0" role="presentation" width="100%" style="margin-top:24px;padding-top:18px;border-top:1px solid rgba(28,28,26,0.08);">
       <tr><td>
         <p style="font-size:12px;color:#8A8A82;font-style:italic;line-height:1.6;margin:0 0 8px;"><strong style="color:#4A4A44;font-style:normal;">P.S.</strong> Still not sure? Here's what Jamie said after getting a plan for her French Bulldog Bruno:</p>
-        ${blockquote(`My trainer quoted me $600 for a 6-session package. The PawCraft plan was more detailed than anything he gave me in session one.`, `— Jamie K. · Bruno · French Bulldog · 3 years`)}
+        ${blockquote(`My trainer quoted me $600 for a 6-session package. The PawCraft plan was more detailed than anything he gave me in session one.`, `Jamie K. · Bruno · French Bulldog · 3 years`)}
       </td></tr>
     </table>
     ${sig()}
@@ -258,13 +258,13 @@ export function recoveryEmail3(d: RecoveryEmailData) {
   const problem = primaryProblem(d.problems)
 
   const body = `
-    ${p(`Sarah had a 2-year-old Husky named Koda. ${problem.charAt(0).toUpperCase() + problem.slice(1)}, reactive — similar profile to ${d.dogName}.`)}
+    ${p(`Sarah had a 2-year-old Husky named Koda. ${problem.charAt(0).toUpperCase() + problem.slice(1)}, reactive: a similar profile to ${d.dogName}.`)}
     ${p(`She'd spent $400 on group classes. Tried every YouTube technique. Still ended every walk exhausted and embarrassed.`)}
     ${blockquote(
       `I've spent $400 on group classes and nothing clicked. This plan finally explained WHY Koda does what he does. Within 2 weeks the ${problem} dropped by about 80%. The breed diagnostic section alone was worth the ${PRICE_LABEL}.`,
-      `— Sarah L. · Koda · Husky · 2 years`
+      `Sarah L. · Koda · Husky · 2 years`
     )}
-    ${p(`The difference wasn't effort. Sarah was already trying hard. The difference was having a plan built for <em>her dog's</em> specific drive level, age, and environment — not a recycled guide written for every dog on the planet.`)}
+    ${p(`The difference wasn't effort. Sarah was already trying hard. The difference was having a plan built for <em>her dog's</em> specific drive level, age, and environment, not a recycled guide written for every dog on the planet.`)}
     ${p(`${d.dogName}'s plan is already built around their ${d.dogBreed} temperament, their specific triggers, and your situation. <strong style="color:#1C1C1A;">It's just waiting for you to unlock it.</strong>`)}
     ${p(`${PRICE_LABEL}. In your inbox a few minutes later.`)}
     ${ctaButton(orderUrl(d.sessionId), `Unlock ${d.dogName}'s plan now →`)}
@@ -281,24 +281,24 @@ export function recoveryEmail4(d: RecoveryEmailData) {
   const previewText = `We hold completed profiles for 5 days. After today, you'd need to start the form again.`
 
   const body = `
-    ${p(`Last one from me — I promise.`)}
+    ${p(`Last one from me, I promise.`)}
     ${p(`We hold the profile data from completed surveys for 5 days. After today, ${d.dogName}'s profile is cleared from our system and you'd need to fill out the form again to get a plan.`)}
     ${p(`I just want to make sure you're not leaving without knowing exactly what you'd be getting:`)}
     ${bulletList([
-      `A ${d.dogBreed}-specific temperament diagnostic — why ${d.dogName} behaves the way they do, explained clearly`,
-      `30 days of training, mapped out day by day — no guessing what to do next`,
+      `A ${d.dogBreed}-specific temperament diagnostic: why ${d.dogName} behaves the way they do, explained clearly`,
+      `30 days of training, mapped out day by day, so there's no guessing what to do next`,
       d.dailyTime ? `Exercises designed for ${d.dailyTime}-minute sessions${d.living ? ` in ${livingText(d.living)}` : ''}` : `Exercises tailored to your daily schedule and living situation`,
       `The most common mistakes owners make with ${d.dogBreed}s that silently kill progress`,
       `Weekly milestones to tick off and your own progress ratings, so you can see it working`,
       `A "what to do when…" toolkit for the moments between sessions`,
     ])}
     ${p(`All of that for ${PRICE_LABEL}.`)}
-    ${p(`If you've decided it's not for you — no problem at all. But if something stopped you that I can answer, just hit reply. I'm a real person and I'll respond within a few hours.`)}
-    ${p(`Either way, I hope ${d.dogName}'s walks — and days — get easier soon. You clearly care about getting this right.`)}
+    ${p(`If you've decided it's not for you, no problem at all. But if something stopped you that I can answer, just hit reply. I'm a real person and I'll respond within a few hours.`)}
+    ${p(`Either way, I hope ${d.dogName}'s walks (and days) get easier soon. You clearly care about getting this right.`)}
     <table cellpadding="0" cellspacing="0" border="0" role="presentation" style="margin:24px 0 8px;">
       <tr>
         <td style="border-radius:99px;background:#1A6B4A;margin-right:10px;">
-          <a href="${orderUrl(d.sessionId)}" style="display:inline-block;padding:14px 28px;color:white;font-size:14px;font-weight:500;text-decoration:none;border-radius:99px;font-family:'DM Sans',Arial,sans-serif;">Get ${d.dogName}'s plan — ${PRICE_LABEL}</a>
+          <a href="${orderUrl(d.sessionId)}" style="display:inline-block;padding:14px 28px;color:white;font-size:14px;font-weight:500;text-decoration:none;border-radius:99px;font-family:'DM Sans',Arial,sans-serif;">Get ${d.dogName}'s plan for ${PRICE_LABEL}</a>
         </td>
         <td style="padding-left:10px;">
           <a href="mailto:${SITE_EMAIL}" style="display:inline-block;padding:13px 22px;color:#1A6B4A;font-size:14px;font-weight:500;text-decoration:none;border-radius:99px;border:1.5px solid #1A6B4A;font-family:'DM Sans',Arial,sans-serif;">I have a question →</a>

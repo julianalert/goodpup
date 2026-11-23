@@ -35,7 +35,7 @@ export async function sendPlanEmail({ to, dogName, planUrl }: SendPlanEmailOptio
             ${dogName}'s progress week by week.
           </p>
           <p style="font-size: 16px; color: #4A4A44; line-height: 1.6;">
-            Start with Day 1 today — even 5 minutes makes a difference. From tomorrow
+            Start with Day 1 today. Even 5 minutes makes a difference. From tomorrow
             you'll get one short email a day with that day's session; you can change
             the time or turn it off from the plan.
           </p>
@@ -47,9 +47,9 @@ export async function sendPlanEmail({ to, dogName, planUrl }: SendPlanEmailOptio
             </a>
           </div>
           <p style="font-size: 13px; color: #7A7A72; line-height: 1.6; margin-bottom: 0;">
-            You can return to this link any time — it won't expire.<br>
+            You can return to this link any time. It won't expire.<br>
             Questions? Reply to this email and we'll help you out.<br><br>
-            — Julian @ PawCraft
+            Julian @ PawCraft
           </p>
         </div>
       </div>
