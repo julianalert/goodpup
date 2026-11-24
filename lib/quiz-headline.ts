@@ -20,17 +20,17 @@ export const QUIZ_HEADLINES: Record<QuizHeadlineKey, QuizHeadline> = {
   default: {
     lead: 'Tell us about your dog.',
     emphasis: 'their 30-day personalised training plan.',
-    sub: 'Answer 5 quick questions so our AI can generate a program that actually fits your dog, not a generic guide.',
+    sub: 'Answer 5 quick questions so we can create a program that actually fits your dog, not a generic guide.',
   },
   puppy: {
     lead: 'Tell us about your puppy.',
     emphasis: 'their 30-day puppy training plan.',
-    sub: 'Answer 5 quick questions so our AI can generate a program that actually fits your puppy, not a generic guide.',
+    sub: 'Answer 5 quick questions so we can create a program that actually fits your puppy, not a generic guide.',
   },
   behavior: {
     lead: 'Tell us about your dog.',
     emphasis: 'their 30-day behavior training plan.',
-    sub: 'Answer 5 quick questions so our AI can generate a program that actually fits your dog, not a generic guide.',
+    sub: 'Answer 5 quick questions so we can create a program that actually fits your dog, not a generic guide.',
   },
 }
 

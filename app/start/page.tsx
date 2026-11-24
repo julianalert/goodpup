@@ -472,7 +472,7 @@ export default function FormPage({ searchParams }: { searchParams: SearchParams 
             <div className={s.successStep}>
               <div className={s.successIcon}>🐾</div>
               <div className={s.successTitle}>Generating your plan…</div>
-              <p className={s.successSub}>Hang tight. Our AI is building a personalized 30-day program just for your dog.</p>
+              <p className={s.successSub}>Hang tight. We&apos;re building a personalized 30-day program just for your dog.</p>
               <div className={s.generatingSteps}>
                 {GEN_STEPS.map((label, i) => {
                   const isDone = i < genStepIndex
